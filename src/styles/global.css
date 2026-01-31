@@ -1,0 +1,32 @@
+body {
+    background-color: #212121;
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 400;
+    font-style: normal;
+    color: papayawhip;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: -100px;
+    z-index: -1;
+    background: repeating-linear-gradient(
+        -45deg,
+        #1a1a1a,
+        #1a1a1a 30px,
+        #0f0f0f 30px,
+        #0f0f0f 60px
+    );
+    background-size: 84.85px 84.85px;
+    animation: stripe-move 20s linear infinite;
+}
+
+@keyframes stripe-move {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 84.85px 84.85px;
+    }
+}

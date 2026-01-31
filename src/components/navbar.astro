@@ -1,0 +1,57 @@
+---
+const { highlighted = undefined } = Astro.props;
+---
+
+<div class="navbar" data-message={highlighted}>
+    <img
+        class="navbar-img"
+        src="/verpitek.svg"
+        alt="main Verpitek Logo"
+        transition:persist="logo"
+    />
+    <a class="navlink" id="navhome" href="./" data-astro-prefetch>Home</a>
+    <a class="navlink" id="navlunatech" href="./lunatech" data-astro-prefetch
+        >LunaTech</a
+    >
+    <a class="navlink" id="navbedpak" href="./bedpak" data-astro-prefetch
+        >BedPak</a
+    >
+    <a class="navlink" id="navweboneko" href="./weboneko" data-astro-prefetch
+        >Weboneko</a
+    >
+    <a class="navlink" id="navabout" href="./about" data-astro-prefetch>About</a
+    >
+</div>
+
+<style>
+    .navbar {
+        display: flex;
+        padding-bottom: 16px;
+        padding-top: 16px;
+        padding-left: 16px;
+        padding-right: 16px;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .navlink {
+        text-decoration: none;
+        color: papayawhip;
+    }
+
+    .navbar-img {
+        height: 64px;
+    }
+</style>
+
+<script>
+    function highlight() {
+        const nav = document.querySelector(".navbar");
+        const message = nav.dataset.message;
+        if (message !== undefined) {
+            document.getElementById(message).style.color = "#e1ff00";
+        }
+    }
+    highlight()
+    document.addEventListener('astro:after-swap', highlight);
+</script>
