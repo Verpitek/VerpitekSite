@@ -4,6 +4,7 @@ body {
     font-weight: 400;
     font-style: normal;
     color: papayawhip;
+    text-align: center;
 }
 
 body::before {
@@ -29,4 +30,9 @@ body::before {
     to {
         background-position: 84.85px 84.85px;
     }
+}
+
+a {
+    text-decoration: none;
+    color: #aa75ff;
 }
