@@ -3,17 +3,17 @@ const { highlighted = undefined } = Astro.props;
 ---
 
 <div class="navbar" data-message={highlighted}>
-    <img
-        class="navbar-img"
-        src="/verpitek.svg"
-        alt="main Verpitek Logo"
-        transition:persist="logo"
-    />
-    <a class="navlink" id="navhome" href="./" data-astro-prefetch>Home</a>
-    <a class="navlink" id="navlunatech" href="./lunatech" data-astro-prefetch
-        >LunaTech</a
-    >
-    <a class="navlink" id="navabout" href="./about" data-astro-prefetch>About</a
+    <a href="/" class="navbar-logo">
+        <img
+            class="navbar-img"
+            src="/verpitek.svg"
+            alt="main Verpitek Logo"
+            transition:persist="logo"
+        />
+    </a>
+    <a class="navlink" id="navhome" href="/" data-astro-prefetch>Home</a>
+    <a class="navlink" id="navwiki" href="/wiki" data-astro-prefetch>Wiki</a>
+    <a class="navlink" id="navabout" href="/about" data-astro-prefetch>About</a
     >
 </div>
 
@@ -35,6 +35,11 @@ const { highlighted = undefined } = Astro.props;
         color: papayawhip;
     }
 
+    .navbar-logo {
+        display: flex;
+        align-items: center;
+    }
+
     .navbar-img {
         height: 64px;
     }
@@ -43,11 +48,15 @@ const { highlighted = undefined } = Astro.props;
 <script>
     function highlight() {
         const nav = document.querySelector(".navbar");
-        const message = nav.dataset.message;
-        if (message !== undefined) {
-            document.getElementById(message).style.color = "#e1ff00";
+        if (!nav) return;
+        const message = nav.getAttribute('data-message');
+        if (message) {
+            const element = document.getElementById(message);
+            if (element) {
+                element.style.color = "#e1ff00";
+            }
         }
     }
-    highlight()
+    highlight();
     document.addEventListener('astro:after-swap', highlight);
 </script>

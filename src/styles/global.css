@@ -36,3 +36,78 @@ a {
     text-decoration: none;
     color: #aa75ff;
 }
+
+h1, h2, h3 {
+    margin-top: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        margin-left: 2vw;
+        margin-right: 2vw;
+    }
+    .hero-title {
+        font-size: 3rem;
+    }
+    .hero-subtitle {
+        font-size: 1.25rem;
+    }
+    .video-wrapper iframe {
+        flex: 1 1 100%;
+    }
+
+}
+
+/* Wiki content typography */
+.wiki-content p {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.wiki-content ul, .wiki-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.wiki-content li {
+    margin-bottom: 0.5rem;
+}
+
+.wiki-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.wiki-content th, .wiki-content td {
+    border: 1px solid #333;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.wiki-content th {
+    background: #1a1a1a;
+    color: #e1ff00;
+}
+
+.wiki-content code {
+    background: #1a1a1a;
+    padding: 0.2rem 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
+}
+
+.wiki-cta {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: #e1ff00;
+    color: #212121;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.wiki-cta:hover {
+    background: #c9e000;
+}

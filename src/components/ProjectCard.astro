@@ -1,0 +1,95 @@
+---
+interface Props {
+    title: string;
+    description: string;
+    link?: string;
+    linkText?: string;
+    videoId?: string;
+    secondVideoId?: string;
+}
+const { title, description, link, linkText, videoId, secondVideoId } = Astro.props;
+---
+
+<div class="project-card">
+    <h2>{title}</h2>
+    <p>{description}</p>
+    {videoId && (
+        <div class="video-wrapper">
+            <iframe
+                width="560"
+                height="315"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={`YouTube video player for ${title}`}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+            ></iframe>
+            {secondVideoId && (
+                <iframe
+                    width="560"
+                    height="315"
+                    src={`https://www.youtube.com/embed/${secondVideoId}`}
+                    title={`YouTube video player for ${title} (second)`}
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                ></iframe>
+            )}
+        </div>
+    )}
+    {link && (
+        <a href={link} class="project-link" target="_blank" rel="noopener noreferrer">
+            {linkText || "Learn more"}
+        </a>
+    )}
+</div>
+
+<style>
+    .project-card {
+        background: #222;
+        border: 1px solid #333;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: left;
+        transition: transform 0.3s, border-color 0.3s;
+    }
+    .project-card:hover {
+        border-color: #aa75ff;
+        transform: translateY(-4px);
+    }
+    .project-card h2 {
+        color: #e1ff00;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    .project-card p {
+        color: papayawhip;
+        line-height: 1.6;
+    }
+    .video-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        justify-content: center;
+    }
+    .video-wrapper iframe {
+        flex: 1 1 300px;
+        max-width: 560px;
+        border: none;
+    }
+    .project-link {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #aa75ff;
+        color: #212121;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+    .project-link:hover {
+        background: #8a55dd;
+    }
+</style>

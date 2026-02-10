@@ -4,41 +4,57 @@ import Nav from "../components/navbar.astro";
 import Head from "../components/head.astro";
 import Container from "../components/container.astro";
 import Footer from "../components/footer.astro";
+import Hero from "../components/Hero.astro";
+import ProjectCard from "../components/ProjectCard.astro";
 ---
 
 <html lang="en">
     <Head />
     <body>
         <Nav highlighted="navhome" />
-        <h1>Verpitek</h1>
+        <Hero />
         <Container>
             <h1>What do we do?</h1>
             <p>
                 We design games, add-ons and other experiences, mostly centering
-                around pushing the limits of the provided game engine
+                around pushing the limits of the provided game engine.
             </p>
         </Container>
         <Container>
             <h1>What are we?</h1>
             <p>
-                We are a group of silly guys, who try to design the most complex
-                and conviluted game systems or software
+                We are a group of passionate developers who create complex and
+                intricate game systems and software, focusing on innovation and
+                technical depth.
             </p>
         </Container>
-        <Container>
+        <Container id="projects">
             <h1>Our Projects</h1>
-            <Container
-                ><h2>LunaTech</h2><p>
-                    A programming and automation centered Minecraft Bedrock
-                    Add-On, not only having a proper energy api, but also
-                    utilising a full programming language inside of it for
-                    microcontroller programming
-                </p>
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/Pb-wQ5BLi1o?si=f2TvliLy4sMcFqvu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/EObQssoHALM?si=SuH9r4F6QjMnicYO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></Container
-            >
-            <Container><h2>BedPak</h2><p>a pretty simple api for bedrock Add-On management</p><a href="https://bedpak.com/">BedPak Frontend</a></Container>
-            <Container><h2>Weboneko</h2>under construction</Container>
+            <ProjectCard
+                title="LunaTech"
+                description="A programming and automation centered Minecraft Bedrock Add-On, not only having a proper energy API, but also utilizing a full programming language inside of it for microcontroller programming."
+                videoId="Pb-wQ5BLi1o"
+                secondVideoId="EObQssoHALM"
+            />
+            <ProjectCard
+                title="BedPak"
+                description="A simple API for Minecraft Bedrock Add-On management, providing tools and utilities for modders."
+                link="https://bedpak.com/"
+                linkText="Visit BedPak Frontend"
+            />
+            <ProjectCard
+                title="Weboneko"
+                description="Currently under construction. A web-based toolkit for interactive experiences."
+            />
+            <ProjectCard
+                title="PanSpark"
+                description="A tiny 16-bit programming language for JavaScript environments, primarily used in our projects for microcontrollers."
+            />
+        </Container>
+        <Container>
+            <h1>Documentation & Wiki</h1>
+            <p>Explore detailed documentation, tutorials, and technical references for our projects in the Verpitek Wiki.</p>
+            <a href="/wiki" class="wiki-cta">Go to Wiki</a>
         </Container>
         <Footer />
     </body>
