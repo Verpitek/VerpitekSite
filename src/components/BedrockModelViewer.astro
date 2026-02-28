@@ -267,7 +267,7 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
         // Bedrock applies rotations extrinsic XYZ (global X → global Y → global Z),
         // which equals intrinsic ZYX in Three.js Euler terms.
         pivotGroup.rotation.order = 'XYZ';
-        pivotGroup.rotation.set(-deg(rx), deg(ry), deg(rz));
+        pivotGroup.rotation.set(-deg(rx), -deg(ry), deg(rz));
 
         // Mesh sits at cube.origin relative to cube.pivot
         const mesh = buildBoxMesh(

@@ -1,0 +1,2800 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>PanSpark Debugger</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* ── Variables ── */
+            :root {
+                --amber: #ffb000;
+                --amber-dim: #c47a00;
+                --amber-bright: #ffd060;
+                --amber-glow: rgba(255, 176, 0, 0.13);
+                --bg: #0a0700;
+                --bg2: #100d00;
+                --bg3: #181100;
+                --border: #3a2800;
+                --border-bright: #6b4400;
+                --lh: 20px;
+                --fs: 13px;
+                --gw: 44px;
+            }
+            @media (max-width: 767px) {
+                :root {
+                    --lh: 22px;
+                    --fs: 16px;
+                    --gw: 38px;
+                }
+            }
+
+            /* ── Reset ── */
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                background: var(--bg);
+                color: var(--amber);
+                font-family: "Share Tech Mono", monospace;
+                font-size: var(--fs);
+                height: 100vh;
+                height: 100dvh;
+                overflow: hidden;
+            }
+
+            /* ── CRT effects ── */
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, 0.07) 2px,
+                    rgba(0, 0, 0, 0.07) 4px
+                );
+                pointer-events: none;
+                z-index: 9000;
+            }
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: radial-gradient(
+                    ellipse at center,
+                    transparent 55%,
+                    rgba(0, 0, 0, 0.65) 100%
+                );
+                pointer-events: none;
+                z-index: 9001;
+            }
+
+            @keyframes flicker {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                93% {
+                    opacity: 0.92;
+                }
+                94% {
+                    opacity: 1;
+                }
+                97% {
+                    opacity: 0.96;
+                }
+            }
+            @keyframes ipanim {
+                0%,
+                100% {
+                    opacity: 0.55;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+            @keyframes fadein {
+                from {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+            @keyframes fadein-up {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+
+            /* ── Shell grid — desktop ── */
+            .shell {
+                display: grid;
+                grid-template-rows: auto 1fr auto;
+                height: 100vh;
+                height: 100dvh;
+                animation: flicker 9s infinite;
+            }
+
+            /* ── Topbar ── */
+            .topbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 7px 14px;
+                background: var(--bg2);
+                border-bottom: 1px solid var(--border-bright);
+                flex-shrink: 0;
+            }
+            .logo {
+                display: flex;
+                align-items: center;
+                font-family: "VT323", monospace;
+                font-size: 27px;
+                color: var(--amber-bright);
+                text-shadow:
+                    0 0 18px var(--amber),
+                    0 0 36px rgba(255, 176, 0, 0.4);
+                letter-spacing: 3px;
+            }
+            .logo sub {
+                font-size: 14px;
+                color: var(--amber-dim);
+                letter-spacing: 1px;
+                margin-left: 7px;
+                vertical-align: middle;
+            }
+            .logo-image {
+                height: 27px;
+                width: auto;
+            }
+            @media (max-width: 767px) {
+                .logo-image {
+                    height: 20px;
+                }
+            }
+            .topbar-right {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 11px;
+                color: var(--amber-dim);
+            }
+            #heap-info {
+                display: none;
+            }
+            @media (min-width: 480px) {
+                #heap-info {
+                    display: inline;
+                }
+            }
+            .sp {
+                padding: 2px 10px;
+                border: 1px solid var(--border-bright);
+                font-family: "VT323", monospace;
+                font-size: 16px;
+                border-radius: 2px;
+                letter-spacing: 1px;
+            }
+            .sp.idle {
+                color: var(--amber-dim);
+            }
+            .sp.running {
+                color: #88ff44;
+                border-color: #44aa22;
+                text-shadow: 0 0 8px #44ff22;
+            }
+            .sp.paused {
+                color: var(--amber-bright);
+                border-color: var(--amber);
+                text-shadow: 0 0 8px var(--amber);
+            }
+            .sp.error {
+                color: #ff5544;
+                border-color: #aa2222;
+                text-shadow: 0 0 8px #ff3322;
+            }
+            .sp.done {
+                color: #00ddff;
+                border-color: #0088aa;
+                text-shadow: 0 0 8px #00ccff;
+            }
+
+            /* ── Workspace — desktop ── */
+            .workspace {
+                display: grid;
+                grid-template-columns: 1fr 255px;
+                overflow: hidden;
+            }
+
+            /* ── Editor pane ── */
+            .epane {
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                border-right: 1px solid var(--border);
+            }
+
+            /* ── Pane header ── */
+            .ph {
+                font-family: "VT323", monospace;
+                font-size: 16px;
+                color: var(--amber-dim);
+                letter-spacing: 2px;
+                padding: 4px 12px;
+                background: var(--bg2);
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-shrink: 0;
+            }
+            .pb {
+                font-size: 11px;
+                font-family: "Share Tech Mono", monospace;
+                color: var(--border-bright);
+                letter-spacing: 0;
+            }
+
+            /* ── Editor internals ──
+   #gutter: fixed-width left column, overflow:hidden, scrollTop synced via JS
+   #hll: syntax highlight mirror, same padding+font as #code, scrollTop+Left synced
+   #ipbar: active line highlight bar, top set by JS
+   #code: transparent textarea on top of everything
+*/
+            .ewrap {
+                flex: 1;
+                position: relative;
+                overflow: hidden;
+            }
+
+            #gutter {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: var(--gw);
+                background: var(--bg2);
+                border-right: 1px solid var(--border);
+                overflow: hidden;
+                padding: 10px 0;
+                pointer-events: none;
+                z-index: 5;
+            }
+            .ln {
+                display: block;
+                height: var(--lh);
+                line-height: var(--lh);
+                text-align: right;
+                padding-right: 7px;
+                font-size: calc(var(--fs) - 1px);
+                font-family: "Share Tech Mono", monospace;
+                color: var(--border-bright);
+            }
+            .ln.aln {
+                color: var(--amber-bright);
+                text-shadow: 0 0 8px var(--amber);
+            }
+
+            #hll {
+                position: absolute;
+                left: var(--gw);
+                right: 0;
+                top: 0;
+                bottom: 0;
+                padding: 10px 12px 10px 0;
+                font:
+                    var(--fs)/var(--lh) "Share Tech Mono",
+                    monospace;
+                white-space: pre;
+                overflow: hidden;
+                pointer-events: none;
+                z-index: 1;
+            }
+            .hl {
+                display: block;
+                height: var(--lh);
+                line-height: var(--lh);
+                white-space: pre;
+            }
+
+            #ipbar {
+                position: absolute;
+                left: var(--gw);
+                right: 0;
+                height: var(--lh);
+                background: rgba(255, 176, 0, 0.1);
+                box-shadow: inset 2px 0 0 var(--amber);
+                pointer-events: none;
+                z-index: 2;
+                display: none;
+                animation: ipanim 1.2s ease-in-out infinite;
+            }
+
+            #code {
+                position: absolute;
+                inset: 0;
+                padding: 10px 12px 10px var(--gw);
+                font:
+                    var(--fs)/var(--lh) "Share Tech Mono",
+                    monospace;
+                background: transparent;
+                /* near-invisible text so caret shows without duplicating visible text */
+                color: rgba(255, 176, 0, 0.01);
+                caret-color: var(--amber-bright);
+                border: none;
+                outline: none;
+                resize: none;
+                overflow: auto;
+                white-space: pre;
+                tab-size: 2;
+                z-index: 4;
+                -webkit-overflow-scrolling: touch;
+            }
+            #code::selection {
+                background: rgba(255, 176, 0, 0.28);
+                color: transparent;
+            }
+
+            /* ── Syntax colours ── */
+            .kw {
+                color: #ffd060;
+            }
+            .reg {
+                color: #ffaa20;
+            }
+            .sv {
+                color: #ff8800;
+            }
+            .str {
+                color: #a8d840;
+            }
+            .arr {
+                color: #a8d840;
+            }
+            .num {
+                color: #ff7733;
+            }
+            .cmt {
+                color: #4a3a12;
+            }
+            .op {
+                color: #7a5520;
+            }
+            .lbl {
+                color: #ffc870;
+                font-style: italic;
+            }
+            .dflt {
+                color: var(--amber);
+            }
+
+            /* ── Autocomplete ── */
+            #ac {
+                position: absolute;
+                min-width: 230px;
+                max-height: 180px;
+                background: var(--bg3);
+                border: 1px solid var(--amber-dim);
+                z-index: 30;
+                display: none;
+                overflow-y: auto;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
+            }
+            #ac.show {
+                display: block;
+            }
+            .aci {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                padding: 5px 11px;
+                cursor: pointer;
+                font-family: "Share Tech Mono", monospace;
+                min-height: 34px;
+            }
+            .aci:hover,
+            .aci.s {
+                background: rgba(255, 176, 0, 0.12);
+            }
+            .aci-n {
+                color: var(--amber-bright);
+                font-size: 13px;
+                white-space: nowrap;
+            }
+            .aci-h {
+                color: var(--amber-dim);
+                font-size: 10px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                flex: 1;
+            }
+            /* Hide autocomplete on touch devices */
+            @media (max-width: 767px) {
+                #ac {
+                    display: none !important;
+                }
+            }
+
+            /* ── Right pane — desktop ── */
+            .rpane {
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                background: var(--bg2);
+            }
+
+            /* Mobile tab bar — hidden on desktop */
+            .mob-tabbar {
+                display: none;
+            }
+
+            /* Sections */
+            .rs-wrap {
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            #rs {
+                flex-shrink: 0;
+            }
+            #sk {
+                flex: 0 0 auto;
+                max-height: 88px;
+                border-top: 1px solid var(--border);
+                border-bottom: 1px solid var(--border);
+                overflow-y: auto;
+            }
+            #op {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .rg {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1px;
+                padding: 5px 7px;
+            }
+            .rr {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                padding: 3px 5px;
+                border-radius: 2px;
+                transition: background 0.15s;
+            }
+            .rr.chg {
+                background: rgba(255, 176, 0, 0.1);
+            }
+            .rn {
+                color: var(--amber-dim);
+                font-size: 11px;
+                width: 22px;
+                flex-shrink: 0;
+            }
+            .rv {
+                color: var(--amber-bright);
+                font-size: 12px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                flex: 1;
+            }
+            .rt {
+                font-size: 9px;
+                color: var(--border-bright);
+                padding: 0 3px;
+                border: 1px solid var(--border);
+                border-radius: 1px;
+                flex-shrink: 0;
+            }
+
+            .ski {
+                font-size: 11px;
+                color: var(--amber-dim);
+                padding: 2px 13px;
+            }
+            .ski.top {
+                color: var(--amber);
+            }
+
+            .oa {
+                flex: 1;
+                overflow-y: auto;
+                padding: 5px 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .ol {
+                font-size: 12px;
+                line-height: 18px;
+                padding: 1px 4px;
+                color: var(--amber-bright);
+                border-left: 2px solid transparent;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+            .ol.err {
+                color: #ff6644;
+                border-left-color: #ff4422;
+            }
+            .ol.sys {
+                color: var(--border-bright);
+                font-size: 11px;
+            }
+
+            /* ── Toolbar ── */
+            .toolbar {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                padding: 6px 12px;
+                background: var(--bg2);
+                border-top: 1px solid var(--border-bright);
+                flex-shrink: 0;
+                flex-wrap: wrap;
+            }
+            .btn {
+                font-family: "VT323", monospace;
+                font-size: 18px;
+                letter-spacing: 0.5px;
+                padding: 4px 13px 5px;
+                background: var(--bg3);
+                border: 1px solid var(--border-bright);
+                color: var(--amber);
+                cursor: pointer;
+                border-radius: 2px;
+                transition: all 0.1s;
+                outline: none;
+                /* touch target */
+                min-height: 38px;
+                display: inline-flex;
+                align-items: center;
+                touch-action: manipulation;
+            }
+            .btn:hover {
+                background: rgba(255, 176, 0, 0.09);
+                border-color: var(--amber);
+                color: var(--amber-bright);
+                box-shadow: 0 0 9px rgba(255, 176, 0, 0.18);
+            }
+            .btn:active {
+                opacity: 0.7;
+                transform: translateY(1px);
+            }
+            .btn.primary {
+                border-color: var(--amber);
+                color: var(--amber-bright);
+            }
+            .btn.bon {
+                background: rgba(255, 176, 0, 0.12);
+                border-color: var(--amber-bright);
+            }
+            .btn.danger:hover {
+                border-color: #ff4444;
+                color: #ff6644;
+            }
+            .btn:disabled {
+                opacity: 0.28;
+                cursor: not-allowed;
+                transform: none;
+            }
+            .ts {
+                width: 1px;
+                height: 22px;
+                background: var(--border);
+                margin: 0 3px;
+                flex-shrink: 0;
+            }
+            #speed {
+                appearance: none;
+                background: var(--bg3);
+                border: 1px solid var(--border-bright);
+                color: var(--amber);
+                font-family: "Share Tech Mono", monospace;
+                font-size: 11px;
+                padding: 3px 6px;
+                cursor: pointer;
+                border-radius: 2px;
+                height: 38px;
+            }
+            .slb {
+                font-size: 11px;
+                color: var(--amber-dim);
+                white-space: nowrap;
+            }
+            .ipc {
+                font-size: 11px;
+                color: var(--amber-dim);
+                margin-left: auto;
+                white-space: nowrap;
+            }
+            .ipc span {
+                color: var(--amber);
+            }
+
+            /* ── Docs overlay ── */
+            .dov {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.72);
+                z-index: 5000;
+                display: none;
+                align-items: stretch;
+                justify-content: flex-end;
+            }
+            .dov.open {
+                display: flex;
+            }
+            .dp {
+                width: 530px;
+                max-width: 100vw;
+                background: var(--bg2);
+                border-left: 1px solid var(--border-bright);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                animation: fadein 0.18s ease;
+            }
+            .dh {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 16px;
+                background: var(--bg3);
+                border-bottom: 1px solid var(--border-bright);
+                flex-shrink: 0;
+            }
+            .dt {
+                font-family: "VT323", monospace;
+                font-size: 24px;
+                color: var(--amber-bright);
+                letter-spacing: 2px;
+                text-shadow: 0 0 14px var(--amber);
+            }
+            .dx {
+                font-family: "VT323", monospace;
+                font-size: 22px;
+                color: var(--amber-dim);
+                background: none;
+                border: 1px solid var(--border);
+                padding: 1px 10px;
+                cursor: pointer;
+                border-radius: 2px;
+                min-height: 38px;
+                touch-action: manipulation;
+            }
+            .dx:hover {
+                color: var(--amber-bright);
+                border-color: var(--amber);
+            }
+            .dtabs {
+                display: flex;
+                border-bottom: 1px solid var(--border);
+                flex-shrink: 0;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .dtab {
+                font-family: "VT323", monospace;
+                font-size: 16px;
+                letter-spacing: 1px;
+                padding: 6px 14px;
+                color: var(--amber-dim);
+                cursor: pointer;
+                border-bottom: 2px solid transparent;
+                transition: all 0.1s;
+                white-space: nowrap;
+                flex-shrink: 0;
+                min-height: 38px;
+                touch-action: manipulation;
+            }
+            .dtab:hover {
+                color: var(--amber);
+            }
+            .dtab.act {
+                color: var(--amber-bright);
+                border-bottom-color: var(--amber);
+                background: var(--amber-glow);
+            }
+            .db {
+                flex: 1;
+                overflow-y: auto;
+                padding: 16px 18px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .db .sec {
+                margin-bottom: 22px;
+            }
+            .db h3 {
+                font-family: "VT323", monospace;
+                font-size: 19px;
+                color: var(--amber-bright);
+                letter-spacing: 2px;
+                margin-bottom: 9px;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 4px;
+            }
+            .db p {
+                font-size: 12px;
+                line-height: 1.7;
+                color: var(--amber-dim);
+                margin-bottom: 8px;
+            }
+            .db p strong {
+                color: var(--amber);
+            }
+            .db code {
+                font-family: "Share Tech Mono", monospace;
+                font-size: 11px;
+                color: var(--amber-bright);
+                background: rgba(255, 176, 0, 0.07);
+                padding: 1px 5px;
+                border: 1px solid var(--border);
+                border-radius: 2px;
+            }
+            .db pre {
+                font-family: "Share Tech Mono", monospace;
+                font-size: 11.5px;
+                color: var(--amber);
+                background: rgba(0, 0, 0, 0.45);
+                border: 1px solid var(--border);
+                border-left: 2px solid var(--amber-dim);
+                padding: 10px 13px;
+                margin: 8px 0 4px;
+                overflow-x: auto;
+                line-height: 1.65;
+            }
+            .tbl {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 11px;
+                margin: 6px 0;
+            }
+            .tbl th {
+                color: var(--amber-dim);
+                text-align: left;
+                padding: 3px 8px 5px;
+                border-bottom: 1px solid var(--border-bright);
+                font-family: "VT323", monospace;
+                font-size: 14px;
+                letter-spacing: 1px;
+            }
+            .tbl td {
+                padding: 4px 8px;
+                border-bottom: 1px solid var(--border);
+                color: var(--amber-dim);
+                vertical-align: top;
+            }
+            .tbl td:first-child {
+                color: var(--amber-bright);
+                white-space: nowrap;
+                font-family: "Share Tech Mono", monospace;
+            }
+            .tbl tr:hover td {
+                background: var(--amber-glow);
+            }
+            .note {
+                font-size: 11px;
+                color: var(--border-bright);
+                background: rgba(255, 176, 0, 0.04);
+                border: 1px solid var(--border);
+                padding: 7px 10px;
+                border-radius: 2px;
+                margin: 8px 0;
+            }
+
+            /* ════════════════════════════════════════════════════════
+   MOBILE OVERRIDES  ( ≤ 767px )
+   Strategy:
+   • .workspace uses display:contents so .epane and .rpane
+     become direct grid children of .shell
+   • .shell gets 4 explicit rows: topbar | editor | drawer | toolbar
+   • .rpane becomes a bottom drawer with a tab bar + collapse toggle
+   • Docs panel goes full-screen
+   ════════════════════════════════════════════════════════ */
+            @media (max-width: 767px) {
+                .shell {
+                    grid-template-rows: auto 1fr auto auto;
+                }
+
+                /* flatten workspace so children slot into shell grid */
+                .workspace {
+                    display: contents;
+                }
+
+                /* editor: no right border, full width */
+                .epane {
+                    border-right: none;
+                    overflow: hidden;
+                }
+
+                /* add bottom padding to editor elements to prevent keyboard covering text */
+                #code,
+                #gutter,
+                #hll {
+                    padding-bottom: 40px;
+                }
+
+                /* ── Bottom drawer ── */
+                .rpane {
+                    border-top: 2px solid var(--border-bright);
+                    border-right: none;
+                    height: 220px;
+                    min-height: 40px;
+                    transition: height 0.2s ease;
+                    flex-shrink: 0;
+                }
+                .rpane.mob-collapsed {
+                    height: 40px;
+                }
+
+                /* ── Mobile tab bar ── */
+                .mob-tabbar {
+                    display: flex;
+                    align-items: stretch;
+                    height: 40px;
+                    flex-shrink: 0;
+                    border-bottom: 1px solid var(--border);
+                    background: var(--bg3);
+                }
+                .rtab {
+                    font-family: "VT323", monospace;
+                    font-size: 17px;
+                    letter-spacing: 1px;
+                    flex: 1;
+                    background: none;
+                    border: none;
+                    border-right: 1px solid var(--border);
+                    color: var(--amber-dim);
+                    cursor: pointer;
+                    min-height: 40px;
+                    touch-action: manipulation;
+                    transition: all 0.1s;
+                }
+                .rtab:active {
+                    background: rgba(255, 176, 0, 0.1);
+                }
+                .rtab.act {
+                    color: var(--amber-bright);
+                    background: rgba(255, 176, 0, 0.1);
+                    border-bottom: 2px solid var(--amber);
+                }
+                .rtog {
+                    width: 46px;
+                    flex-shrink: 0;
+                    background: none;
+                    border: none;
+                    border-left: 1px solid var(--border);
+                    color: var(--amber-dim);
+                    cursor: pointer;
+                    font-size: 18px;
+                    line-height: 1;
+                    touch-action: manipulation;
+                    transition: all 0.1s;
+                }
+                .rtog:active {
+                    background: rgba(255, 176, 0, 0.1);
+                }
+
+                /* hide section pane-headers (replaced by tab labels) */
+                .rs-wrap > .ph {
+                    display: none;
+                }
+
+                /* sections: hidden by default, show active one */
+                .rs-wrap {
+                    display: none;
+                }
+                #rs.mob-vis,
+                #sk.mob-vis,
+                #op.mob-vis {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                    overflow: hidden;
+                }
+                /* stack needs its own scroll within the drawer */
+                #sk.mob-vis {
+                    max-height: unset;
+                    border: none;
+                }
+
+                /* Registers: allow 2-col grid to scroll if needed */
+                #rs.mob-vis {
+                    overflow-y: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                /* ── Toolbar on mobile ── */
+                .toolbar {
+                    padding: 5px 8px;
+                    gap: 4px;
+                }
+                .btn {
+                    font-size: 17px;
+                    padding: 4px 10px 5px;
+                    min-height: 42px;
+                }
+                .ts {
+                    height: 20px;
+                    margin: 0 2px;
+                }
+                .slb {
+                    font-size: 10px;
+                }
+                #speed {
+                    font-size: 10px;
+                    padding: 2px 4px;
+                    height: 42px;
+                }
+                /* IP counter: hide on very small screens */
+                .ipc {
+                    display: none;
+                }
+                @media (min-width: 480px) {
+                    .ipc {
+                        display: block;
+                        font-size: 10px;
+                    }
+                }
+
+                /* ── Docs: full screen on mobile ── */
+                .dp {
+                    width: 100vw;
+                    border-left: none;
+                    animation: fadein-up 0.18s ease;
+                }
+                .dov {
+                    justify-content: center;
+                    align-items: flex-end;
+                    /* slide up from bottom on mobile */
+                }
+                .dp {
+                    max-height: 90vh;
+                    border-top: 2px solid var(--border-bright);
+                }
+            }
+
+            /* ── Scrollbars ── */
+            ::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--bg);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border-bright);
+                border-radius: 3px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--amber-dim);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="shell">
+            <!-- ── Topbar ── -->
+            <div class="topbar">
+                <div class="logo"><img src="/panspark.png" alt="PanSpark" class="logo-image"><sub>DEBUGGER</sub></div>
+                <div class="topbar-right">
+                    <a href="/" style="color: var(--amber-dim); text-decoration: none; margin-right: 10px;">← Home</a>
+                    <span id="heap-info">HEAP: 0/1280</span>
+                    <span id="spill" class="sp idle">IDLE</span>
+                </div>
+            </div>
+
+            <!-- ── Workspace ── -->
+            <div class="workspace">
+                <!-- Editor -->
+                <div class="epane">
+                    <div class="ph">
+                        SOURCE EDITOR <span class="pb" id="lcnt">0 lines</span>
+                    </div>
+                    <div class="ewrap">
+                        <div id="gutter"></div>
+                        <div id="hll"></div>
+                        <div id="ipbar"></div>
+                        <textarea
+                            id="code"
+                            spellcheck="false"
+                            autocomplete="off"
+                            autocorrect="off"
+                            autocapitalize="off"
+                        >
+// PanSpark — Fibonacci Sequence
+$a   = r0
+$b   = r1
+$tmp = r2
+$n   = r3
+$i   = r4
+
+POINT main
+  SET 0 >> $a
+  SET 1 >> $b
+  SET 0 >> $tmp
+  SET 10 >> $n
+  SET 0 >> $i
+
+POINT loop
+  IF $i >= $n >> done
+  PRINT $a
+  ADD $a $b >> $tmp
+  SET $b >> $a
+  SET $tmp >> $b
+  INC $i
+  JUMP loop
+
+POINT done
+  HALT</textarea
+                        >
+                        <div id="ac"></div>
+                    </div>
+                </div>
+
+                <!-- Right pane / mobile bottom drawer -->
+                <div class="rpane" id="rpane">
+                    <!-- Mobile-only tab bar -->
+                    <div class="mob-tabbar" id="mob-tabbar">
+                        <button
+                            class="rtab act"
+                            data-sect="rs"
+                            touch-action="manipulation"
+                        >
+                            REGS
+                        </button>
+                        <button
+                            class="rtab"
+                            data-sect="sk"
+                            touch-action="manipulation"
+                        >
+                            STACK
+                        </button>
+                        <button
+                            class="rtab"
+                            data-sect="op"
+                            touch-action="manipulation"
+                        >
+                            OUTPUT
+                        </button>
+                        <button class="rtog" id="rtog">▾</button>
+                    </div>
+
+                    <!-- Registers -->
+                    <div class="rs-wrap" id="rs">
+                        <div class="ph">
+                            REGISTERS <span class="pb">r0–r7</span>
+                        </div>
+                        <div id="regs" class="rg"></div>
+                    </div>
+
+                    <!-- Call stack -->
+                    <div class="rs-wrap ska" id="sk">
+                        <div class="ph" style="font-size: 14px">CALL STACK</div>
+                        <div id="stk">
+                            <div class="ski sys" style="padding: 4px 13px">
+                                — empty —
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output -->
+                    <div
+                        class="rs-wrap"
+                        id="op"
+                        style="flex: 1; overflow: hidden"
+                    >
+                        <div class="ph">
+                            OUTPUT <span class="pb" id="ocnt">0 lines</span>
+                        </div>
+                        <div id="out" class="oa"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Toolbar ── -->
+            <div class="toolbar">
+                <button class="btn primary" id="bcompile">COMPILE</button>
+                <div class="ts"></div>
+                <button class="btn" id="brun" disabled>RUN</button>
+                <button class="btn" id="bstep" disabled>STEP</button>
+                <button class="btn" id="bpause" disabled>PAUSE</button>
+                <button class="btn danger" id="breset">RESET</button>
+                <div class="ts"></div>
+                <span class="slb">SPEED</span>
+                <select id="speed">
+                    <option value="0">MAX</option>
+                    <option value="50" selected>NORMAL</option>
+                    <option value="200">SLOW</option>
+                    <option value="600">CRAWL</option>
+                </select>
+                <div class="ts"></div>
+                <button class="btn" id="bdocs">DOCS</button>
+                <div class="ipc">
+                    IP&nbsp;<span id="ipv">—</span>&nbsp;/&nbsp;<span id="icnt"
+                        >—</span
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Docs overlay ── -->
+        <div class="dov" id="dov">
+            <div class="dp">
+                <div class="dh">
+                    <span class="dt">PANSPARK REF</span>
+                    <button class="dx" id="dclose">✕ CLOSE</button>
+                </div>
+                <div class="dtabs">
+                    <div class="dtab act" data-tab="overview">OVERVIEW</div>
+                    <div class="dtab" data-tab="ops">OPS</div>
+                    <div class="dtab" data-tab="arrays">ARRAYS</div>
+                    <div class="dtab" data-tab="flow">FLOW</div>
+                    <div class="dtab" data-tab="examples">EXAMPLES</div>
+                </div>
+                <div class="db" id="dbody"></div>
+            </div>
+        </div>
+
+        <script>
+            // ════════════════════════════════════════════════════════
+            // DOCS (unchanged)
+            // ════════════════════════════════════════════════════════
+            const DOCS = {
+                overview: `<div class="sec">
+<h3>WHAT IS PANSPARK</h3>
+<p>An assembly-like VM language. Programs run line-by-line; each line is one instruction. The only storage type is <strong>registers</strong> — up to 8 by default (<code>r0</code>–<code>r7</code>). Registers hold integers, strings, or number arrays.</p>
+<div class="note">All registers share one heap budget (default 1280 B). Integer = 2B · String = len+1B · Array = 2B × elements.</div>
+</div>
+<div class="sec">
+<h3>NAMED VARIABLES</h3>
+<p>Declare register aliases at the top of your file. Resolved at compile time — zero runtime cost.</p>
+<pre>$counter = r0      // explicit
+$index   = auto    // next free register
+$value   = auto    // next after that</pre>
+<p>Longest names substitute first to prevent partial-match bugs. Explicit and <code>auto</code> can be mixed.</p>
+</div>
+<div class="sec">
+<h3>SYNTAX RULES</h3>
+<p><strong>Result arrow:</strong> ops that write a value use <code>&gt;&gt;</code> — e.g. <code>ADD r0 r1 &gt;&gt; r2</code></p>
+<p><strong>Comments:</strong> own line only, starting with <code>//</code> — no inline comments.</p>
+<p><strong>Opcodes</strong> are UPPERCASE. <strong>Labels</strong> are alphanumeric, no spaces.</p>
+<p><strong>Strings:</strong> <code>"hello"</code> · <strong>Arrays:</strong> <code>[1,2,3]</code></p>
+</div>
+<div class="sec">
+<h3>PERIPHERALS</h3>
+<p>Any unknown opcode dispatches to a registered handler. Register on the host before compiling:</p>
+<pre>vm.registerPeripheral("MACH_GET", (vm, args) => {
+  const handle = vm.fetchMemory(args[0]);
+  const prop   = vm.fetchValue(args[1]);
+  vm.setMemory(result, args[2]);
+});</pre>
+<div class="note">Peripheral <em>names</em> survive saveState/loadState. Handler <em>functions</em> do not — re-register after restoring.</div>
+</div>`,
+                ops: `<div class="sec">
+<h3>BASIC</h3>
+<table class="tbl"><tr><th>Opcode</th><th>Syntax</th><th>Notes</th></tr>
+<tr><td>SET</td><td><code>SET &lt;val&gt; &gt;&gt; dest</code></td><td>val = literal, reg, string, or array</td></tr>
+<tr><td>PRINT</td><td><code>PRINT &lt;val&gt;</code></td><td>Pushes to output buffer</td></tr>
+<tr><td>NOP</td><td><code>NOP</code></td><td>No operation</td></tr>
+<tr><td>HALT</td><td><code>HALT</code></td><td>Stop execution</td></tr>
+</table></div>
+<div class="sec">
+<h3>ARITHMETIC</h3>
+<p>Integer-only. Passing a string register throws at runtime.</p>
+<table class="tbl"><tr><th>Opcode</th><th>Syntax</th><th>Result</th></tr>
+<tr><td>ADD</td><td><code>ADD a b &gt;&gt; d</code></td><td>a + b</td></tr>
+<tr><td>SUB</td><td><code>SUB a b &gt;&gt; d</code></td><td>a − b</td></tr>
+<tr><td>MUL</td><td><code>MUL a b &gt;&gt; d</code></td><td>a × b</td></tr>
+<tr><td>DIV</td><td><code>DIV a b &gt;&gt; d</code></td><td>trunc(a÷b) — throws on 0</td></tr>
+<tr><td>MOD</td><td><code>MOD a b &gt;&gt; d</code></td><td>a % b — throws on 0</td></tr>
+<tr><td>POW</td><td><code>POW b e &gt;&gt; d</code></td><td>b^e</td></tr>
+<tr><td>SQRT</td><td><code>SQRT a &gt;&gt; d</code></td><td>floor(√a)</td></tr>
+<tr><td>ABS</td><td><code>ABS a &gt;&gt; d</code></td><td>|a|</td></tr>
+<tr><td>MIN</td><td><code>MIN a b &gt;&gt; d</code></td><td>smaller of a, b</td></tr>
+<tr><td>MAX</td><td><code>MAX a b &gt;&gt; d</code></td><td>larger of a, b</td></tr>
+<tr><td>RNG</td><td><code>RNG min max &gt;&gt; d</code></td><td>random in [min, max]</td></tr>
+<tr><td>INC</td><td><code>INC reg</code></td><td>reg += 1 in-place</td></tr>
+<tr><td>DEC</td><td><code>DEC reg</code></td><td>reg -= 1 in-place</td></tr>
+</table></div>`,
+                arrays: `<div class="sec">
+<h3>ARRAY OPERATIONS</h3>
+<p>Arrays hold numbers only. Empty literals <code>[]</code> not allowed — use <code>ARR_NEW 0</code>. Heap: <strong>2 bytes per element</strong>.</p>
+<table class="tbl"><tr><th>Opcode</th><th>Syntax</th><th>Notes</th></tr>
+<tr><td>SET</td><td><code>SET [1,2,3] &gt;&gt; d</code></td><td>Literal array</td></tr>
+<tr><td>ARR_NEW</td><td><code>ARR_NEW size &gt;&gt; d</code></td><td>Zero-filled array</td></tr>
+<tr><td>ARR_PUSH</td><td><code>ARR_PUSH arr val</code></td><td>Append val</td></tr>
+<tr><td>ARR_POP</td><td><code>ARR_POP arr &gt;&gt; d</code></td><td>Remove last → d (0 if empty)</td></tr>
+<tr><td>ARR_GET</td><td><code>ARR_GET arr idx &gt;&gt; d</code></td><td>Read at index</td></tr>
+<tr><td>ARR_SET</td><td><code>ARR_SET arr idx val</code></td><td>Write at index</td></tr>
+<tr><td>ARR_LEN</td><td><code>ARR_LEN arr &gt;&gt; d</code></td><td>Length → d</td></tr>
+<tr><td>ARR_SORT</td><td><code>ARR_SORT arr</code></td><td>Sort ascending in-place</td></tr>
+</table>
+<div class="note">IF/UNTIL comparisons on arrays compare the <strong>sum of all elements</strong>.</div>
+</div>
+<div class="sec"><h3>EXAMPLE</h3>
+<pre>SET [10,20,30] >> r0
+ARR_PUSH r0 40      // [10,20,30,40]
+ARR_GET  r0 1 >> r1 // r1 = 20
+ARR_SET  r0 0 99    // [99,20,30,40]
+ARR_LEN  r0 >> r2   // r2 = 4
+ARR_SORT r0         // [20,30,40,99]
+PRINT r0
+HALT</pre></div>`,
+                flow: `<div class="sec">
+<h3>LABELS &amp; JUMPS</h3>
+<pre>POINT my_label   // declare a target
+JUMP  my_label   // unconditional jump</pre>
+</div>
+<div class="sec">
+<h3>CONDITIONALS</h3>
+<pre>IF v1 op v2 >> label_true
+IF v1 op v2 >> label_true ELSE label_false</pre>
+<p>Operators: <code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></p>
+<p><code>==</code> / <code>!=</code> work on integers, strings, and arrays (by sum). Ordering works on integers and arrays (sum) — strings throw. False with no ELSE falls through.</p>
+</div>
+<div class="sec">
+<h3>BLOCKING WAIT</h3>
+<pre>UNTIL v1 op v2</pre>
+<p>Stays on this instruction each cycle until condition is true. Same operators as IF.</p>
+</div>
+<div class="sec">
+<h3>FUNCTIONS</h3>
+<pre>CALL my_func  // push return addr, jump
+RET           // pop return addr, jump back</pre>
+<p>Full recursion up to configured stack depth (default 256).</p>
+<pre>POINT main
+  SET 5 >> r0
+  SET 1 >> r1
+  CALL factorial
+  PRINT r1
+  HALT
+
+POINT factorial
+  IF r0 == 0 >> fdone
+  MUL r1 r0 >> r1
+  DEC r0
+  CALL factorial
+POINT fdone
+  RET</pre>
+</div>`,
+                examples: `<div class="sec"><h3>FIBONACCI</h3>
+<pre>$a = r0  $b = r1  $tmp = r2  $n = r3  $i = r4
+
+POINT main
+  SET 0 >> $a   SET 1 >> $b
+  SET 0 >> $tmp  SET 10 >> $n  SET 0 >> $i
+
+POINT loop
+  IF $i >= $n >> done
+  PRINT $a
+  ADD $a $b >> $tmp
+  SET $b >> $a   SET $tmp >> $b
+  INC $i
+  JUMP loop
+POINT done
+  HALT</pre></div>
+<div class="sec"><h3>ARRAY SORT &amp; COMPARE</h3>
+<pre>SET [5,1,9,3,7] >> r0
+ARR_SORT r0
+PRINT r0            // [1,3,5,7,9]
+IF r0 > 20 >> big
+PRINT "sum <= 20"
+HALT
+POINT big
+PRINT "sum > 20"
+HALT</pre></div>
+<div class="sec"><h3>CUSTOM PERIPHERAL</h3>
+<pre>// Host JS:
+vm.registerPeripheral("MATH_FAC", (vm, args) => {
+  const n = vm.fetchMemory(args[0]);
+  let r = 1;
+  for (let i = 2; i &lt;= n; i++) r *= i;
+  vm.setMemory(r, args[1]);
+});
+
+// PanSpark:
+SET 7 >> r0
+MATH_FAC r0 >> r1
+PRINT r1   // 5040
+HALT</pre></div>
+<div class="sec"><h3>MACHINE MONITOR</h3>
+<pre>$handle = r0  $enabled = r1  $progress = r2
+
+POINT main
+  MACH_OPEN "macerator_1" >> $handle
+
+POINT poll
+  MACH_GET $handle "enabled"  >> $enabled
+  MACH_GET $handle "progress" >> $progress
+  IF $enabled == 0 >> start
+  IF $progress == 100 >> done
+  JUMP poll
+
+POINT start
+  MACH_SET $handle "enabled" 1
+  JUMP poll
+POINT done
+  MACH_SET $handle "enabled" 0
+  MACH_CLOSE $handle
+  HALT</pre></div>`,
+            };
+
+            // ════════════════════════════════════════════════════════
+            // VM (unchanged)
+            // ════════════════════════════════════════════════════════
+            const ArgType = {
+                LITERAL: 0,
+                REGISTER: 1,
+                EQUAL: 2,
+                NOTEQUAL: 3,
+                LESS: 4,
+                GREATER: 5,
+                LESSEQUAL: 6,
+                GREATEQUAL: 7,
+                STRING: 9,
+                ARRAY: 10,
+            };
+            const OpCode = {
+                SET: 0,
+                ADD: 1,
+                SUB: 2,
+                PRINT: 3,
+                JUMP: 4,
+                POINT: 5,
+                IF: 6,
+                MUL: 7,
+                DIV: 8,
+                MOD: 9,
+                SQRT: 10,
+                POW: 11,
+                ABS: 12,
+                MIN: 13,
+                MAX: 14,
+                INC: 15,
+                DEC: 16,
+                RNG: 17,
+                NOP: 18,
+                HALT: 19,
+                UNTIL: 20,
+                CALL: 21,
+                RET: 22,
+                ARR_NEW: 23,
+                ARR_PUSH: 24,
+                ARR_POP: 25,
+                ARR_GET: 26,
+                ARR_SET: 27,
+                ARR_LEN: 28,
+                ARR_SORT: 29,
+                PERIPHERAL: 30,
+            };
+            function bsz(v) {
+                return v.tag === "int"
+                    ? 2
+                    : v.tag === "string"
+                      ? v.data.length + 1
+                      : v.data.length * 2;
+            }
+            function tok(line) {
+                const t = [];
+                let i = 0;
+                while (i < line.length) {
+                    if (line[i] === " ") {
+                        i++;
+                        continue;
+                    }
+                    if (line[i] === '"') {
+                        let j = i + 1;
+                        while (j < line.length && line[j] !== '"') j++;
+                        t.push(line.slice(i, j + 1));
+                        i = j + 1;
+                    } else if (line[i] === "[") {
+                        let j = i + 1;
+                        while (j < line.length && line[j] !== "]") j++;
+                        if (j >= line.length) throw new Error("Unclosed [");
+                        t.push(line.slice(i, j + 1));
+                        i = j + 1;
+                    } else {
+                        let j = i;
+                        while (j < line.length && line[j] !== " ") j++;
+                        t.push(line.slice(i, j));
+                        i = j;
+                    }
+                }
+                return t;
+            }
+            function parg(a) {
+                if (a.startsWith('"') && a.endsWith('"'))
+                    return { type: ArgType.STRING, value: a.slice(1, -1) };
+                if (a.startsWith("[") && a.endsWith("]")) {
+                    const el = a
+                        .slice(1, -1)
+                        .trim()
+                        .split(",")
+                        .map((s) => parseInt(s.trim()));
+                    if (!a.slice(1, -1).trim()) throw new Error("Empty array");
+                    if (el.some(isNaN)) throw new Error("Bad array: " + a);
+                    return { type: ArgType.ARRAY, value: el };
+                }
+                if (a.startsWith("r") && !isNaN(parseInt(a.slice(1))))
+                    return {
+                        type: ArgType.REGISTER,
+                        value: parseInt(a.slice(1)),
+                    };
+                if (a === "==") return { type: ArgType.EQUAL, value: 0 };
+                if (a === "!=") return { type: ArgType.NOTEQUAL, value: 0 };
+                if (a === "<") return { type: ArgType.LESS, value: 0 };
+                if (a === ">") return { type: ArgType.GREATER, value: 0 };
+                if (a === "<=") return { type: ArgType.LESSEQUAL, value: 0 };
+                if (a === ">=") return { type: ArgType.GREATEQUAL, value: 0 };
+                const n = parseInt(a);
+                if (isNaN(n)) throw new Error('Cannot parse: "' + a + '"');
+                return { type: ArgType.LITERAL, value: n };
+            }
+            function bi(op, tks, line, pname) {
+                const args = [];
+                for (let i = 1; i < tks.length; i++)
+                    if (tks[i] !== ">>" && tks[i] !== "ELSE")
+                        args.push(parg(tks[i]));
+                return {
+                    operation: op,
+                    arguments: args,
+                    line,
+                    peripheralName: pname,
+                };
+            }
+            class VM {
+                constructor(rl = 8, sl = 256, hl = 1280) {
+                    this.registerMemoryLimit = rl;
+                    this.callStackLimit = sl;
+                    this.heapLimit = hl;
+                    this.registerMemory = Array.from({ length: rl }, () => ({
+                        tag: "int",
+                        data: 0,
+                    }));
+                    this.callStack = new Array(sl).fill(0);
+                    this.stackPointer = 0;
+                    this.instructions = [];
+                    this.instrToSourceLine = [];
+                    this.activeInstructionPos = 0;
+                    this.outputBuffer = [];
+                    this.peripherals = new Map();
+                }
+                registerPeripheral(n, f) {
+                    this.peripherals.set(n, f);
+                }
+                th() {
+                    return this.registerMemory.reduce((s, v) => s + bsz(v), 0);
+                }
+                heapUsed() {
+                    return this.th();
+                }
+                heapAvailable() {
+                    return this.heapLimit - this.th();
+                }
+                setMemory(data, dest) {
+                    if (dest.type !== ArgType.REGISTER)
+                        throw new Error("Illegal destination");
+                    const idx = dest.value;
+                    if (idx < 0 || idx >= this.registerMemoryLimit)
+                        throw new Error("Register OOB");
+                    const nv =
+                        typeof data === "string"
+                            ? { tag: "string", data }
+                            : Array.isArray(data)
+                              ? { tag: "array", data }
+                              : { tag: "int", data };
+                    const delta = bsz(nv) - bsz(this.registerMemory[idx]);
+                    if (this.th() + delta > this.heapLimit)
+                        throw new Error(
+                            "Heap overflow! Need " +
+                                delta +
+                                " B, only " +
+                                this.heapAvailable() +
+                                " free.",
+                        );
+                    this.registerMemory[idx] = nv;
+                }
+                fetchValue(arg) {
+                    if (arg.type === ArgType.LITERAL) return arg.value;
+                    if (arg.type === ArgType.STRING) return arg.value;
+                    if (arg.type === ArgType.ARRAY) return arg.value;
+                    if (arg.type === ArgType.REGISTER) {
+                        if (
+                            arg.value < 0 ||
+                            arg.value >= this.registerMemoryLimit
+                        )
+                            throw new Error("Register OOB");
+                        return this.registerMemory[arg.value].data;
+                    }
+                    throw new Error("Illegal fetch");
+                }
+                fetchMemory(arg) {
+                    const v = this.fetchValue(arg);
+                    if (typeof v === "string")
+                        throw new Error(
+                            'Expected number, got string "' + v + '"',
+                        );
+                    if (Array.isArray(v))
+                        throw new Error("Expected number, got array");
+                    return v;
+                }
+                pushCallStack(a) {
+                    if (this.stackPointer >= this.callStackLimit)
+                        throw new Error("Stack overflow");
+                    this.callStack[this.stackPointer++] = a;
+                }
+                popCallStack() {
+                    if (this.stackPointer <= 0)
+                        throw new Error("Stack underflow");
+                    return this.callStack[--this.stackPointer];
+                }
+                evalCond(ins) {
+                    const a = ins.arguments;
+                    const rA = this.fetchValue(a[0]),
+                        rB = this.fetchValue(a[2]),
+                        op = a[1].type;
+                    const sum = (v) =>
+                        Array.isArray(v) ? v.reduce((x, y) => x + y, 0) : v;
+                    if (op === ArgType.EQUAL)
+                        return Array.isArray(rA) || Array.isArray(rB)
+                            ? sum(rA) === sum(rB)
+                            : rA == rB;
+                    if (op === ArgType.NOTEQUAL)
+                        return Array.isArray(rA) || Array.isArray(rB)
+                            ? sum(rA) !== sum(rB)
+                            : rA != rB;
+                    const nA = sum(rA),
+                        nB = sum(rB);
+                    if (op === ArgType.LESS) return nA < nB;
+                    if (op === ArgType.GREATER) return nA > nB;
+                    if (op === ArgType.LESSEQUAL) return nA <= nB;
+                    if (op === ArgType.GREATEQUAL) return nA >= nB;
+                    return false;
+                }
+                resolveVars(source) {
+                    const vars = new Map();
+                    let auto = 0;
+                    const out = [],
+                        om = [];
+                    const src = source.split("\n");
+                    for (let i = 0; i < src.length; i++) {
+                        const t = src[i].trimStart();
+                        const d = t.match(/^\$(\w+)\s*=\s*(\S+)$/);
+                        if (d) {
+                            const nm = "$" + d[1],
+                                tgt = d[2];
+                            if (tgt === "auto") {
+                                vars.set(nm, "r" + auto++);
+                            } else {
+                                vars.set(nm, tgt);
+                                if (tgt.startsWith("r")) {
+                                    const n = parseInt(tgt.slice(1));
+                                    if (!isNaN(n) && n >= auto) auto = n + 1;
+                                }
+                            }
+                            continue;
+                        }
+                        let res = t;
+                        for (const [k, v] of [...vars.entries()].sort(
+                            (a, b) => b[0].length - a[0].length,
+                        ))
+                            res = res.replaceAll(k, v);
+                        out.push(res);
+                        om.push(i);
+                    }
+                    return { code: out.join("\n"), om };
+                }
+                compile(source) {
+                    this.instructions = [];
+                    this.instrToSourceLine = [];
+                    this.activeInstructionPos = 0;
+                    this.stackPointer = 0;
+                    this.outputBuffer = [];
+                    this.registerMemory = Array.from(
+                        { length: this.registerMemoryLimit },
+                        () => ({ tag: "int", data: 0 }),
+                    );
+                    const { code, om } = this.resolveVars(source);
+                    const rl = code.split("\n");
+                    const san = [],
+                        so = [];
+                    for (let ri = 0; ri < rl.length; ri++) {
+                        const t = rl[ri].trimStart();
+                        if (!t || t.startsWith("//")) continue;
+                        san.push(t);
+                        so.push(om[ri]);
+                    }
+                    const pts = new Map();
+                    for (let i = 0; i < san.length; i++) {
+                        const tk = tok(san[i]);
+                        if (tk[0] === "POINT") pts.set(tk[1], i);
+                    }
+                    const lbl = (l) => {
+                        const x = pts.get(l);
+                        if (x === undefined)
+                            throw new Error('Undefined label "' + l + '"');
+                        return String(x);
+                    };
+                    for (let i = 0; i < san.length; i++) {
+                        let tk = tok(san[i]);
+                        const op = tk[0];
+                        const ra = (idx) => {
+                            tk = [...tk];
+                            tk[idx] = lbl(tk[idx]);
+                        };
+                        let ins = null;
+                        switch (op) {
+                            case "SET":
+                                ins = bi(OpCode.SET, tk, i);
+                                break;
+                            case "ADD":
+                                ins = bi(OpCode.ADD, tk, i);
+                                break;
+                            case "SUB":
+                                ins = bi(OpCode.SUB, tk, i);
+                                break;
+                            case "PRINT":
+                                ins = bi(OpCode.PRINT, tk, i);
+                                break;
+                            case "JUMP":
+                                ra(1);
+                                ins = bi(OpCode.JUMP, tk, i);
+                                break;
+                            case "POINT":
+                                ra(1);
+                                ins = bi(OpCode.POINT, tk, i);
+                                break;
+                            case "CALL":
+                                ra(1);
+                                ins = bi(OpCode.CALL, tk, i);
+                                break;
+                            case "IF":
+                                ra(5);
+                                if (tk[6] === "ELSE") {
+                                    if (tk.length < 8)
+                                        throw new Error("Missing ELSE label");
+                                    ra(7);
+                                    tk = tk.filter((_, j) => j !== 6);
+                                }
+                                ins = bi(OpCode.IF, tk, i);
+                                break;
+                            case "UNTIL":
+                                ins = bi(OpCode.UNTIL, tk, i);
+                                break;
+                            case "MUL":
+                                ins = bi(OpCode.MUL, tk, i);
+                                break;
+                            case "DIV":
+                                ins = bi(OpCode.DIV, tk, i);
+                                break;
+                            case "MOD":
+                                ins = bi(OpCode.MOD, tk, i);
+                                break;
+                            case "SQRT":
+                                ins = bi(OpCode.SQRT, tk, i);
+                                break;
+                            case "POW":
+                                ins = bi(OpCode.POW, tk, i);
+                                break;
+                            case "ABS":
+                                ins = bi(OpCode.ABS, tk, i);
+                                break;
+                            case "MIN":
+                                ins = bi(OpCode.MIN, tk, i);
+                                break;
+                            case "MAX":
+                                ins = bi(OpCode.MAX, tk, i);
+                                break;
+                            case "INC":
+                                ins = bi(OpCode.INC, tk, i);
+                                break;
+                            case "DEC":
+                                ins = bi(OpCode.DEC, tk, i);
+                                break;
+                            case "RNG":
+                                ins = bi(OpCode.RNG, tk, i);
+                                break;
+                            case "NOP":
+                                ins = bi(OpCode.NOP, tk, i);
+                                break;
+                            case "HALT":
+                                ins = bi(OpCode.HALT, tk, i);
+                                break;
+                            case "RET":
+                                ins = bi(OpCode.RET, tk, i);
+                                break;
+                            case "ARR_NEW":
+                                ins = bi(OpCode.ARR_NEW, tk, i);
+                                break;
+                            case "ARR_PUSH":
+                                ins = bi(OpCode.ARR_PUSH, tk, i);
+                                break;
+                            case "ARR_POP":
+                                ins = bi(OpCode.ARR_POP, tk, i);
+                                break;
+                            case "ARR_GET":
+                                ins = bi(OpCode.ARR_GET, tk, i);
+                                break;
+                            case "ARR_SET":
+                                ins = bi(OpCode.ARR_SET, tk, i);
+                                break;
+                            case "ARR_LEN":
+                                ins = bi(OpCode.ARR_LEN, tk, i);
+                                break;
+                            case "ARR_SORT":
+                                ins = bi(OpCode.ARR_SORT, tk, i);
+                                break;
+                            default:
+                                if (this.peripherals.has(op)) {
+                                    ins = bi(OpCode.PERIPHERAL, tk, i, op);
+                                } else
+                                    throw new Error(
+                                        'Unknown opcode "' +
+                                            op +
+                                            '" at instruction ' +
+                                            i,
+                                    );
+                        }
+                        this.instructions.push(ins);
+                        this.instrToSourceLine.push(so[i]);
+                    }
+                    return this.instructions;
+                }
+                step() {
+                    if (this.activeInstructionPos >= this.instructions.length)
+                        return "halt";
+                    this.outputBuffer = [];
+                    const ins = this.instructions[this.activeInstructionPos];
+                    let ipm = false;
+                    const a = () => ins.arguments;
+                    const gn = (i) => this.fetchMemory(a()[i]);
+                    const gv = (i) => this.fetchValue(a()[i]);
+                    const ds = (i) => a()[i];
+                    const sm = (v, d) => this.setMemory(v, d);
+                    switch (ins.operation) {
+                        case OpCode.SET:
+                            sm(gv(0), ds(1));
+                            break;
+                        case OpCode.PRINT:
+                            this.outputBuffer.push(gv(0));
+                            break;
+                        case OpCode.ADD:
+                            sm(gn(0) + gn(1), ds(2));
+                            break;
+                        case OpCode.SUB:
+                            sm(gn(0) - gn(1), ds(2));
+                            break;
+                        case OpCode.MUL:
+                            sm(gn(0) * gn(1), ds(2));
+                            break;
+                        case OpCode.DIV: {
+                            const b = gn(1);
+                            if (!b) throw new Error("Division by zero");
+                            sm(Math.trunc(gn(0) / b), ds(2));
+                            break;
+                        }
+                        case OpCode.MOD: {
+                            const b = gn(1);
+                            if (!b) throw new Error("Modulo by zero");
+                            sm(gn(0) % b, ds(2));
+                            break;
+                        }
+                        case OpCode.SQRT:
+                            sm(Math.floor(Math.sqrt(gn(0))), ds(1));
+                            break;
+                        case OpCode.POW:
+                            sm(Math.pow(gn(0), gn(1)), ds(2));
+                            break;
+                        case OpCode.ABS:
+                            sm(Math.abs(gn(0)), ds(1));
+                            break;
+                        case OpCode.MIN:
+                            sm(Math.min(gn(0), gn(1)), ds(2));
+                            break;
+                        case OpCode.MAX:
+                            sm(Math.max(gn(0), gn(1)), ds(2));
+                            break;
+                        case OpCode.INC: {
+                            const x = a()[0];
+                            sm(this.fetchMemory(x) + 1, x);
+                            break;
+                        }
+                        case OpCode.DEC: {
+                            const x = a()[0];
+                            sm(this.fetchMemory(x) - 1, x);
+                            break;
+                        }
+                        case OpCode.RNG: {
+                            const mn = gn(0),
+                                mx = gn(1);
+                            sm(
+                                Math.floor(Math.random() * (mx - mn + 1)) + mn,
+                                ds(2),
+                            );
+                            break;
+                        }
+                        case OpCode.NOP:
+                            break;
+                        case OpCode.HALT:
+                            return "halt";
+                        case OpCode.JUMP:
+                            this.activeInstructionPos = a()[0].value;
+                            ipm = true;
+                            break;
+                        case OpCode.POINT:
+                            break;
+                        case OpCode.IF:
+                            if (this.evalCond(ins)) {
+                                this.activeInstructionPos = a()[3].value;
+                                ipm = true;
+                            } else if (a()[4]) {
+                                this.activeInstructionPos = a()[4].value;
+                                ipm = true;
+                            }
+                            break;
+                        case OpCode.UNTIL:
+                            if (!this.evalCond(ins)) return "yield";
+                            break;
+                        case OpCode.CALL:
+                            this.pushCallStack(this.activeInstructionPos + 1);
+                            this.activeInstructionPos = a()[0].value;
+                            ipm = true;
+                            break;
+                        case OpCode.RET:
+                            this.activeInstructionPos = this.popCallStack();
+                            ipm = true;
+                            break;
+                        case OpCode.ARR_NEW: {
+                            sm(new Array(gn(0)).fill(0), ds(1));
+                            break;
+                        }
+                        case OpCode.ARR_PUSH: {
+                            const arr = this.fetchValue(a()[0]);
+                            if (!Array.isArray(arr))
+                                throw new Error("ARR_PUSH: not array");
+                            sm([...arr, gn(1)], a()[0]);
+                            break;
+                        }
+                        case OpCode.ARR_POP: {
+                            const arr = this.fetchValue(a()[0]);
+                            if (!Array.isArray(arr))
+                                throw new Error("ARR_POP: not array");
+                            const v = arr.length ? arr[arr.length - 1] : 0;
+                            sm([...arr.slice(0, -1)], a()[0]);
+                            sm(v, ds(1));
+                            break;
+                        }
+                        case OpCode.ARR_GET: {
+                            const arr = this.fetchValue(a()[0]);
+                            if (!Array.isArray(arr))
+                                throw new Error("ARR_GET: not array");
+                            sm(arr[gn(1)] ?? 0, ds(2));
+                            break;
+                        }
+                        case OpCode.ARR_SET: {
+                            const arr = [...this.fetchValue(a()[0])];
+                            arr[gn(1)] = gn(2);
+                            sm(arr, a()[0]);
+                            break;
+                        }
+                        case OpCode.ARR_LEN: {
+                            const arr = this.fetchValue(a()[0]);
+                            if (!Array.isArray(arr))
+                                throw new Error("ARR_LEN: not array");
+                            sm(arr.length, ds(1));
+                            break;
+                        }
+                        case OpCode.ARR_SORT: {
+                            sm(
+                                [...this.fetchValue(a()[0])].sort(
+                                    (x, y) => x - y,
+                                ),
+                                a()[0],
+                            );
+                            break;
+                        }
+                        case OpCode.PERIPHERAL: {
+                            const h = this.peripherals.get(ins.peripheralName);
+                            if (!h)
+                                throw new Error(
+                                    "No handler: " + ins.peripheralName,
+                                );
+                            h(this, ins.arguments);
+                            break;
+                        }
+                        default:
+                            throw new Error("Unknown opcode: " + ins.operation);
+                    }
+                    if (!ipm) this.activeInstructionPos++;
+                    if (this.activeInstructionPos >= this.instructions.length)
+                        return "halt";
+                    return "stepped";
+                }
+            }
+
+            // ════════════════════════════════════════════════════════
+            // ELEMENT REFS
+            // ════════════════════════════════════════════════════════
+            const codeEl = document.getElementById("code");
+            const gutterEl = document.getElementById("gutter");
+            const hllEl = document.getElementById("hll");
+            const ipbarEl = document.getElementById("ipbar");
+            const acEl = document.getElementById("ac");
+            const regsEl = document.getElementById("regs");
+            const stkEl = document.getElementById("stk");
+            const outEl = document.getElementById("out");
+            const rpaneEl = document.getElementById("rpane");
+            const rtogEl = document.getElementById("rtog");
+            const spillEl = document.getElementById("spill");
+            const heapEl = document.getElementById("heap-info");
+            const ipvEl = document.getElementById("ipv");
+            const icntEl = document.getElementById("icnt");
+            const lcntEl = document.getElementById("lcnt");
+            const ocntEl = document.getElementById("ocnt");
+            const bcmp = document.getElementById("bcompile");
+            const brun = document.getElementById("brun");
+            const bstep = document.getElementById("bstep");
+            const bpause = document.getElementById("bpause");
+            const breset = document.getElementById("breset");
+            const speedEl = document.getElementById("speed");
+            const bdocs = document.getElementById("bdocs");
+            const dovEl = document.getElementById("dov");
+            const dbodyEl = document.getElementById("dbody");
+            const dcloseEl = document.getElementById("dclose");
+
+            // ════════════════════════════════════════════════════════
+            // RESPONSIVE METRICS — read from CSS variables
+            // So layout values are the single source of truth in CSS.
+            // ════════════════════════════════════════════════════════
+            function getMetrics() {
+                const cs = getComputedStyle(document.documentElement);
+                return {
+                    LH: parseInt(cs.getPropertyValue("--lh")) || 20,
+                    GW: parseInt(cs.getPropertyValue("--gw")) || 44,
+                    PAD: 10,
+                };
+            }
+            let M = getMetrics();
+            window.addEventListener("resize", () => {
+                M = getMetrics();
+                updateIpBar();
+            });
+
+            // ════════════════════════════════════════════════════════
+            // SYNTAX HIGHLIGHTER
+            // ════════════════════════════════════════════════════════
+            const HL_OPS = new Set([
+                "SET",
+                "ADD",
+                "SUB",
+                "PRINT",
+                "JUMP",
+                "POINT",
+                "CALL",
+                "IF",
+                "UNTIL",
+                "HALT",
+                "NOP",
+                "RET",
+                "MUL",
+                "DIV",
+                "MOD",
+                "SQRT",
+                "POW",
+                "ABS",
+                "MIN",
+                "MAX",
+                "INC",
+                "DEC",
+                "RNG",
+                "ARR_NEW",
+                "ARR_PUSH",
+                "ARR_POP",
+                "ARR_GET",
+                "ARR_SET",
+                "ARR_LEN",
+                "ARR_SORT",
+                "ELSE",
+            ]);
+            const JMP_OPS = new Set(["JUMP", "CALL", "POINT"]);
+            function esc(s) {
+                return s
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+            }
+            function hlLine(line) {
+                const t = line.trimStart();
+                const ind = esc(line.slice(0, line.length - t.length));
+                if (!t) return "";
+                if (t.startsWith("//"))
+                    return ind + `<span class="cmt">${esc(t)}</span>`;
+                const dm = t.match(/^(\$\w+)(\s*=\s*)(\S+)(.*)$/);
+                if (dm)
+                    return (
+                        ind +
+                        `<span class="sv">${esc(dm[1])}</span><span class="op">${esc(dm[2])}</span><span class="reg">${esc(dm[3])}</span>${dm[4] ? `<span class="cmt">${esc(dm[4])}</span>` : ""}`
+                    );
+                let out = ind,
+                    rest = t,
+                    first = true,
+                    ajmp = false,
+                    aarr = false;
+                while (rest.length) {
+                    const sm = rest.match(/^(\s+)/);
+                    if (sm) {
+                        out += esc(sm[1]);
+                        rest = rest.slice(sm[1].length);
+                        continue;
+                    }
+                    if (rest[0] === '"') {
+                        const e = rest.indexOf('"', 1);
+                        const s = e >= 0 ? rest.slice(0, e + 1) : rest;
+                        out += `<span class="str">${esc(s)}</span>`;
+                        rest = rest.slice(s.length);
+                        ajmp = aarr = false;
+                        first = false;
+                        continue;
+                    }
+                    if (rest[0] === "[") {
+                        const e = rest.indexOf("]");
+                        const s = e >= 0 ? rest.slice(0, e + 1) : rest;
+                        out += `<span class="arr">${esc(s)}</span>`;
+                        rest = rest.slice(s.length);
+                        ajmp = aarr = false;
+                        first = false;
+                        continue;
+                    }
+                    if (rest.startsWith(">>")) {
+                        out += `<span class="op">&gt;&gt;</span>`;
+                        rest = rest.slice(2);
+                        aarr = true;
+                        ajmp = false;
+                        first = false;
+                        continue;
+                    }
+                    if (
+                        rest.startsWith("==") ||
+                        rest.startsWith("!=") ||
+                        rest.startsWith("<=") ||
+                        rest.startsWith(">=")
+                    ) {
+                        out += `<span class="op">${esc(rest.slice(0, 2))}</span>`;
+                        rest = rest.slice(2);
+                        ajmp = aarr = false;
+                        first = false;
+                        continue;
+                    }
+                    if (rest[0] === "<" || rest[0] === ">") {
+                        out += `<span class="op">${esc(rest[0])}</span>`;
+                        rest = rest.slice(1);
+                        ajmp = aarr = false;
+                        first = false;
+                        continue;
+                    }
+                    const wm = rest.match(/^(\S+)/);
+                    if (!wm) break;
+                    const w = wm[1];
+                    rest = rest.slice(w.length);
+                    if (first) {
+                        if (HL_OPS.has(w)) {
+                            out += `<span class="kw">${esc(w)}</span>`;
+                            ajmp = JMP_OPS.has(w);
+                        } else {
+                            out += `<span class="dflt">${esc(w)}</span>`;
+                            ajmp = false;
+                        }
+                        first = false;
+                        aarr = false;
+                        continue;
+                    }
+                    if (w === "ELSE") {
+                        out += `<span class="kw">${esc(w)}</span>`;
+                        ajmp = true;
+                        aarr = false;
+                        continue;
+                    }
+                    if (/^r\d+$/.test(w)) {
+                        out += `<span class="reg">${esc(w)}</span>`;
+                        ajmp = aarr = false;
+                        continue;
+                    }
+                    if (w.startsWith("$")) {
+                        out += `<span class="sv">${esc(w)}</span>`;
+                        ajmp = aarr = false;
+                        continue;
+                    }
+                    if (/^-?\d+$/.test(w)) {
+                        out += `<span class="num">${esc(w)}</span>`;
+                        ajmp = aarr = false;
+                        continue;
+                    }
+                    if (ajmp || aarr) {
+                        out += `<span class="lbl">${esc(w)}</span>`;
+                        ajmp = aarr = false;
+                        continue;
+                    }
+                    out += `<span class="dflt">${esc(w)}</span>`;
+                    ajmp = aarr = false;
+                }
+                return out;
+            }
+            function renderHL() {
+                const lines = codeEl.value.split("\n");
+                hllEl.innerHTML = lines
+                    .map((l) => `<div class="hl">${hlLine(l)}</div>`)
+                    .join("");
+            }
+
+            // ════════════════════════════════════════════════════════
+            // GUTTER
+            // Separate render (only when line count changes) + active
+            // line set by tweaking one element's class — no full re-render.
+            // ════════════════════════════════════════════════════════
+            let gCount = 0,
+                gActiveEl = null;
+            function renderGutter() {
+                const n = codeEl.value.split("\n").length;
+                if (n === gCount) return;
+                // Build N span.ln elements — joined with '' (no whitespace between them)
+                const html = [];
+                for (let i = 0; i < n; i++)
+                    html.push(`<span class="ln">${i + 1}</span>`);
+                gutterEl.innerHTML = html.join("");
+                gCount = n;
+                gActiveEl = null;
+            }
+            function setGutterActive(idx) {
+                if (gActiveEl) gActiveEl.classList.remove("aln");
+                gActiveEl = gutterEl.children[idx] || null;
+                if (gActiveEl) gActiveEl.classList.add("aln");
+            }
+
+            // ════════════════════════════════════════════════════════
+            // IP BAR — top is calculated relative to scroll position
+            // ════════════════════════════════════════════════════════
+            function updateIpBar() {
+                if (
+                    !compiled ||
+                    !vm.instrToSourceLine.length ||
+                    vm.activeInstructionPos >= vm.instrToSourceLine.length
+                ) {
+                    ipbarEl.style.display = "none";
+                    if (gActiveEl) {
+                        gActiveEl.classList.remove("aln");
+                        gActiveEl = null;
+                    }
+                    return;
+                }
+                const src = vm.instrToSourceLine[vm.activeInstructionPos];
+                ipbarEl.style.top =
+                    M.PAD + src * M.LH - codeEl.scrollTop + "px";
+                ipbarEl.style.height = M.LH + "px";
+                ipbarEl.style.display = "block";
+                setGutterActive(src);
+            }
+
+            // ════════════════════════════════════════════════════════
+            // SCROLL SYNC
+            // ════════════════════════════════════════════════════════
+            function syncScroll() {
+                hllEl.scrollTop = codeEl.scrollTop;
+                hllEl.scrollLeft = codeEl.scrollLeft;
+                gutterEl.scrollTop = codeEl.scrollTop;
+                updateIpBar();
+            }
+            codeEl.addEventListener("scroll", syncScroll);
+
+            // ════════════════════════════════════════════════════════
+            // AUTOCOMPLETE  (desktop only — hidden on mobile via CSS)
+            // ════════════════════════════════════════════════════════
+            const ALL_OPS = [
+                "SET",
+                "ADD",
+                "SUB",
+                "PRINT",
+                "JUMP",
+                "POINT",
+                "CALL",
+                "IF",
+                "UNTIL",
+                "HALT",
+                "NOP",
+                "RET",
+                "MUL",
+                "DIV",
+                "MOD",
+                "SQRT",
+                "POW",
+                "ABS",
+                "MIN",
+                "MAX",
+                "INC",
+                "DEC",
+                "RNG",
+                "ARR_NEW",
+                "ARR_PUSH",
+                "ARR_POP",
+                "ARR_GET",
+                "ARR_SET",
+                "ARR_LEN",
+                "ARR_SORT",
+            ];
+            const OP_HINT = {
+                SET: "<val> >> dest",
+                ADD: "a b >> dest",
+                SUB: "a b >> dest",
+                MUL: "a b >> dest",
+                DIV: "a b >> dest",
+                MOD: "a b >> dest",
+                POW: "b e >> dest",
+                SQRT: "a >> dest",
+                ABS: "a >> dest",
+                MIN: "a b >> dest",
+                MAX: "a b >> dest",
+                RNG: "min max >> dest",
+                INC: "reg",
+                DEC: "reg",
+                PRINT: "<val>",
+                NOP: "",
+                HALT: "",
+                JUMP: "label",
+                POINT: "label",
+                CALL: "label",
+                RET: "",
+                IF: "v op v >> lbl [ELSE lbl]",
+                UNTIL: "v op v",
+                ARR_NEW: "size >> dest",
+                ARR_PUSH: "arr val",
+                ARR_POP: "arr >> dest",
+                ARR_GET: "arr idx >> dest",
+                ARR_SET: "arr idx val",
+                ARR_LEN: "arr >> dest",
+                ARR_SORT: "arr",
+            };
+
+            let CHAR_W = 7.8;
+            document.fonts.ready.then(() => {
+                const sp = document.createElement("span");
+                Object.assign(sp.style, {
+                    position: "absolute",
+                    visibility: "hidden",
+                    font: '13px/1 "Share Tech Mono",monospace',
+                    whiteSpace: "pre",
+                });
+                sp.textContent = "x".repeat(100);
+                document.body.appendChild(sp);
+                CHAR_W = sp.offsetWidth / 100;
+                document.body.removeChild(sp);
+            });
+
+            let acList = [],
+                acSel = -1;
+            function isMobile() {
+                return window.innerWidth <= 767;
+            }
+
+            function acGetPrefix() {
+                if (isMobile()) return null;
+                const pos = codeEl.selectionStart;
+                const before = codeEl.value.slice(0, pos);
+                const ls = before.lastIndexOf("\n") + 1;
+                const ltext = before.slice(ls);
+                const m = ltext.match(/^(\s*)([A-Z_]{1,12})$/);
+                return m ? { pre: m[2], ind: m[1] } : null;
+            }
+            function acUpdate() {
+                const info = acGetPrefix();
+                if (!info) {
+                    acHide();
+                    return;
+                }
+                acList = ALL_OPS.filter(
+                    (op) => op.startsWith(info.pre) && op !== info.pre,
+                );
+                if (!acList.length) {
+                    acHide();
+                    return;
+                }
+                if (acSel >= acList.length) acSel = 0;
+                if (acSel < 0) acSel = 0;
+                acRender();
+                const pos = codeEl.selectionStart;
+                const lines = codeEl.value.slice(0, pos).split("\n");
+                const row = lines.length - 1,
+                    col = lines[row].length;
+                const left = M.GW + col * CHAR_W;
+                const top = M.PAD + (row + 1) * M.LH - codeEl.scrollTop;
+                acEl.style.left =
+                    Math.min(left, codeEl.clientWidth - 240) + "px";
+                acEl.style.top =
+                    Math.min(Math.max(top, 0), codeEl.clientHeight - 30) + "px";
+                acEl.classList.add("show");
+            }
+            function acHide() {
+                acEl.classList.remove("show");
+                acList = [];
+                acSel = -1;
+            }
+            function acRender() {
+                acEl.innerHTML = acList
+                    .map(
+                        (op, i) =>
+                            `<div class="aci${i === acSel ? " s" : ""}" data-i="${i}"><span class="aci-n">${op}</span><span class="aci-h">${OP_HINT[op] || ""}</span></div>`,
+                    )
+                    .join("");
+            }
+            function acAccept() {
+                if (acSel < 0 || !acList.length) return;
+                const info = acGetPrefix();
+                if (!info) return;
+                const op = acList[acSel];
+                const pos = codeEl.selectionStart;
+                const start =
+                    codeEl.value.lastIndexOf("\n", pos - 1) +
+                    1 +
+                    info.ind.length;
+                codeEl.value =
+                    codeEl.value.slice(0, start) +
+                    op +
+                    " " +
+                    codeEl.value.slice(pos);
+                codeEl.selectionStart = codeEl.selectionEnd =
+                    start + op.length + 1;
+                acHide();
+                onInput();
+            }
+            acEl.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                const item = e.target.closest(".aci");
+                if (item) {
+                    acSel = +item.dataset.i;
+                    acAccept();
+                }
+            });
+
+            // ════════════════════════════════════════════════════════
+            // MOBILE DRAWER
+            // ════════════════════════════════════════════════════════
+            let mobOpen = true;
+            let mobActiveTab = "rs";
+
+            function setMobTab(name) {
+                mobActiveTab = name;
+                ["rs", "sk", "op"].forEach((id) => {
+                    const el = document.getElementById(id);
+                    el.classList.toggle("mob-vis", id === name);
+                });
+                document
+                    .querySelectorAll(".rtab")
+                    .forEach((t) =>
+                        t.classList.toggle("act", t.dataset.sect === name),
+                    );
+                // If drawer is collapsed, open it
+                if (!mobOpen) openDrawer();
+                // Auto-scroll output to bottom when switching to it
+                if (name === "op") outEl.scrollTop = outEl.scrollHeight;
+            }
+
+            function openDrawer() {
+                mobOpen = true;
+                rpaneEl.classList.remove("mob-collapsed");
+                rtogEl.textContent = "▾";
+            }
+            function collapseDrawer() {
+                mobOpen = false;
+                rpaneEl.classList.add("mob-collapsed");
+                rtogEl.textContent = "▴";
+            }
+
+            rtogEl.addEventListener("click", () => {
+                if (mobOpen) collapseDrawer();
+                else openDrawer();
+            });
+
+            document.querySelectorAll(".rtab").forEach((t) => {
+                t.addEventListener("click", () => setMobTab(t.dataset.sect));
+            });
+
+            // Init mobile tab state
+            function applyMobTabs() {
+                if (isMobile()) {
+                    setMobTab(mobActiveTab);
+                } else {
+                    // Desktop: show all, remove mob-vis classes
+                    ["rs", "sk", "op"].forEach((id) =>
+                        document.getElementById(id).classList.remove("mob-vis"),
+                    );
+                }
+            }
+            window.addEventListener("resize", applyMobTabs);
+            applyMobTabs();
+
+            // ════════════════════════════════════════════════════════
+            // VM INSTANCE
+            // ════════════════════════════════════════════════════════
+            const vm = new VM(8, 256, 1280);
+            let compiled = false,
+                running = false,
+                runTimer = null,
+                prevRegs = [],
+                outLines = 0;
+
+            // ════════════════════════════════════════════════════════
+            // UI HELPERS
+            // ════════════════════════════════════════════════════════
+            function onInput() {
+                compiled = false;
+                ipbarEl.style.display = "none";
+                if (gActiveEl) {
+                    gActiveEl.classList.remove("aln");
+                    gActiveEl = null;
+                }
+                renderGutter();
+                renderHL();
+                syncScroll();
+                lcntEl.textContent = codeEl.value.split("\n").length + " lines";
+            }
+
+            function renderRegs() {
+                regsEl.innerHTML = vm.registerMemory
+                    .map((rv, i) => {
+                        const ch =
+                            prevRegs[i] &&
+                            JSON.stringify(prevRegs[i]) !== JSON.stringify(rv);
+                        const vs =
+                            rv.tag === "array"
+                                ? "[" + rv.data.join(",") + "]"
+                                : String(rv.data);
+                        return `<div class="rr${ch ? " chg" : ""}"><span class="rn">r${i}</span><span class="rv" title="${vs}">${vs}</span><span class="rt">${rv.tag === "int" ? "INT" : rv.tag === "string" ? "STR" : "ARR"}</span></div>`;
+                    })
+                    .join("");
+                prevRegs = vm.registerMemory.map((r) => ({
+                    ...r,
+                    data: Array.isArray(r.data) ? [...r.data] : r.data,
+                }));
+            }
+
+            function renderStack() {
+                if (!vm.stackPointer) {
+                    stkEl.innerHTML =
+                        '<div class="ski sys" style="padding:4px 13px">— empty —</div>';
+                    return;
+                }
+                const h = [];
+                for (let i = vm.stackPointer - 1; i >= 0; i--)
+                    h.push(
+                        `<div class="ski${i === vm.stackPointer - 1 ? " top" : ""}">→ addr:${vm.callStack[i]}</div>`,
+                    );
+                stkEl.innerHTML = h.join("");
+            }
+
+            function addOutput(arr) {
+                arr.forEach((v) => {
+                    const d = document.createElement("div");
+                    d.className = "ol";
+                    d.textContent = Array.isArray(v)
+                        ? "[" + v.join(",") + "]"
+                        : String(v);
+                    outEl.appendChild(d);
+                    outLines++;
+                });
+                ocntEl.textContent = outLines + " lines";
+                outEl.scrollTop = outEl.scrollHeight;
+                // On mobile, if output tab is not active, flash the tab
+                if (isMobile() && mobActiveTab !== "op" && arr.length) {
+                    const tab = document.querySelector('[data-sect="op"]');
+                    if (tab) {
+                        tab.style.color = "var(--amber-bright)";
+                        setTimeout(() => (tab.style.color = ""), 800);
+                    }
+                }
+            }
+
+            function addMsg(msg, err) {
+                const d = document.createElement("div");
+                d.className = "ol " + (err ? "err" : "sys");
+                d.textContent = msg;
+                outEl.appendChild(d);
+                outLines++;
+                ocntEl.textContent = outLines + " lines";
+                outEl.scrollTop = outEl.scrollHeight;
+            }
+
+            function setStatus(s) {
+                spillEl.className = "sp " + s;
+                spillEl.textContent = s.toUpperCase();
+            }
+
+            function updateHUD() {
+                heapEl.textContent =
+                    "HEAP: " + vm.heapUsed() + "/" + vm.heapLimit;
+                ipvEl.textContent = compiled ? vm.activeInstructionPos : "—";
+                icntEl.textContent = compiled ? vm.instructions.length : "—";
+                updateIpBar();
+                renderRegs();
+                renderStack();
+            }
+
+            // ════════════════════════════════════════════════════════
+            // KEY EVENTS
+            // ════════════════════════════════════════════════════════
+            codeEl.addEventListener("keydown", (e) => {
+                if (acEl.classList.contains("show")) {
+                    if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        acSel = (acSel + 1) % acList.length;
+                        acRender();
+                        return;
+                    }
+                    if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        acSel = (acSel - 1 + acList.length) % acList.length;
+                        acRender();
+                        return;
+                    }
+                    if (e.key === "Tab" || e.key === "Enter") {
+                        if (acList.length) {
+                            e.preventDefault();
+                            acAccept();
+                            return;
+                        }
+                    }
+                    if (e.key === "Escape") {
+                        acHide();
+                        return;
+                    }
+                }
+                if (e.key === "Tab") {
+                    e.preventDefault();
+                    const s = codeEl.selectionStart;
+                    codeEl.value =
+                        codeEl.value.slice(0, s) +
+                        "  " +
+                        codeEl.value.slice(codeEl.selectionEnd);
+                    codeEl.selectionStart = codeEl.selectionEnd = s + 2;
+                    onInput();
+                }
+            });
+            codeEl.addEventListener("input", () => {
+                onInput();
+                acUpdate();
+            });
+            document.addEventListener("click", (e) => {
+                if (!acEl.contains(e.target) && e.target !== codeEl) acHide();
+            });
+            codeEl.addEventListener("blur", () => setTimeout(acHide, 120));
+
+            // ════════════════════════════════════════════════════════
+            // COMPILE / RUN / STEP
+            // ════════════════════════════════════════════════════════
+            bcmp.addEventListener("click", () => {
+                stopRun();
+                outEl.innerHTML = "";
+                outLines = 0;
+                ocntEl.textContent = "0 lines";
+                prevRegs = [];
+                // On mobile, switch to output tab after compile attempt
+                if (isMobile()) setMobTab("op");
+                try {
+                    vm.compile(codeEl.value);
+                    compiled = true;
+                    addMsg(
+                        "✓ compiled " +
+                            vm.instructions.length +
+                            " instructions",
+                    );
+                    setStatus("paused");
+                    brun.disabled = false;
+                    bstep.disabled = false;
+                    bpause.disabled = true;
+                    if (isMobile()) openDrawer();
+                    updateHUD();
+                } catch (e) {
+                    compiled = false;
+                    addMsg("✗ " + e.message, true);
+                    setStatus("error");
+                    brun.disabled = true;
+                    bstep.disabled = true;
+                    bpause.disabled = true;
+                    updateHUD();
+                }
+            });
+
+            bstep.addEventListener("click", () => {
+                if (!compiled) return;
+                // On mobile: switch to regs tab to watch state change
+                if (isMobile() && mobActiveTab === "op") setMobTab("rs");
+                try {
+                    const r = vm.step();
+                    addOutput(vm.outputBuffer);
+                    updateHUD();
+                    if (r === "halt") {
+                        addMsg("■ HALT");
+                        setStatus("done");
+                        brun.disabled = true;
+                        bstep.disabled = true;
+                        bpause.disabled = true;
+                    }
+                } catch (e) {
+                    addMsg("✗ " + e.message, true);
+                    setStatus("error");
+                    stopRun();
+                    brun.disabled = true;
+                    bstep.disabled = true;
+                    bpause.disabled = true;
+                }
+            });
+
+            function runLoop() {
+                const delay = parseInt(speedEl.value);
+                if (delay === 0) {
+                    let s = 0;
+                    try {
+                        while (s++ < 100000) {
+                            const r = vm.step();
+                            addOutput(vm.outputBuffer);
+                            if (r === "halt") {
+                                addMsg("■ HALT");
+                                setStatus("done");
+                                running = false;
+                                brun.disabled = true;
+                                bstep.disabled = true;
+                                bpause.disabled = true;
+                                updateHUD();
+                                return;
+                            }
+                            if (r === "yield") break;
+                        }
+                        if (s >= 100000) addMsg("⚠ 100k step limit", true);
+                        updateHUD();
+                        if (running) runTimer = setTimeout(runLoop, 0);
+                    } catch (e) {
+                        addMsg("✗ " + e.message, true);
+                        setStatus("error");
+                        running = false;
+                        brun.disabled = true;
+                        bstep.disabled = true;
+                        bpause.disabled = true;
+                        updateHUD();
+                    }
+                } else {
+                    try {
+                        const r = vm.step();
+                        addOutput(vm.outputBuffer);
+                        updateHUD();
+                        if (r === "halt") {
+                            addMsg("■ HALT");
+                            setStatus("done");
+                            running = false;
+                            brun.disabled = true;
+                            bstep.disabled = true;
+                            bpause.disabled = true;
+                        } else if (running)
+                            runTimer = setTimeout(runLoop, delay);
+                    } catch (e) {
+                        addMsg("✗ " + e.message, true);
+                        setStatus("error");
+                        running = false;
+                        brun.disabled = true;
+                        bstep.disabled = true;
+                        bpause.disabled = true;
+                    }
+                }
+            }
+            function stopRun() {
+                if (runTimer) {
+                    clearTimeout(runTimer);
+                    runTimer = null;
+                }
+                running = false;
+            }
+
+            brun.addEventListener("click", () => {
+                if (!compiled) return;
+                running = true;
+                setStatus("running");
+                brun.disabled = true;
+                bstep.disabled = true;
+                bpause.disabled = false;
+                if (isMobile()) setMobTab("op");
+                runLoop();
+            });
+            bpause.addEventListener("click", () => {
+                stopRun();
+                setStatus("paused");
+                brun.disabled = false;
+                bstep.disabled = false;
+                bpause.disabled = true;
+            });
+            breset.addEventListener("click", () => {
+                stopRun();
+                compiled = false;
+                outEl.innerHTML = "";
+                outLines = 0;
+                ocntEl.textContent = "0 lines";
+                prevRegs = [];
+                vm.instructions = [];
+                vm.instrToSourceLine = [];
+                vm.activeInstructionPos = 0;
+                vm.stackPointer = 0;
+                vm.outputBuffer = [];
+                vm.registerMemory = Array.from({ length: 8 }, () => ({
+                    tag: "int",
+                    data: 0,
+                }));
+                setStatus("idle");
+                brun.disabled = true;
+                bstep.disabled = true;
+                bpause.disabled = true;
+                ipbarEl.style.display = "none";
+                if (gActiveEl) {
+                    gActiveEl.classList.remove("aln");
+                    gActiveEl = null;
+                }
+                updateHUD();
+            });
+
+            // ════════════════════════════════════════════════════════
+            // DOCS
+            // ════════════════════════════════════════════════════════
+            let activeTab = "overview";
+            function openDoc(tab) {
+                activeTab = tab || activeTab;
+                dbodyEl.innerHTML = DOCS[activeTab] || "";
+                document
+                    .querySelectorAll(".dtab")
+                    .forEach((t) =>
+                        t.classList.toggle("act", t.dataset.tab === activeTab),
+                    );
+                dovEl.classList.add("open");
+                bdocs.classList.add("bon");
+            }
+            function closeDoc() {
+                dovEl.classList.remove("open");
+                bdocs.classList.remove("bon");
+            }
+            bdocs.addEventListener("click", () =>
+                dovEl.classList.contains("open") ? closeDoc() : openDoc(),
+            );
+            dcloseEl.addEventListener("click", closeDoc);
+            dovEl.addEventListener("click", (e) => {
+                if (e.target === dovEl) closeDoc();
+            });
+            document
+                .querySelectorAll(".dtab")
+                .forEach((t) =>
+                    t.addEventListener("click", () => openDoc(t.dataset.tab)),
+                );
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") closeDoc();
+            });
+
+            // ════════════════════════════════════════════════════════
+            // INIT
+            // ════════════════════════════════════════════════════════
+            renderGutter();
+            renderHL();
+            renderRegs();
+            renderStack();
+            lcntEl.textContent = codeEl.value.split("\n").length + " lines";
+        </script>
+    </body>
+</html>

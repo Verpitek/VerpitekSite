@@ -8,9 +8,18 @@ interface Props {
     secondVideoId?: string;
 }
 const { title, description, link, linkText, videoId, secondVideoId } = Astro.props;
+
+const logoMap = {
+    "LunaTech": "/LunaTechLogo.webp",
+    "BedPak": "/bedpak_mascot.webp",
+    "PanSpark": "/panspark.png",
+} as const;
+const logoPath = title in logoMap ? logoMap[title as keyof typeof logoMap] : undefined;
+const isExternal = link?.startsWith('http') ?? false;
 ---
 
 <div class="project-card">
+    {logoPath && <img src={logoPath} alt={`${title} logo`} class="project-logo" />}
     <h2>{title}</h2>
     <p>{description}</p>
     {videoId && (
@@ -40,7 +49,7 @@ const { title, description, link, linkText, videoId, secondVideoId } = Astro.pro
         </div>
     )}
     {link && (
-        <a href={link} class="project-link" target="_blank" rel="noopener noreferrer">
+        <a href={link} class="project-link" target={isExternal ? '_blank' : undefined} rel={isExternal ? 'noopener noreferrer' : undefined}>
             {linkText || "Learn more"}
         </a>
     )}
@@ -79,6 +88,19 @@ const { title, description, link, linkText, videoId, secondVideoId } = Astro.pro
         flex: 1 1 300px;
         max-width: 560px;
         border: none;
+    }
+    .project-logo {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    @media (max-width: 768px) {
+        .project-logo {
+            width: 80px;
+            height: 80px;
+        }
     }
     .project-link {
         display: inline-block;
