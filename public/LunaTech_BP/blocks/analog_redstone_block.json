@@ -1,0 +1,371 @@
+{
+	"format_version": "1.21.130",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:analog_redstone_block",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"traits": {
+				"minecraft:placement_direction": {
+					"enabled_states": [
+						"minecraft:cardinal_direction"
+					]
+				}
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				],
+				"lunatech:redstone_signal": [
+					15,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8,
+					9,
+					10,
+					11,
+					12,
+					13,
+					14,
+					0
+				]
+			}
+		},
+		"permutations": [
+			// Transform Permutations
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'north'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							0,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'south'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							180,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'east'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							270,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'west'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							90,
+							0
+						]
+					}
+				}
+			},
+			// Redstone Permutations
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 0",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 0,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 1",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 1,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 2",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 2,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 3",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 3,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 4",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 4,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 5",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 5,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 6",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 6,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 7",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 7,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 8",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 8,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 9",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 9,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 10",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 10,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 11",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 11,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 12",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 12,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 13",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 13,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 14",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 14,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('lunatech:redstone_signal') == 15",
+				"components": {
+					"minecraft:redstone_producer": {
+						"power": 15,
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"strongly_powered_face": "north",
+						"transform_relative": true
+					}
+				}
+			}
+		],
+		"components": {
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"minecraft:geometry": "geometry.invisible",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "acacia_leaves"
+				}
+			},
+			"minecraft:item_visual": {
+				"geometry": "geometry.analog_redstone_block_visual",
+				"material_instances": {
+					"*": {
+						"texture": "lunatech_analog_redstone_block"
+					}
+				}
+			},
+			"minecraft:destruction_particles": {
+				"texture": "lunatech_analog_redstone_block"
+			},
+			"minecraft:selection_box": {
+				"origin": [
+					-8,
+					0,
+					-8
+				],
+				"size": [
+					16,
+					4,
+					16
+				]
+			},
+			"minecraft:collision_box": {
+				"origin": [
+					-8,
+					0,
+					-8
+				],
+				"size": [
+					16,
+					4,
+					16
+				]
+			},
+			"lunatech:block_entity_link": {},
+			"lunatech:analog_redstone_block": {}
+		}
+	}
+}

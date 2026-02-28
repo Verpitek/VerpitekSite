@@ -1,0 +1,76 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:compressor",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				],
+				"lunatech:machine.crafter.state": [
+					"NO_INPUT",
+					"INSUFFICIENT_INPUT",
+					"INVALID_INPUT",
+					"INPUT_MISMATCH",
+					"CRAFTING",
+					"OUTPUT_FULL",
+					"OUT_OF_ENERGY"
+				]
+			}
+		},
+		"components": {
+			"minecraft:destructible_by_mining": {
+				"seconds_to_destroy": 5,
+				"item_specific_speeds": [
+					{
+						"item": {
+							"tags": "query.any_tag('minecraft:is_pickaxe')&&query.any_tag('minecraft:iron_tier','minecraft:diamond_tier')"
+						},
+						"destroy_speed": 1
+					}
+				]
+			},
+			"minecraft:geometry": "geometry.stiched_full_block",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_compressor",
+					"render_method": "alpha_test"
+				}
+			},
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"tag:lunatech:machine": {},
+			"tag:lunatech:machine.has_storage": {},
+			"tag:lunatech:machine.storage.can_hop": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:compressor",
+				"machine_type": "WORKER",
+				"range": 10,
+				"buffer": 1000,
+				"hopper_in": 0,
+				"hopper_out": 1
+			},
+			"lunatech:machine.crafter": {
+				"input_slot": 0,
+				"output_slot": 1,
+				"craft_time": 400,
+				"energy_consumption": 1,
+				"crafting_tag": "lunatech:compressor"
+			},
+			"lunatech:machine.display": {
+				"content": 2
+			},
+			"tag:kylowat:electricity.worker": {}
+		}
+	}
+}

@@ -1,0 +1,109 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.machine_ui.power_dial": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"power_dial": {
+					"rotation": [0, 0, "(v.power_percentage * 90) - 45"]
+				}
+			}
+		},
+		"animation.machine_ui.billboard": {
+			"loop": true,
+			"bones": {
+				"gui_back": {
+					"rotation": [0, "query.rotation_to_camera(1)", 0]
+				}
+			}
+		},
+		"animation.machine_ui.input_bar": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"ibar": {
+					"scale": [1, "math.clamp(variable.input_percentage * 6, 0, 6)", 1]
+				}
+			}
+		},
+		"animation.machine_ui.output_bar": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"obar": {
+					"scale": [1, "math.clamp(variable.output_percentage * 6, 0, 6)", 1]
+				}
+			}
+		},
+		"animation.machine_ui.progress_bar": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"progress_bar": {
+					"scale": ["math.clamp(variable.progress_percentage * 26, 0, 26)", 1, 1]
+				}
+			}
+		},
+		"animation.machine_ui.closed": {
+			"loop": "hold_on_last_frame",
+			"bones": {
+				"gui_back": {
+					"scale": 0
+				}
+			}
+		},
+		"animation.machine_ui.open": {
+			"loop": "hold_on_last_frame",
+			"bones": {
+				"gui_back": {
+					"scale": 1
+				}
+			}
+		},
+		"animation.machine_ui.closing": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.5,
+			"bones": {
+				"gui_back": {
+					"scale": {
+						"0.0": [1, 1, 1],
+						"0.5": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"animation.machine_ui.opening": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.5,
+			"bones": {
+				"gui_back": {
+					"scale": {
+						"0.0": [0, 0, 0],
+						"0.5": [1, 1, 1]
+					}
+				}
+			}
+		},
+		"animation.machine_ui.inv_bars": {
+			"loop": true,
+			"bones": {
+				"inv_slot0": {
+					"scale": [1, "math.clamp(variable.inv_0_percentage * 10, 0, 10)", 1]
+				},
+				"inv_slot1": {
+					"scale": [1, "math.clamp(variable.inv_1_percentage * 10, 0, 10)", 1]
+				},
+				"inv_slot2": {
+					"scale": [1, "math.clamp(variable.inv_2_percentage * 10, 0, 10)", 1]
+				},
+				"inv_slot3": {
+					"scale": [1, "math.clamp(variable.inv_3_percentage * 10, 0, 10)", 1]
+				},
+				"inv_slot4": {
+					"scale": [1, "math.clamp(variable.inv_4_percentage * 10, 0, 10)", 1]
+				}
+			}
+		}
+	}
+}

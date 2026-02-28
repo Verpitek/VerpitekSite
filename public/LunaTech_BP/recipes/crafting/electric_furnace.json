@@ -1,0 +1,33 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:electric_furnace"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "CAC",
+            "BCB",
+            "BBB"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:prototyping_pcb"
+            },
+            "B": {
+                "item": "copper_ingot"
+            },
+            "C": {
+                "item": "lunatech:composite_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:electric_furnace"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

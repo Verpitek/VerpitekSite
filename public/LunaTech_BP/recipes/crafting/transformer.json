@@ -1,0 +1,29 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:transformer"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "ABA"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:wires"
+            },
+            "B": {
+                "item": "minecraft:iron_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:transformer",
+            "count": 1
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

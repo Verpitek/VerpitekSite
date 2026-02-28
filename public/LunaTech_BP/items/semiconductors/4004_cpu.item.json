@@ -1,0 +1,14 @@
+{
+	"format_version": "1.20.50",
+	"minecraft:item": {
+		"description": {
+			"identifier": "lunatech:4004_cpu",
+			"menu_category": {
+				"category": "items"
+			}
+		},
+		"components": {
+			"minecraft:icon": "lunatech_4004_cpu"
+		}
+	}
+}

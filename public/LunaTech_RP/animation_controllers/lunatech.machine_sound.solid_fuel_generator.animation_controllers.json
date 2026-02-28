@@ -1,0 +1,33 @@
+{
+	"format_version": "1.19.0",
+	"animation_controllers": {
+		"controller.animation.lunatech.machine.solid_fuel_generator": {
+			"initial_state": "inactive",
+			"states": {
+				"inactive": {
+					"transitions": [
+						{"activating": "variable.active == true"}
+					]
+				},
+				"activating": {
+					"animations": ["activating"],
+					"transitions": [
+						{"active": "query.state_time > 1.91"}
+					]
+				},
+				"active": {
+					"animations": ["active"],
+					"transitions": [
+						{"deactivating": "variable.active == false && Math.mod(query.state_time - 1.250025, 1.6667) <= 0.2"}
+					]
+				},
+				"deactivating": {
+					"animations": ["deactivating"],
+					"transitions": [
+						{"inactive": "query.state_time > 1"}
+					]
+				}
+			}
+		}
+	}
+}

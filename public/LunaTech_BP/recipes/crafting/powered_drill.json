@@ -1,0 +1,33 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:powered_drill"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " A ",
+            "ABA",
+            "ACA"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:composite_ingot"
+            },
+            "B": {
+                "item": "lunatech:wires"
+            },
+            "C": {
+                "item": "lunatech:prototyping_pcb"
+            }
+        },
+        "result": {
+            "item": "lunatech:powered_drill"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

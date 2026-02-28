@@ -1,0 +1,21 @@
+{
+	"format_version": "1.20.50",
+	"minecraft:item": {
+		"description": {
+			"identifier": "lunatech:nutrition_brick",
+			"menu_category": {
+				"category": "items"
+			}
+		},
+		"components": {
+			"minecraft:icon": "lunatech_nutrition_brick",
+			"minecraft:food": {
+				"nutrition": 10,
+				"saturation_modifier": 10
+			},
+			"minecraft:use_modifiers": {
+				"use_duration": 1
+			}
+		}
+	}
+}

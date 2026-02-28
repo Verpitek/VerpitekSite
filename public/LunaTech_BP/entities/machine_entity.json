@@ -1,0 +1,43 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "lunatech:machine_entity",
+			"is_spawnable": false,
+			"is_summonable": true,
+			"is_experimental": false
+		},
+		"component_groups": {},
+		"components": {
+			"minecraft:physics": {
+				"has_collision": false,
+				"has_gravity": false,
+				"push_towards_closest_space": false
+			},
+			"minecraft:inventory": {
+				"private": true,
+				"restrict_to_owner": true,
+				"inventory_size": 1024,
+				"container_type": "container"
+			},
+			"minecraft:knockback_resistance": {
+				"value": 999999
+			},
+			"minecraft:damage_sensor": {
+				"triggers": {
+					"cause": "all",
+					"deals_damage": "no"
+				}
+			},
+			"minecraft:collision_box": {
+				"height": 1,
+				"width": 0
+			},
+			"minecraft:health": {
+				"min": 1,
+				"value": 100
+			}
+		},
+		"events": {}
+	}
+}

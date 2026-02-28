@@ -1,0 +1,124 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.machine_ui.progress_power_in_output",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 28,
+				"visible_bounds_height": 5,
+				"visible_bounds_offset": [0, 1.5, 0]
+			},
+			"bones": [
+				{
+					"name": "gui_back",
+					"pivot": [0, -8, 0],
+					"cubes": [
+						{
+							"origin": [-24, 0, 0],
+							"size": [48, 24, 0],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [48, 24]}
+							}
+						}
+					]
+				},
+				{
+					"name": "power_dial",
+					"parent": "gui_back",
+					"pivot": [-15, 7.75, -0.75],
+					"cubes": [
+						{
+							"origin": [-17.58579, 2.33579, -0.75],
+							"size": [8, 8, 0],
+							"pivot": [-15, 7.75, -0.75],
+							"rotation": [0, 0, 45],
+							"uv": {
+								"north": {"uv": [0, 75], "uv_size": [8, 8]}
+							}
+						}
+					]
+				},
+				{
+					"name": "dial_casing",
+					"parent": "gui_back",
+					"pivot": [-9, -16, 0],
+					"cubes": [
+						{"origin": [-19.5, 5.5, -2], "size": [9, 9, 2], "uv": [0, 64]}
+					]
+				},
+				{
+					"name": "progress_bar",
+					"parent": "gui_back",
+					"pivot": [-13, 15, -0.3],
+					"cubes": [
+						{
+							"origin": [-13, 17, -0.3],
+							"size": [1, 1, 0],
+							"uv": {
+								"north": {"uv": [8, 75], "uv_size": [1, 1]}
+							}
+						}
+					]
+				},
+				{
+					"name": "input_bar",
+					"parent": "gui_back",
+					"pivot": [1.5, 10, -0.3],
+					"cubes": [
+						{
+							"origin": [-7, 7.5, -0.3],
+							"size": [5, 5, 0],
+							"uv": {
+								"north": {"uv": [9, 75], "uv_size": [5, 5]}
+							}
+						}
+					]
+				},
+				{
+					"name": "ibar",
+					"parent": "input_bar",
+					"pivot": [0.5, 7.1, -0.3],
+					"cubes": [
+						{
+							"origin": [-1, 7.1, -0.3],
+							"size": [3, 1, 0],
+							"uv": {
+								"north": {"uv": [8, 75], "uv_size": [1, 1]}
+							}
+						}
+					]
+				},
+				{
+					"name": "output_bar",
+					"parent": "gui_back",
+					"pivot": [14.5, 10, -0.3],
+					"cubes": [
+						{
+							"origin": [8, 7.5, -0.3],
+							"size": [5, 5, 0],
+							"uv": {
+								"north": {"uv": [14, 75], "uv_size": [5, 5]}
+							}
+						}
+					]
+				},
+				{
+					"name": "obar",
+					"parent": "output_bar",
+					"pivot": [15.5, 7.1, -0.3],
+					"cubes": [
+						{
+							"origin": [14, 7.1, -0.3],
+							"size": [3, 1, 0],
+							"uv": {
+								"north": {"uv": [8, 75], "uv_size": [1, 1]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

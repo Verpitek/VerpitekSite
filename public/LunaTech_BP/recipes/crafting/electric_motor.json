@@ -1,0 +1,33 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:electric_motor"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " I ",
+            "CWC",
+            "CIC"
+        ],
+        "key": {
+            "I": {
+                "item": "iron_ingot"
+            },
+            "C": {
+                "item": "copper_ingot"
+            },
+            "W": {
+                "item": "lunatech:wires"
+            }
+        },
+        "result": {
+            "item": "lunatech:electric_motor"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:solar_panel"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "AAA",
+            "BDB",
+            "TWT"
+        ],
+        "key": {
+            "A": {
+                "item": "minecraft:glass"
+            },
+            "B": {
+                "item": "lunatech:composite_ingot"
+            },
+            "T": {
+                "item": "lunatech:transistor"
+            },
+            "D": {
+                "item": "minecraft:glowstone"
+            },
+            "W": {
+                "item": "lunatech:wires"
+            }
+        },
+        "result": {
+            "item": "lunatech:solar_panel"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

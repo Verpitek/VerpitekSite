@@ -1,0 +1,39 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:recycler"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "CAC",
+            "E C",
+            "WBW"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:prototyping_pcb"
+            },
+            "B": {
+                "item": "diamond"
+            },
+            "W": {
+                "item": "lunatech:wires"
+            },
+            "C": {
+                "item": "lunatech:composite_ingot"
+            },
+            "E": {
+                "item": "lunatech:electric_motor"
+            }
+        },
+        "result": {
+            "item": "lunatech:recycler"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

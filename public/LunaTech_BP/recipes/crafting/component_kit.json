@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:component_kit"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "",
+            " A ",
+            "BCD"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:transformer"
+            },
+            "B": {
+                "item": "lunatech:transistor"
+            },
+            "C": {
+                "item": "lunatech:crystal_oscillator"
+            },
+            "D": {
+                "item": "lunatech:wires"
+            }
+        },
+        "result": {
+            "item": "lunatech:component_kit"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

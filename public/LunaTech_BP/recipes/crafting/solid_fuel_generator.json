@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:solid_fuel_generator"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "AAA",
+            "CBC",
+            "CPC"
+        ],
+        "key": {
+            "A": {
+                "item": "copper_ingot"
+            },
+            "B": {
+                "item": "iron_ingot"
+            },
+            "C": {
+                "item": "lunatech:composite_ingot"
+            },
+            "P": {
+                "item": "lunatech:electric_motor"
+            }
+        },
+        "result": {
+            "item": "lunatech:solid_fuel_generator"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

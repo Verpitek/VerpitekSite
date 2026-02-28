@@ -1,0 +1,308 @@
+{
+	"format_version": "1.21.120",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:microcontroller",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				],
+				"lunatech:power.front": [
+					false,
+					true
+				],
+				"lunatech:power.back": [
+					false,
+					true
+				],
+				"lunatech:power.left": [
+					false,
+					true
+				],
+				"lunatech:power.right": [
+					false,
+					true
+				],
+				"lunatech:executor.panspark": [
+					"UNINIT",
+					"IDLE",
+					"COMPILING",
+					"RUNNING",
+					"ERR"
+				]
+			}
+		},
+		"permutations": [
+			{
+				// Producing in all directions (BIN: 0000)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"south",
+							"west",
+							"east"
+						],
+						"power": 0
+					}
+				}
+			},
+			{
+				// Producing in [Right] Direction (BIN: 0001)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Left] Direction (BIN: 0010)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"west"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Left, Right] Direction (BIN: 0011)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"west",
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Bottom] Direction (BIN: 0100)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"south"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Bottom, Right] Direction (BIN: 0101)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"south",
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Bottom, Left] Direction (BIN: 0110)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"south",
+							"west"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Bottom, Left, Right] Direction (BIN: 0111)
+				"condition": "query.block_state('lunatech:power.front') == false && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"south",
+							"west",
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top] Direction (BIN: 1000)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top, Right] Direction (BIN: 1001)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top, Left] Direction (BIN: 1010)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"west"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top, Left, Right] Direction (BIN: 1011)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == false && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"west",
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top, Bottom] Direction (BIN: 1100)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"south"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top, Bottom, Right] Direction (BIN: 1101)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == false && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"south",
+							"east"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in [Top, Bottom, Left] Direction (BIN: 1110)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == false",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [
+							"north",
+							"south",
+							"west"
+						],
+						"power": 15
+					}
+				}
+			},
+			{
+				// Producing in all directions (BIN: 1111)
+				"condition": "query.block_state('lunatech:power.front') == true && query.block_state('lunatech:power.back') == true && query.block_state('lunatech:power.left') == true && query.block_state('lunatech:power.right') == true",
+				"components": {
+					"minecraft:redstone_producer": {
+						"connected_faces": [],
+						"power": 15
+					}
+				}
+			}
+		],
+		"components": {
+			"minecraft:geometry": "geometry.microcontroller",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_microcontroller",
+					"render_method": "alpha_test"
+				}
+			},
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"minecraft:selection_box": {
+				"origin": [
+					-8,
+					0,
+					-8
+				],
+				"size": [
+					16,
+					4,
+					16
+				]
+			},
+			"minecraft:collision_box": {
+				"origin": [
+					-8,
+					0,
+					-8
+				],
+				"size": [
+					16,
+					4,
+					16
+				]
+			},
+			"tag:lunatech:machine": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:microcontroller",
+				"machine_type": "WORKER",
+				"range": 10,
+				"buffer": 1000
+			},
+			"lunatech:machine.microcontroller": {},
+			"lunatech:executor.panspark": {},
+			"lunatech:machine.display": {
+				"content": 0,
+				"offset": {
+					"x": 0,
+					"y": -0.9,
+					"z": 0
+				}
+			},
+			"tag:kylowat:electricity.worker": {}
+		}
+	}
+}

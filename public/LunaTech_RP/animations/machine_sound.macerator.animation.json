@@ -1,0 +1,30 @@
+{
+	"format_version": "1.21.110",
+	"animations": {
+		"animation.lunatech.machine.macerator.active": {
+			"loop": true,
+			"animation_length": 1.6667,
+			"sound_effects": {
+				"0.0": {
+					"effect": "active"
+				}
+			}
+		},
+		"animation.lunatech.machine.macerator.activating": {
+			"animation_length": 1.875,
+			"sound_effects": {
+				"0.0": {
+					"effect": "startup"
+				}
+			}
+		},
+		"animation.lunatech.machine.macerator.deactivating": {
+			"animation_length": 1.625,
+			"sound_effects": {
+				"0.4167": {
+					"effect": "shutdown"
+				}
+			}
+		}
+	}
+}

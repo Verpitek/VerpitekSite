@@ -1,0 +1,26 @@
+{
+	"format_version": "1.20.80",
+	"render_controllers": {
+		"controller.render.machine_ui": {
+			"geometry": "Array.geo[q.property('lunatech:model')]",
+			"materials": [
+				{
+					"*": "Material.default"
+				}
+			],
+			"arrays": {
+				"geometries": {
+					"Array.geo": [
+						"Geometry.power_only",
+						"Geometry.power_progress_input",
+						"Geometry.power_progress_in_output",
+						"Geometry.power_inv"
+					]
+				}
+			},
+			"textures": [
+				"Texture.default"
+			]
+		}
+	}
+}

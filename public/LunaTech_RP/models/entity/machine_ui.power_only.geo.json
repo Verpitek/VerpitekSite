@@ -1,0 +1,54 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.machine_ui.power_only",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "gui_back",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+							"origin": [-9, 0, 0],
+							"size": [18, 18, 0],
+							"uv": {
+								"north": {"uv": [0, 46], "uv_size": [18, 18]}
+							}
+						}
+					]
+				},
+				{
+					"name": "power_dial",
+					"parent": "gui_back",
+					"pivot": [0, 6.75, -0.75],
+					"cubes": [
+						{
+							"origin": [-2.58579, 1.33579, -0.75],
+							"size": [8, 8, 0],
+							"pivot": [0, 6.75, -0.75],
+							"rotation": [0, 0, 45],
+							"uv": {
+								"north": {"uv": [0, 75], "uv_size": [8, 8]}
+							}
+						}
+					]
+				},
+				{
+					"name": "dial_casing",
+					"parent": "gui_back",
+					"pivot": [6, -17, 0],
+					"cubes": [
+						{"origin": [-4.5, 4.5, -2], "size": [9, 9, 2], "uv": [0, 64]}
+					]
+				}
+			]
+		}
+	]
+}

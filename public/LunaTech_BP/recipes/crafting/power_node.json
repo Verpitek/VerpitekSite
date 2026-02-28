@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:power_node"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " A ",
+            "BCB",
+            "DDD"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:prototyping_pcb"
+            },
+            "B": {
+                "item": "minecraft:redstone"
+            },
+            "C": {
+                "item": "lunatech:wires"
+            },
+            "D": {
+                "item": "lunatech:composite_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:power_node"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

@@ -1,0 +1,169 @@
+{
+    "format_version": "1.21.90",
+    "minecraft:block": {
+        "description": {
+            "identifier": "lunatech:resin_jungle_log",
+            "menu_category": {
+                "category": "construction"
+            },
+            "traits": {
+                "minecraft:placement_position": {
+                    "enabled_states": [
+                        "minecraft:block_face"
+                    ]
+                }
+            },
+            "states": {
+                "lunatech:resin_filled": [
+                    false,
+                    true
+                ]
+            }
+        },
+        "components": {
+            "minecraft:destructible_by_mining": {
+                "seconds_to_destroy": 3,
+                "item_specific_speeds": [
+                    {
+                        "item": {
+                            "tags": "query.any_tag('minecraft:is_axe')&&query.any_tag('minecraft:iron_tier','minecraft:diamond_tier')"
+                        },
+                        "destroy_speed": 1
+                    }
+                ]
+            },
+            "tag:minecraft:is_axe_item_destructible": {},
+            "minecraft:geometry": "minecraft:geometry.full_block",
+            "minecraft:light_dampening": 15,
+            "minecraft:light_emission": 0,
+            "minecraft:tick": {
+                "interval_range": [
+                    6000,
+                    18000
+                ],
+                "looping": true
+            },
+            "lunatech:resin_fill": {},
+            "minecraft:material_instances": {
+                "*": {
+                    "texture": "lunatech_unfilled_resin_jungle_log",
+                    "render_method": "opaque",
+                    "ambient_occlusion": 1,
+                    "face_dimming": true
+                },
+                "up": {
+                    "texture": "jungle_log_top",
+                    "render_method": "opaque",
+                    "ambient_occlusion": 1,
+                    "face_dimming": true
+                },
+                "down": {
+                    "texture": "jungle_log_top",
+                    "render_method": "opaque",
+                    "ambient_occlusion": 1,
+                    "face_dimming": true
+                }
+            },
+            "minecraft:collision_box": true
+        },
+        "permutations": [
+            {
+                "condition": "q.block_state('lunatech:resin_filled') == true",
+                "components": {
+                    "minecraft:material_instances": {
+                        "*": {
+                            "texture": "lunatech_filled_resin_jungle_log",
+                            "render_method": "opaque",
+                            "ambient_occlusion": 1,
+                            "face_dimming": true
+                        },
+                        "up": {
+                            "texture": "jungle_log_top",
+                            "render_method": "opaque",
+                            "ambient_occlusion": 1,
+                            "face_dimming": true
+                        },
+                        "down": {
+                            "texture": "jungle_log_top",
+                            "render_method": "opaque",
+                            "ambient_occlusion": 1,
+                            "face_dimming": true
+                        }
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:block_face') == 'north'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            90,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:block_face') == 'west'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            0,
+                            90
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:block_face') == 'south'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            90,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:block_face') == 'east'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            0,
+                            90
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:block_face') == 'up'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            },
+            {
+                "condition": "q.block_state('minecraft:block_face') == 'down'",
+                "components": {
+                    "minecraft:transformation": {
+                        "rotation": [
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+}

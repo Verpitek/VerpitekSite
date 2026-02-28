@@ -1,0 +1,16 @@
+{
+	"format_version": "1.20.80",
+	"render_controllers": {
+		"controller.render.analog_redstone_block_visual": {
+			"geometry": "Geometry.default",
+			"materials": [
+				{
+					"*": "Material.default"
+				}
+			],
+			"textures": [
+				"Texture.default"
+			]
+		}
+	}
+}

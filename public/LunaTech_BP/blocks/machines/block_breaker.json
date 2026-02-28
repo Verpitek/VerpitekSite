@@ -1,0 +1,112 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:block_breaker",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"traits": {
+				"minecraft:placement_direction": {
+					"enabled_states": [
+						"minecraft:cardinal_direction"
+					]
+				}
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				],
+				"lunatech:breaker_state": [
+					"IDLE",
+					"BREAKING",
+					"STUCK"
+				],
+				"lunatech:breaking_state": [
+					0,
+					1,
+					2,
+					3
+				]
+			}
+		},
+		"permutations": [
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'north'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							0,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'south'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							180,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'east'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							270,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:cardinal_direction') == 'west'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							90,
+							0
+						]
+					}
+				}
+			}
+		],
+		"components": {
+			"minecraft:geometry": "geometry.block_breaker",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_block_breaker"
+				}
+			},
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"tag:lunatech:machine": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:block_breaker",
+				"machine_type": "WORKER",
+				"range": 10,
+				"buffer": 1000
+			},
+			"lunatech:machine.display": {
+				"content": 0
+			},
+			"tag:kylowat:electricity.worker": {}
+		}
+	}
+}

@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:watermill"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "ADC",
+            " BC",
+            "ADC"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:composite_ingot"
+            },
+            "B": {
+                "item": "minecraft:copper_ingot"
+            },
+            "C": {
+                "item": "lunatech:electric_motor"
+            },
+            "D": {
+                "item": "lunatech:transformer"
+            }
+        },
+        "result": {
+            "item": "lunatech:watermill"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

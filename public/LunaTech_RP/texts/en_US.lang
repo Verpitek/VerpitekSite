@@ -1,0 +1,97 @@
+pack.name=LunaTech RP
+pack.description=LunaTech
+
+### CATEGORIES
+lunatech:construction=Lunatech Construction
+lunatech:machines=Lunatech Machines
+
+### ITEMS
+item.spawn_egg.entity.lunatech:machine_ui.name=Spawn Machine UI
+item.spawn_egg.entity.lunatech:machine_entity.name=Spawn Machine Entity
+item.spawn_egg.entity.lunatech:macerator_sound.name=Spawn Macerator Sound
+item.lunatech:rubber=Rubber
+item.lunatech:rubber_compound=Rubber Compound
+item.lunatech:component_kit=Component Kit
+item.lunatech:composite_ingot=Composite Ingot
+item.lunatech:composite_plate=Composite Plate
+item.lunatech:composite_scrap=Composite Scrap
+item.lunatech:electric_motor=Electric Motor
+item.lunatech:prototyping_pcb=Prototyping PCB
+item.lunatech:screen=Screen
+item.lunatech:transformer=Transformer
+item.lunatech:wires=Wires
+item.lunatech:nutrition_brick=Nutrition Brick
+item.lunatech:composite_powder=Composite Powder
+item.lunatech:raw_copper_powder=Raw Copper Powder
+item.lunatech:raw_gold_powder=Raw Gold Powder
+item.lunatech:raw_iron_powder=Raw Iron Powder
+item.lunatech:4004_cpu=CPU 4004
+item.lunatech:6502_cpu=CPU 6502
+item.lunatech:8008_cpu=CPU 8008
+item.lunatech:8080_cpu=CPU 8080
+item.lunatech:crystal_oscillator=Crystal Oscillator
+item.lunatech:i386_cpu=CPU i386
+item.lunatech:transistor=Transistor
+item.lunatech:databank_active=Databank §a(Active)
+item.lunatech:databank_full=Databank §c(Full)
+item.lunatech:hammer=Hammer
+item.lunatech:multitester=Multitester
+item.lunatech:pliers=Pliers
+item.lunatech:powered_chainsaw=Powered Chainsaw
+item.lunatech:powered_drill=Powered Drill
+item.lunatech:screwdriver=Screwdriver
+item.lunatech:soldering_iron=Soldering Iron
+item.lunatech:jetpack=Jetpack
+item.lunatech:standart_issue_pda=Standard Issue PDA
+item.lunatech:standart_issue_visor=Standard Issue Visor
+item.lunatech:wrench=Wrench
+item.lunatech:lunanet_module=LunaNet Module
+item.lunatech:machine_module=Machine Module
+item.lunatech:redstone_module=Redstone Module
+item.lunatech:storage_module=Storage Module
+item.lunatech:world_module=World Module
+item.lunatech:redstone_isotope_tier1=Redstone Isotope\n§9Tier 1
+
+### ENTITIES
+entity.lunatech:machine_entity.name=Machine Entity
+entity.lunatech:machine_ui.name=Machine UI
+entity.lunatech:macerator_sound.name=Macerator Sound
+
+### BLOCKS
+tile.lunatech:power_node.name=Power Node
+tile.lunatech:solar_panel.name=Solar Panel
+tile.lunatech:terminal.name=Terminal
+tile.lunatech:building_block.name=Building Block
+tile.lunatech:composite_frame_glass.name=Composite Frame Glass
+tile.lunatech:composite_open_plate_grate.name=Composite Open Plate Grate
+tile.lunatech:composite_path_block.name=Composite Path Block
+tile.lunatech:composite_plate_block.name=Composite Plate Block
+tile.lunatech:composite_plate_grate.name=Composite Plate Grate
+tile.lunatech:composite_plate_ornament.name=Composite Plate Ornament
+tile.lunatech:composite_plate_shingles.name=Composite Plate Shingles
+tile.lunatech:composite_scrap_plate_block.name=Composite Scrap Plate Block
+tile.lunatech:sturdy_composite_block.name=Sturdy Composite Block
+tile.lunatech:electric_furnace.name=Electric Furnace
+tile.lunatech:accumulator.name=Accumulator
+tile.lunatech:solid_fuel_generator.name=Solid Fuel Generator
+tile.lunatech:wireless_charger.name=Wireless Charger
+tile.lunatech:macerator.name=Macerator
+tile.lunatech:windmill.name=Windmill
+tile.lunatech:watermill.name=Watermill
+tile.lunatech:machine_block.name=Machine Block
+tile.lunatech:resin_jungle_log.name=Resin Jungle Log
+tile.lunatech:recycler.name=Recycler
+tile.lunatech:compressor.name=Compressor
+tile.lunatech:microcontroller.name=Microcontroller
+item.spawn_egg.entity.lunatech:machine_text_ui.name=Spawn Machine Text UI
+entity.lunatech:machine_text_ui.name=Machine Text UI
+tile.lunatech:block_breaker.name=Block Breaker
+tile.lunatech:analog_redstone_block.name=Analog Redstone Block
+tile.lunatech:item_extractor.name=Item Extractor
+tile.lunatech:item_reciever.name=Item Reciever
+tile.lunatech:item_junction.name=Item Junction
+tile.lunatech:quarry_controller.name=Querry Controller
+tile.lunatech:quarry_corner.name=Querry Corner
+tile.lunatech:quarry_beam.name=Quarry Beam
+item.spawn_egg.entity.lunatech:analog_redstone_block_visual.name=Spawn Analog Redstone block Visual
+entity.lunatech:analog_redstone_block_visual.name=Analog Redstone block Visual

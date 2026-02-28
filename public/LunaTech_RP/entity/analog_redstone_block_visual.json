@@ -1,0 +1,31 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "lunatech:analog_redstone_block_visual",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/analog_redstone_block_visual"
+			},
+			"geometry": {
+				"default": "geometry.analog_redstone_block_visual"
+			},
+			"render_controllers": [
+				"controller.render.analog_redstone_block_visual"
+			],
+			"animations": {
+				"power_indicator": "animation.model.slider_position"
+			},
+			"scripts": {
+				"pre_animation": [
+					"variable.output_percentage = query.property('lunatech:power_level') / 15;"
+				],
+				"animate": [
+					"power_indicator"
+				]
+			}
+		}
+	}
+}

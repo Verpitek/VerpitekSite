@@ -1,0 +1,65 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "lunatech:machine_ui",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/generic_machine_gui"
+			},
+			"geometry": {
+				"power_only": "geometry.machine_ui.power_only",
+				"power_progress_input": "geometry.machine_ui.progress_power_input",
+				"power_progress_in_output": "geometry.machine_ui.progress_power_in_output",
+				"power_inv": "geometry.machine_ui.item_extrec"
+			},
+			"render_controllers": [
+				"controller.render.machine_ui"
+			],
+			"spawn_egg": {
+				"base_color": "#000000",
+				"overlay_color": "#FFFFFF"
+			},
+			"animations": {
+				"main": "animation.machine_ui.billboard",
+				"power_dial": "animation.machine_ui.power_dial",
+				"input_bar": "animation.machine_ui.input_bar",
+				"output_bar": "animation.machine_ui.output_bar",
+				"progress_bar": "animation.machine_ui.progress_bar",
+				"inv_bars": "animation.machine_ui.inv_bars",
+				// Pop-Up animations
+				"toggle_controller": "controller.animation.machine_ui.toggle",
+				"closed": "animation.machine_ui.closed",
+				"closing": "animation.machine_ui.closing",
+				"open": "animation.machine_ui.open",
+				"opening": "animation.machine_ui.opening"
+			},
+			"scripts": {
+				"pre_animation": [
+					"variable.power_percentage = query.property('lunatech:power_dial') / 100;",
+					"variable.progress_percentage = query.property('lunatech:progress_dial') / 100;",
+					"variable.input_percentage = query.property('lunatech:input_percentage') / 100;",
+					"variable.output_percentage = query.property('lunatech:output_percentage') / 100;",
+					// Inventory related percentages
+					"variable.inv_0_percentage = query.property('lunatech:inv_0_percentage') / 100;",
+					"variable.inv_1_percentage = query.property('lunatech:inv_1_percentage') / 100;",
+					"variable.inv_2_percentage = query.property('lunatech:inv_2_percentage') / 100;",
+					"variable.inv_3_percentage = query.property('lunatech:inv_3_percentage') / 100;",
+					"variable.inv_4_percentage = query.property('lunatech:inv_4_percentage') / 100;"
+				],
+				"animate": [
+					"main",
+					"power_dial",
+					"progress_bar",
+					"input_bar",
+					"output_bar",
+					"inv_bars",
+					// Pop-Up Animation Controller
+					"toggle_controller"
+				]
+			}
+		}
+	}
+}

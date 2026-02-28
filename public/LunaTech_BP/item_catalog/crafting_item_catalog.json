@@ -1,0 +1,50 @@
+{
+    "format_version": "1.21.110",
+    "minecraft:crafting_items_catalog": {
+        "categories": [
+            {
+                "category_name": "items",
+                "groups": [
+                    {
+                        "group_identifier": {
+                            "icon": "lunatech:power_node",
+                            "name": "lunatech:machines"
+                        },
+                        "items": [
+                            "lunatech:power_node",
+                            "lunatech:accumulator",
+                            "lunatech:solar_panel",
+                            "lunatech:terminal",
+                            "lunatech:electric_furnace",
+                            "lunatech:solid_fuel_generator",
+                            "lunatech:macerator",
+                            "lunatech:windmill"
+                        ]
+                    }
+                ]
+            },
+            {
+                "category_name": "construction",
+                "groups": [
+                    {
+                        "group_identifier": {
+                            "icon": "lunatech:composite_plate_block",
+                            "name": "lunatech:construction"
+                        },
+                        "items": [
+                            "lunatech:composite_frame_glass",
+                            "lunatech:composite_open_plate_grate",
+                            "lunatech:composite_path_block",
+                            "lunatech:composite_plate_block",
+                            "lunatech:composite_plate_grate",
+                            "lunatech:composite_plate_ornament",
+                            "lunatech:composite_plate_shingles",
+                            "lunatech:composite_scrap_plate_block",
+                            "lunatech:sturdy_composite_block"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

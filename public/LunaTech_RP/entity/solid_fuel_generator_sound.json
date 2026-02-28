@@ -1,0 +1,44 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "lunatech:solid_fuel_generator_sound",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/macerator_sound"
+			},
+			"geometry": {
+				"default": "geometry.machine_entity"
+			},
+			"render_controllers": [
+				"controller.render.macerator_sound"
+			],
+			"spawn_egg": {
+				"base_color": "#000000",
+				"overlay_color": "#FFFFFF"
+			},
+			"sound_effects": {
+				"active": "machine_sound.solid_fuel_generator.active",
+				"startup": "machine_sound.solid_fuel_generator.activating",
+				"shutdown": "machine_sound.shutdown"
+			},
+			"animations": {
+				"sound_controller": "controller.animation.lunatech.machine.macerator",
+				"active": "animation.lunatech.machine.macerator.active",
+				"activating": "animation.lunatech.machine.macerator.activating",
+				"deactivating": "animation.lunatech.machine.macerator.deactivating"
+			},
+			"scripts": {
+				"should_update_effects_offscreen": true,
+				"pre_animation": [
+					"variable.active = query.property('lunatech:active');"
+				],
+				"animate": [
+					"sound_controller"
+				]
+			}
+		}
+	}
+}

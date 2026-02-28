@@ -1,0 +1,159 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "lunatech:machine_ui",
+			"is_spawnable": true,
+			"is_summonable": true,
+			"is_experimental": false,
+			"properties": {
+				"lunatech:progress_dial": {
+					"client_sync": true,
+					"type": "int",
+					"default": 0,
+					"range": [
+						0,
+						100
+					]
+				},
+				"lunatech:power_dial": {
+					"client_sync": true,
+					"type": "int",
+					"default": 0,
+					"range": [
+						0,
+						100
+					]
+				},
+				"lunatech:input_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"default": 0,
+					"range": [
+						0,
+						100
+					]
+				},
+				"lunatech:output_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"default": 0,
+					"range": [
+						0,
+						100
+					]
+				},
+				"lunatech:model": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						3
+					],
+					"default": 0
+				},
+				"lunatech:open_state": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						1
+					],
+					"default": 0
+				},
+				// Inv Slot properties
+				"lunatech:inv_0_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						100
+					],
+					"default": 0
+				},
+				"lunatech:inv_1_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						100
+					],
+					"default": 0
+				},
+				"lunatech:inv_2_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						100
+					],
+					"default": 0
+				},
+				"lunatech:inv_3_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						100
+					],
+					"default": 0
+				},
+				"lunatech:inv_4_percentage": {
+					"client_sync": true,
+					"type": "int",
+					"range": [
+						0,
+						100
+					],
+					"default": 0
+				}
+			}
+		},
+		"component_groups": {},
+		"components": {
+			"minecraft:scale": {
+				"value": 0.5
+			},
+			"minecraft:physics": {
+				"has_collision": false,
+				"has_gravity": false,
+				"push_towards_closest_space": false
+			},
+			"minecraft:inventory": {
+				"private": true,
+				"restrict_to_owner": true,
+				"inventory_size": 1024,
+				"container_type": "container"
+			},
+			"minecraft:knockback_resistance": {
+				"value": 999999
+			},
+			"minecraft:damage_sensor": {
+				"triggers": {
+					"cause": "all",
+					"deals_damage": "no"
+				}
+			},
+			"minecraft:health": {
+				"min": 1,
+				"value": 100
+			},
+			"minecraft:collision_box": {
+				"width": 0,
+				"height": 0
+			}
+		},
+		"events": {
+			"lunatech:make_small": {
+				"set_property": {
+					"lunatech:model": 1
+				}
+			},
+			"lunatech:make_big": {
+				"set_property": {
+					"lunatech:model": 0
+				}
+			}
+		}
+	}
+}

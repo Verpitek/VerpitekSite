@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:accumulator"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "CAC",
+            "BDB",
+            "CAC"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:transformer"
+            },
+            "B": {
+                "item": "minecraft:redstone"
+            },
+            "C": {
+                "item": "lunatech:composite_ingot"
+            },
+            "D": {
+                "item": "minecraft:copper_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:accumulator"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

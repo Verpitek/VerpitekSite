@@ -1,0 +1,161 @@
+// Pulls blocks from an immediatly connected chest
+{
+	"format_version": "1.21.130",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:item_extractor",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"traits": {
+				"minecraft:placement_position": {
+					"enabled_states": [
+						"minecraft:block_face"
+					]
+				}
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				]
+			}
+		},
+		"permutations": [
+			{
+				"condition": "query.block_state('minecraft:block_face') == 'up'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							0,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:block_face') == 'down'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							180,
+							0,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:block_face') == 'north'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							-90,
+							0,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:block_face') == 'south'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							90,
+							0,
+							0
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:block_face') == 'east'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							0,
+							-90
+						]
+					}
+				}
+			},
+			{
+				"condition": "query.block_state('minecraft:block_face') == 'west'",
+				"components": {
+					"minecraft:transformation": {
+						"rotation": [
+							0,
+							0,
+							90
+						]
+					}
+				}
+			}
+		],
+		"components": {
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"minecraft:geometry": "geometry.item_emitter",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_item_extractor",
+					"render_method": "alpha_test"
+				}
+			},
+			"minecraft:item_visual": {
+				"geometry": "geometry.item_emitter",
+				"material_instances": {
+					"*": {
+						"texture": "lunatech_item_extractor"
+					}
+				}
+			},
+			"minecraft:selection_box": {
+				"size": [
+					8,
+					16,
+					8
+				],
+				"origin": [
+					-4,
+					0,
+					-4
+				]
+			},
+			"minecraft:collision_box": {
+				"size": [
+					8,
+					16,
+					8
+				],
+				"origin": [
+					-4,
+					0,
+					-4
+				]
+			},
+			"tag:lunatech:machine": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:item_extractor",
+				"machine_type": "WORKER",
+				"range": 10,
+				"buffer": 1000
+			},
+			"lunatech:machine.display": {
+				"content": 3
+			},
+			// Linking Related Tags
+			"tag:kylowat:electricity.worker": {},
+			"tag:lunatech:items.emitter": {}
+		}
+	}
+}

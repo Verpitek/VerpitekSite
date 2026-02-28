@@ -1,0 +1,14 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.model.slider_position": {
+			"loop": true,
+			"animation_length": 0.0417,
+			"bones": {
+				"slider": {
+					"position": [0, 0, "0 - (variable.output_percentage * 14)"]
+				}
+			}
+		}
+	}
+}

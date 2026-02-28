@@ -1,0 +1,63 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:terminal",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				],
+				"lunatech:panspark_vm.state": [
+					"UNINIT",
+					"INITING",
+					"IDLE",
+					"RUNNING",
+					"ERR",
+					"OUT_OF_POWER",
+					"FINISHED"
+				]
+			}
+		},
+		"components": {
+			"minecraft:destructible_by_mining": {
+				"seconds_to_destroy": 5,
+				"item_specific_speeds": [
+					{
+						"item": {
+							"tags": "query.any_tag('minecraft:is_pickaxe')&&query.any_tag('minecraft:iron_tier','minecraft:diamond_tier')"
+						},
+						"destroy_speed": 1
+					}
+				]
+			},
+			"minecraft:geometry": "geometry.stiched_full_block",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_terminal",
+					"render_method": "alpha_test"
+				}
+			},
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"tag:lunatech:machine": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:terminal",
+				"machine_type": "WORKERS",
+				"range": 10,
+				"buffer": 1000
+			},
+			"tag:lunatech:panspark_client": {},
+			"lunatech:panspark_client": {}
+		}
+	}
+}

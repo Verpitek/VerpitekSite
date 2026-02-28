@@ -1,0 +1,32 @@
+{
+    "format_version": "1.21.110",
+    "minecraft:block": {
+        "description": {
+            "identifier": "lunatech:machine_block",
+            "menu_category": {
+                "category": "items",
+                "group": "lunatech:machines"
+            }
+        },
+        "components": {
+            "minecraft:destructible_by_mining": {
+                "seconds_to_destroy": 5,
+                "item_specific_speeds": [
+                    {
+                        "item": {
+                            "tags": "query.any_tag('minecraft:is_pickaxe')&&query.any_tag('minecraft:iron_tier','minecraft:diamond_tier')"
+                        },
+                        "destroy_speed": 1
+                    }
+                ]
+            },
+            "minecraft:geometry": "geometry.machine_block",
+            "minecraft:material_instances": {
+                "*": {
+                    "texture": "lunatech_machine_block",
+                    "render_method": "alpha_test"
+                }
+            }
+        }
+    }
+}

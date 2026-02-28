@@ -1,0 +1,107 @@
+{
+    "format_version": "1.21.110",
+    "sound_definitions": {
+        "machine_sound.macerator.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/macerator.active"
+            ]
+        },
+        "machine_sound.macerator.startup": {
+            "category": "block",
+            "sounds": [
+                "sounds/macerator.startup"
+            ]
+        },
+        "machine_sound.shutdown": {
+            "category": "block",
+            "sounds": [
+                "sounds/machine.shutdown"
+            ]
+        },
+        "machine_sound.solar_panel.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/solar_panel.active"
+            ]
+        },
+        "machine_sound.solar_panel.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/solar_panel.activating"
+            ]
+        },
+        "machine_sound.compressor.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/compressor.active"
+            ]
+        },
+        "machine_sound.compressor.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/compressor.activating"
+            ]
+        },
+        "machine_sound.electric_furnace.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/electric_furnace.active"
+            ]
+        },
+        "machine_sound.electric_furnace.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/electric_furnace.activating"
+            ]
+        },
+        "machine_sound.solid_fuel_generator.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/solid_fuel_generator.active"
+            ]
+        },
+        "machine_sound.solid_fuel_generator.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/solid_fuel_generator.activating"
+            ]
+        },
+        "machine_sound.power_node.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/power_node.active"
+            ]
+        },
+        "machine_sound.power_node.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/power_node.activating"
+            ]
+        },
+        "machine_sound.watermill.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/watermill.active"
+            ]
+        },
+        "machine_sound.watermill.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/watermill.activating"
+            ]
+        },
+        "machine_sound.windmill.active": {
+            "category": "block",
+            "sounds": [
+                "sounds/windmill.active"
+            ]
+        },
+        "machine_sound.windmill.activating": {
+            "category": "block",
+            "sounds": [
+                "sounds/windmill.activating"
+            ]
+        }
+    }
+}

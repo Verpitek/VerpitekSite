@@ -1,0 +1,13 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.lunatech.machine.power_node.activating": {
+			"animation_length": 1.9167,
+			"sound_effects": {
+				"0.0": {
+					"effect": "activating"
+				}
+			}
+		}
+	}
+}

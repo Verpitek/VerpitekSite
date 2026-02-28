@@ -1,0 +1,44 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "lunatech:compressor_sound",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/macerator_sound"
+			},
+			"geometry": {
+				"default": "geometry.machine_entity"
+			},
+			"render_controllers": [
+				"controller.render.macerator_sound"
+			],
+			"spawn_egg": {
+				"base_color": "#000000",
+				"overlay_color": "#FFFFFF"
+			},
+			"sound_effects": {
+				"active": "machine_sound.compressor.active",
+				"activating": "machine_sound.compressor.activating",
+				"deactivating": "machine_sound.shutdown"
+			},
+			"animations": {
+				"sound_controller": "controller.animation.lunatech.machine.compressor",
+				"active": "animation.lunatech.machine.compressor.active",
+				"activating": "animation.lunatech.machine.compressor.activating",
+				"deactivating": "animation.lunatech.machine.compressor.deactivating"
+			},
+			"scripts": {
+				"should_update_effects_offscreen": true,
+				"pre_animation": [
+					"variable.active = query.property('lunatech:active');"
+				],
+				"animate": [
+					"sound_controller"
+				]
+			}
+		}
+	}
+}

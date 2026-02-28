@@ -1,0 +1,32 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:wires"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " B ",
+            "AAA"
+        ],
+        "key": {
+            "A": {
+                "item": "copper_ingot"
+            },
+            "B": {
+                "item": "lunatech:rubber"
+            }
+        },
+        "result": [
+            {
+                "item": "lunatech:wires",
+                "count": 1
+            }
+        ],
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

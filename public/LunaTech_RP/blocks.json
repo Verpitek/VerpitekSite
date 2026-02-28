@@ -1,0 +1,67 @@
+{
+	"format_version": [
+		1,
+		21,
+		40
+	],
+	"lunatech:power_node": {
+		"sound": "copper"
+	},
+	"lunatech:solar_panel": {
+		"sound": "amethyst_block"
+	},
+	"lunatech:terminal": {
+		"sound": "glass"
+	},
+	"lunatech:electric_furnace": {
+		"sound": "stone"
+	},
+	"lunatech:accumulator": {
+		"sound": "stone"
+	},
+	"lunatech:solid_fuel_generator": {
+		"sound": "stone"
+	},
+	"lunatech:macerator": {
+		"sound": "stone"
+	},
+	"lunatech:windmill": {
+		"sound": "stone"
+	},
+	"lunatech:watermill": {
+		"sound": "stone"
+	},
+	"lunatech:recycler": {
+		"sound": "stone"
+	},
+	"lunatech:compressor": {
+		"sound": "stone"
+	},
+	"lunatech:microcontroller": {
+		"sound": "stone"
+	},
+	"lunatech:block_breaker": {
+		"sound": "stone"
+	},
+	"lunatech:analog_redstone_block": {
+		"sound": "stone"
+	},
+	"lunatech:item_extractor": {
+		"sound": "stone"
+	},
+	"lunatech:item_reciever": {
+		"sound": "stone"
+	},
+	"lunatech:item_junction": {
+		"sound": "stone"
+	},
+	"lunatech:quarry_controller": {
+		"sound": "stone"
+	},
+	"lunatech:quarry_corner": {
+		"sound": "stone"
+	},
+	"lunatech:quarry_beam": {
+		"sound": "stone"
+	}
+}

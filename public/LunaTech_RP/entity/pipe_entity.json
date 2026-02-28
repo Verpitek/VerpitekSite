@@ -1,0 +1,20 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "lunatech:pipe_entity",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"geometry": {
+				"default": "geometry.pipe_entity"
+			},
+			"textures": {
+				"default": "textures/entity/machine_entity"
+			},
+			"render_controllers": [
+				"controller.render.pipe_entity"
+			]
+		}
+	}
+}

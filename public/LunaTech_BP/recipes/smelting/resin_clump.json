@@ -1,0 +1,14 @@
+{
+    "format_version": "1.21.90",
+    "minecraft:recipe_furnace": {
+        "description": {
+            "identifier": "lunatech:resin_clump"
+        },
+        "tags": [
+            "campfire",
+            "furnace"
+        ],
+        "input": "minecraft:dandelion",
+        "output": "minecraft:resin_clump"
+    }
+}

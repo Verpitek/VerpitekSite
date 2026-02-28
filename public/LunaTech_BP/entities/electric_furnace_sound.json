@@ -1,0 +1,55 @@
+{
+	"format_version": "1.20.80",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "lunatech:electric_furnace_sound",
+			"is_spawnable": true,
+			"is_summonable": true,
+			"is_experimental": false,
+			"properties": {
+				"lunatech:active": {
+					"type": "bool",
+					"client_sync": true,
+					"default": false
+				}
+			}
+		},
+		"component_groups": {},
+		"components": {
+			"minecraft:physics": {
+				"has_collision": false,
+				"has_gravity": false,
+				"push_towards_closest_space": false
+			},
+			"minecraft:knockback_resistance": {
+				"value": 999999
+			},
+			"minecraft:damage_sensor": {
+				"triggers": {
+					"cause": "all",
+					"deals_damage": false
+				}
+			},
+			"minecraft:collision_box": {
+				"height": 0,
+				"width": 0
+			},
+			"minecraft:health": {
+				"min": 1,
+				"value": 100
+			}
+		},
+		"events": {
+			"lunatech:off": {
+				"set_property": {
+					"lunatech:active": false
+				}
+			},
+			"lunatech:on": {
+				"set_property": {
+					"lunatech:active": true
+				}
+			}
+		}
+	}
+}

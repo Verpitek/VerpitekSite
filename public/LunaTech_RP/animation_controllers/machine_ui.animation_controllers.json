@@ -1,0 +1,50 @@
+{
+	"format_version": "1.19.0",
+	"animation_controllers": {
+		"controller.animation.machine_ui.toggle": {
+			"initial_state": "closed",
+			"states": {
+				"closed": {
+					"animations": [
+						"closed"
+					],
+					"transitions": [
+						{
+							"opening": "query.property('lunatech:open_state') == 0"
+						}
+					]
+				},
+				"opening": {
+					"animations": [
+						"opening"
+					],
+					"transitions": [
+						{
+							"open": "query.all_animations_finished"
+						}
+					]
+				},
+				"open": {
+					"animations": [
+						"open"
+					],
+					"transitions": [
+						{
+							"closing": "query.property('lunatech:open_state') == 1"
+						}
+					]
+				},
+				"closing": {
+					"animations": [
+						"closing"
+					],
+					"transitions": [
+						{
+							"closed": "query.all_animations_finished"
+						}
+					]
+				}
+			}
+		}
+	}
+}

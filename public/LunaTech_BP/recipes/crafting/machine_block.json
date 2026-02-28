@@ -1,0 +1,27 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:machine_block"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "CCC",
+            "C C",
+            "CCC"
+        ],
+        "key": {
+            "C": {
+                "item": "lunatech:composite_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:machine_block"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

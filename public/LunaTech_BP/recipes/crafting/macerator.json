@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:macerator"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "BBB",
+            "ADA",
+            "ACA"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:composite_ingot"
+            },
+            "B": {
+                "item": "minecraft:diamond"
+            },
+            "C": {
+                "item": "lunatech:prototyping_pcb"
+            },
+            "D": {
+                "item": "lunatech:electric_motor"
+            }
+        },
+        "result": {
+            "item": "lunatech:macerator"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:multitester"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " A ",
+            "BCB",
+            " D "
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:component_kit"
+            },
+            "B": {
+                "item": "lunatech:composite_plate"
+            },
+            "C": {
+                "item": "lunatech:screen"
+            },
+            "D": {
+                "item": "lunatech:wires"
+            }
+        },
+        "result": {
+            "item": "lunatech:multitester",
+            "count": 1
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

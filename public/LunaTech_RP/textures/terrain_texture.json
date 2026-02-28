@@ -1,0 +1,128 @@
+{
+	"resource_pack_name": "LunaTech RP",
+	"texture_name": "atlas.terrain",
+	"padding": 8,
+	"num_mip_levels": 4,
+	"texture_data": {
+		"lunatech_power_node": {
+			"textures": "textures/blocks/power_node"
+		},
+		"lunatech_solar_panel": {
+			"textures": "textures/blocks/solar_panel"
+		},
+		"lunatech_terminal": {
+			"textures": "textures/blocks/terminal"
+		},
+		"lunatech_building_block": {
+			"textures": "textures/blocks/building_block"
+		},
+		"lunatech_composite_frame_glass": {
+			"textures": "textures/blocks/composite_frame_glass"
+		},
+		"lunatech_composite_open_plate_grate": {
+			"textures": "textures/blocks/composite_open_plate_grate"
+		},
+		"lunatech_composite_path_block": {
+			"textures": "textures/blocks/composite_path_block"
+		},
+		"lunatech_composite_plate_block": {
+			"textures": "textures/blocks/composite_plate_block"
+		},
+		"lunatech_composite_plate_grate": {
+			"textures": "textures/blocks/composite_plate_grate"
+		},
+		"lunatech_composite_plate_ornament": {
+			"textures": "textures/blocks/composite_plate_ornament"
+		},
+		"lunatech_composite_plate_shingles": {
+			"textures": "textures/blocks/composite_plate_shingles"
+		},
+		"lunatech_composite_scrap_plate_block": {
+			"textures": "textures/blocks/composite_scrap_plate_block"
+		},
+		"lunatech_sturdy_composite_block": {
+			"textures": "textures/blocks/sturdy_composite_block"
+		},
+		"lunatech_electric_furnace": {
+			"textures": "textures/blocks/electric_furnace"
+		},
+		"lunatech_wireless_charger": {
+			"textures": "textures/blocks/wireless_charger"
+		},
+		"lunatech_accumulator": {
+			"textures": "textures/blocks/accumulator"
+		},
+		"lunatech_solid_fuel_generator": {
+			"textures": "textures/blocks/solid_fuel_generator"
+		},
+		"lunatech_macerator": {
+			"textures": "textures/blocks/macerator"
+		},
+		"lunatech_windmill": {
+			"textures": "textures/blocks/windmill"
+		},
+		"lunatech_watermill": {
+			"textures": "textures/blocks/machines/watermill"
+		},
+		"lunatech_machine_block": {
+			"textures": "textures/blocks/machine_block"
+		},
+		"lunatech_unfilled_resin_jungle_log": {
+			"textures": "textures/blocks/resin/log_jungle_empty_resin"
+		},
+		"lunatech_filled_resin_jungle_log": {
+			"textures": "textures/blocks/resin/log_jungle_filled_resin"
+		},
+		"jungle_log_top": {
+			"textures": "textures/blocks/resin/jungle_log_top"
+		},
+		"lunatech_recycler": {
+			"textures": "textures/blocks/recycler"
+		},
+		"lunatech_compressor": {
+			"textures": "textures/blocks/compressor"
+		},
+		"lunatech_microcontroller": {
+			"textures": "textures/blocks/machines/microcontroller"
+		},
+		"lunatech_transport_pipe_3way": {
+			"textures": "textures/blocks/transport_pipe_3way"
+		},
+		"lunatech_transport_pipe_4way": {
+			"textures": "textures/blocks/transport_pipe_4way"
+		},
+		"lunatech_transport_pipe_corner": {
+			"textures": "textures/blocks/transport_pipe_corner"
+		},
+		"lunatech_transport_pipe_pump": {
+			"textures": "textures/blocks/transport_pipe_pump"
+		},
+		"lunatech_transport_pipe_straight": {
+			"textures": "textures/blocks/transport_pipe_straight"
+		},
+		"lunatech_block_breaker": {
+			"textures": "textures/blocks/block_breaker"
+		},
+		"lunatech_analog_redstone_block": {
+			"textures": "textures/entity/analog_redstone_block_visual"
+		},
+		"lunatech_item_extractor": {
+			"textures": "textures/blocks/item_extractor"
+		},
+		"lunatech_item_reciever": {
+			"textures": "textures/blocks/item_reciever"
+		},
+		"lunatech_item_junction": {
+			"textures": "textures/blocks/item_junction"
+		},
+		"lunatech_quarry_controller": {
+			"textures": "textures/blocks/quarry_controller"
+		},
+		"lunatech_quarry_corner": {
+			"textures": "textures/blocks/quarry_corner"
+		},
+		"lunatech_quarry_beam": {
+			"textures": "textures/blocks/quarry_beam"
+		}
+	}
+}

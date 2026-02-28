@@ -1,7 +1,959 @@
 ---
 import WikiLayout from "../../../components/WikiLayout.astro";
+import BedrockModelViewer from "../../../components/BedrockModelViewer.astro";
+
+function getGeometryPath(geometry: string): string {
+  const geometryMap: Record<string, string> = {
+    "geometry.stiched_full_block": "/LunaTech_RP/models/blocks/stitched_full_block.geo.json",
+    "geometry.alloy_plating": "/LunaTech_RP/models/blocks/alloy_plating.geo.json",
+    "geometry.invisible": "/LunaTech_RP/models/blocks/invisibile.geo.json",
+    "geometry.block_breaker": "/LunaTech_RP/models/blocks/block_breaker.geo.json",
+    "geometry.item_emitter": "/LunaTech_RP/models/blocks/item_emitter.geo.json",
+    "geometry.item_junction": "/LunaTech_RP/models/blocks/item_junction.geo.json",
+    "geometry.item_reciever": "/LunaTech_RP/models/blocks/item_reciever.geo.json",
+    "geometry.machine_block": "/LunaTech_RP/models/blocks/machine_block.geo.json",
+    "geometry.microcontroller": "/LunaTech_RP/models/blocks/microcontroller.geo.json",
+    "geometry.quarry_beam": "/LunaTech_RP/models/blocks/quarry_beam.geo.json",
+    "geometry.quarry_controller": "/LunaTech_RP/models/blocks/quarry_controller.geo.json",
+    "geometry.quarry_corner": "/LunaTech_RP/models/blocks/quarry_corner.geo.json",
+  };
+  
+  if (geometry === "minecraft:geometry.full_block") {
+    return "/LunaTech_RP/models/blocks/stitched_full_block.geo.json";
+  }
+  
+   return geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
+}
+
+const items = [
+  {
+    "identifier": "lunatech:multitester",
+    "name": "Multitester",
+    "icon": "lunatech_multitester",
+    "texturePath": "LunaTech_RP/textures/items/tools/multitester.png",
+    "description": "Diagnostic tool for checking machine stats.",
+    "file": "/LunaTech_BP/items/tools/multitester.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/multitester.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:jetpack",
+    "name": "Jetpack",
+    "icon": "chestplate",
+    "texturePath": null,
+    "description": "Provides limited flight capability.",
+    "file": "/LunaTech_BP/items/tools/jetpack.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:screwdriver",
+    "name": "Screwdriver",
+    "icon": "lunatech_screwdriver",
+    "texturePath": "LunaTech_RP/textures/items/tools/screwdriver.png",
+    "description": "Precise tool for delicate assembly.",
+    "file": "/LunaTech_BP/items/tools/screwdriver.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:wrench",
+    "name": "Wrench",
+    "icon": "lunatech_wrench",
+    "texturePath": "LunaTech_RP/textures/items/tools/wrench.png",
+    "description": "Tool for rotating and configuring machines.",
+    "file": "/LunaTech_BP/items/tools/wrench.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/wrench.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:powered_drill",
+    "name": "Powered Drill",
+    "icon": "lunatech_powered_drill",
+    "texturePath": "LunaTech_RP/textures/items/tools/powered_drill.png",
+    "description": "Electric drill for fast block breaking.",
+    "file": "/LunaTech_BP/items/tools/powered_drill.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/powered_drill.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:soldering_iron",
+    "name": "Soldering Iron",
+    "icon": "lunatech_soldering_iron",
+    "texturePath": "LunaTech_RP/textures/items/tools/soldering_iron.png",
+    "description": "Tool for soldering electronic components.",
+    "file": "/LunaTech_BP/items/tools/soldering_iron.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:powered_chainsaw",
+    "name": "Powered Chainsaw",
+    "icon": "lunatech_powered_chainsaw",
+    "texturePath": "LunaTech_RP/textures/items/tools/powered_chainsaw.png",
+    "description": "Electric chainsaw for cutting trees.",
+    "file": "/LunaTech_BP/items/tools/powered_chainsaw.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/powered_chainsaw.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:hammer",
+    "name": "Hammer",
+    "icon": "lunatech_hammer",
+    "texturePath": "LunaTech_RP/textures/items/tools/hammer.png",
+    "description": "Heavy tool for shaping materials.",
+    "file": "/LunaTech_BP/items/tools/hammer.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/hammer.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:standart_issue_pda",
+    "name": "Standard Issue PDA",
+    "icon": "lunatech_standart_issue_pda",
+    "texturePath": "LunaTech_RP/textures/items/tools/standart_issue_pda.png",
+    "description": "Personal data assistant for accessing systems.",
+    "file": "/LunaTech_BP/items/tools/standart_issue_pda.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:pliers",
+    "name": "Pliers",
+    "icon": "lunatech_pliers",
+    "texturePath": "LunaTech_RP/textures/items/tools/pliers.png",
+    "description": "Tool for bending wires and small parts.",
+    "file": "/LunaTech_BP/items/tools/pliers.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:standart_issue_visor",
+    "name": "Standard Issue Visor",
+    "icon": "lunatech_standart_issue_visor",
+    "texturePath": "LunaTech_RP/textures/items/tools/standart_issue_visor.png",
+    "description": "Augmented reality visor for overlay information.",
+    "file": "/LunaTech_BP/items/tools/standard_issue_visor.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:raw_copper_powder",
+    "name": "Raw Copper Powder",
+    "icon": "lunatech_raw_copper_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/raw_copper_powder.png",
+    "description": "Powdered copper ore.",
+    "file": "/LunaTech_BP/items/powder/raw_copper_powder.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:raw_gold_powder",
+    "name": "Raw Gold Powder",
+    "icon": "lunatech_raw_gold_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/raw_gold_powder.png",
+    "description": "Powdered gold ore.",
+    "file": "/LunaTech_BP/items/powder/raw_iron_powder.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:raw_iron_powder",
+    "name": "Raw Iron Powder",
+    "icon": "lunatech_raw_iron_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/raw_iron_powder.png",
+    "description": "Powdered iron ore.",
+    "file": "/LunaTech_BP/items/powder/raw_gold_powder.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_powder",
+    "name": "Composite Powder",
+    "icon": "lunatech_composite_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/composite_powder.png",
+    "description": "Powdered composite material for processing.",
+    "file": "/LunaTech_BP/items/powder/composite_powder.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/composite_powder.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:redstone_isotope_tier1",
+    "name": "Redstone Isotope\\n§9Tier 1",
+    "icon": "lunatech_redstone_isotope_tier1",
+    "texturePath": null,
+    "description": "Radioisotope power source for portable energy.",
+    "file": "/LunaTech_BP/items/redstone_isotope_tier1.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:databank_active",
+    "name": "Databank §a(Active)",
+    "icon": "lunatech_databank_active",
+    "texturePath": "LunaTech_RP/textures/items/storage/databank_active.png",
+    "description": "Active data storage device.",
+    "file": "/LunaTech_BP/items/storage/databank_active.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:databank_full",
+    "name": "Databank §c(Full)",
+    "icon": "lunatech_databank_full",
+    "texturePath": "LunaTech_RP/textures/items/storage/databank_full.png",
+    "description": "Fully written data storage device.",
+    "file": "/LunaTech_BP/items/storage/databank_full.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_ingot",
+    "name": "Composite Ingot",
+    "icon": "lunatech_composite_ingot",
+    "texturePath": "LunaTech_RP/textures/items/components/composite_ingot.png",
+    "description": "Advanced alloy used in high-tech crafting.",
+    "file": "/LunaTech_BP/items/components/composite_ingot.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/composite_ingot.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:wires",
+    "name": "Wires",
+    "icon": "lunatech_wires",
+    "texturePath": "LunaTech_RP/textures/items/components/wires.png",
+    "description": "Conducts electricity between machines.",
+    "file": "/LunaTech_BP/items/components/wires.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:electric_motor",
+    "name": "Electric Motor",
+    "icon": "lunatech_electric_motor",
+    "texturePath": "LunaTech_RP/textures/items/components/electric_motor.png",
+    "description": "Converts electrical energy into rotational force.",
+    "file": "/LunaTech_BP/items/components/electric_motor.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/electric_motor.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:rubber",
+    "name": "Rubber",
+    "icon": "lunatech_rubber",
+    "texturePath": "LunaTech_RP/textures/items/components/rubber.png",
+    "description": "Elastic material used for insulation.",
+    "file": "/LunaTech_BP/items/components/rubber.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:screen",
+    "name": "Screen",
+    "icon": "lunatech_screen",
+    "texturePath": "LunaTech_RP/textures/items/components/screen.png",
+    "description": "Display component for showing information.",
+    "file": "/LunaTech_BP/items/components/screen.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/screen.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:composite_plate",
+    "name": "Composite Plate",
+    "icon": "lunatech_composite_plate",
+    "texturePath": "LunaTech_RP/textures/items/components/composite_plate.png",
+    "description": "Reinforced plate for structural components.",
+    "file": "/LunaTech_BP/items/components/composite_plate.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:transformer",
+    "name": "Transformer",
+    "icon": "lunatech_transformer",
+    "texturePath": "LunaTech_RP/textures/items/components/transformer.png",
+    "description": "Steps voltage up or down for different machines.",
+    "file": "/LunaTech_BP/items/components/transformer.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/transformer.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:component_kit",
+    "name": "Component Kit",
+    "icon": "lunatech_component_kit",
+    "texturePath": "LunaTech_RP/textures/items/components/component_kit.png",
+    "description": "A component kit used in LunaTech.",
+    "file": "/LunaTech_BP/items/components/component_kit.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/component_kit.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:rubber_compound",
+    "name": "Rubber Compound",
+    "icon": "lunatech_rubber_compound",
+    "texturePath": "LunaTech_RP/textures/items/components/rubber_compound.png",
+    "description": "Uncured rubber mixture.",
+    "file": "/LunaTech_BP/items/components/rubber_compound.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/rubber_compound.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:composite_scrap",
+    "name": "Composite Scrap",
+    "icon": "lunatech_composite_scrap",
+    "texturePath": "LunaTech_RP/textures/items/components/composite_scrap.png",
+    "description": "Recycled composite material.",
+    "file": "/LunaTech_BP/items/components/composite_scrap.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:prototyping_pcb",
+    "name": "Prototyping PCB",
+    "icon": "lunatech_prototyping_pcb",
+    "texturePath": "LunaTech_RP/textures/items/components/prototyping_pcb.png",
+    "description": "Circuit board for prototyping electronics.",
+    "file": "/LunaTech_BP/items/components/prototyping_pcb.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/prototyping_pcb.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:nutrition_brick",
+    "name": "Nutrition Brick",
+    "icon": "lunatech_nutrition_brick",
+    "texturePath": "LunaTech_RP/textures/items/food/nutrition_brick.png",
+    "description": "Compact food source for long expeditions.",
+    "file": "/LunaTech_BP/items/food/nutrition_brick.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:world_module",
+    "name": "World Module",
+    "icon": "lunatech_world_module",
+    "texturePath": "LunaTech_RP/textures/items/upgrades/world_module.png",
+    "description": "A world module used in LunaTech.",
+    "file": "/LunaTech_BP/items/upgrades/world_module.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:storage_module",
+    "name": "Storage Module",
+    "icon": "lunatech_storage_module",
+    "texturePath": "LunaTech_RP/textures/items/upgrades/storage_module.png",
+    "description": "A storage module used in LunaTech.",
+    "file": "/LunaTech_BP/items/upgrades/storage_module.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:machine_module",
+    "name": "Machine Module",
+    "icon": "lunatech_machine_module",
+    "texturePath": "LunaTech_RP/textures/items/upgrades/machine_module.png",
+    "description": "A machine module used in LunaTech.",
+    "file": "/LunaTech_BP/items/upgrades/machine_module.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:lunanet_module",
+    "name": "LunaNet Module",
+    "icon": "lunatech_lunanet_module",
+    "texturePath": "LunaTech_RP/textures/items/upgrades/lunanet_module.png",
+    "description": "A lunanet module used in LunaTech.",
+    "file": "/LunaTech_BP/items/upgrades/lunanet_module.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:redstone_module",
+    "name": "Redstone Module",
+    "icon": "lunatech_redstone_module",
+    "texturePath": "LunaTech_RP/textures/items/upgrades/redstone_module.png",
+    "description": "A redstone module used in LunaTech.",
+    "file": "/LunaTech_BP/items/upgrades/redstone_module.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:crystal_oscillator",
+    "name": "Crystal Oscillator",
+    "icon": "lunatech_crystal_oscillator",
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/crystal_oscillator.png",
+    "description": "Precision timing component for electronics.",
+    "file": "/LunaTech_BP/items/semiconductors/crystal_oscillator.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/crystal_oscillator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:4004_cpu",
+    "name": "CPU 4004",
+    "icon": "lunatech_4004_cpu",
+    "texturePath": null,
+    "description": "Early microprocessor for basic computing.",
+    "file": "/LunaTech_BP/items/semiconductors/4004_cpu.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:8008_cpu",
+    "name": "CPU 8008",
+    "icon": "lunatech_8008_cpu",
+    "texturePath": null,
+    "description": "Early 8-bit microprocessor.",
+    "file": "/LunaTech_BP/items/semiconductors/8008_cpu.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:crystal_oscillator",
+    "name": "Crystal Oscillator",
+    "icon": "lunatech_crystal_oscillator",
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/crystal_oscillator.png",
+    "description": "Precision timing component for electronics.",
+    "file": "/LunaTech_BP/items/semiconductors/i386_cpu.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/crystal_oscillator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:6502_cpu",
+    "name": "CPU 6502",
+    "icon": "lunatech_6502_cpu",
+    "texturePath": null,
+    "description": "Popular 8-bit microprocessor.",
+    "file": "/LunaTech_BP/items/semiconductors/6502_cpu.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:transistor",
+    "name": "Transistor",
+    "icon": "lunatech_transistor",
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/transistor.png",
+    "description": "Semiconductor device for amplification and switching.",
+    "file": "/LunaTech_BP/items/semiconductors/transistor.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/transistor.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:8080_cpu",
+    "name": "CPU 8080",
+    "icon": "lunatech_8080_cpu",
+    "texturePath": null,
+    "description": "Influential 8-bit microprocessor.",
+    "file": "/LunaTech_BP/items/semiconductors/8080_cpu.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:i386_cpu",
+    "name": "CPU i386",
+    "icon": "lunatech_i386_cpu",
+    "texturePath": null,
+    "description": "32-bit microprocessor for advanced computing.",
+    "file": "/LunaTech_BP/items/semiconductors/i386.item.json",
+    "recipes": []
+  }
+];
+const blocks = [
+  {
+    "identifier": "lunatech:quarry_beam",
+    "name": "Quarry Beam",
+    "texture": "lunatech_quarry_beam",
+    "texturePath": "LunaTech_RP/textures/blocks/quarry_beam.png",
+    "description": "Vertical beam used by quarry to mine layers.",
+    "file": "/LunaTech_BP/blocks/quarry_beam.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:item_extractor",
+    "name": "Item Extractor",
+    "texture": "lunatech_item_extractor",
+    "texturePath": "LunaTech_RP/textures/blocks/item_extractor.png",
+    "description": "Extracts items from adjacent containers.",
+    "file": "/LunaTech_BP/blocks/item_extractor.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:resin_jungle_log",
+    "name": "Resin Jungle Log",
+    "texture": "lunatech_unfilled_resin_jungle_log",
+    "texturePath": null,
+    "description": "Jungle log infused with resin for processing.",
+    "file": "/LunaTech_BP/blocks/resin_jungle_log.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:quarry_controller",
+    "name": "Querry Controller",
+    "texture": "lunatech_quarry_controller",
+    "texturePath": "LunaTech_RP/textures/blocks/quarry_controller.png",
+    "description": "Controls quarry operations for automated mining.",
+    "file": "/LunaTech_BP/blocks/quarry_controller.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:block_breaker",
+    "name": "Block Breaker",
+    "texture": "lunatech_block_breaker",
+    "texturePath": "LunaTech_RP/textures/blocks/block_breaker.png",
+    "description": "Breaks blocks in front of it automatically.",
+    "file": "/LunaTech_BP/blocks/machines/block_breaker.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:recycler",
+    "name": "Recycler",
+    "texture": "lunatech_recycler",
+    "texturePath": "LunaTech_RP/textures/blocks/recycler.png",
+    "description": "Recycles unwanted items into reusable materials.",
+    "file": "/LunaTech_BP/blocks/machines/recycler.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/recycler.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:solid_fuel_generator",
+    "name": "Solid Fuel Generator",
+    "texture": "lunatech_solid_fuel_generator",
+    "texturePath": "LunaTech_RP/textures/blocks/solid_fuel_generator.png",
+    "description": "Burns solid fuels to produce energy.",
+    "file": "/LunaTech_BP/blocks/machines/solid_fuel_generator.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/solid_fuel_generator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:power_node",
+    "name": "Power Node",
+    "texture": "lunatech_power_node",
+    "texturePath": "LunaTech_RP/textures/blocks/power_node.png",
+    "description": "Wireless energy transfer node that connects machines within range.",
+    "file": "/LunaTech_BP/blocks/machines/power_node.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/power_node.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:solar_panel",
+    "name": "Solar Panel",
+    "texture": "lunatech_solar_panel",
+    "texturePath": "LunaTech_RP/textures/blocks/solar_panel.png",
+    "description": "Generates energy from sunlight during the day.",
+    "file": "/LunaTech_BP/blocks/machines/solar_panel.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/solar_panel.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:accumulator",
+    "name": "Accumulator",
+    "texture": "lunatech_accumulator",
+    "texturePath": "LunaTech_RP/textures/blocks/accumulator.png",
+    "description": "Stores electrical energy for later use.",
+    "file": "/LunaTech_BP/blocks/machines/accumulator.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/accumulator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:electric_furnace",
+    "name": "Electric Furnace",
+    "texture": "lunatech_electric_furnace",
+    "texturePath": "LunaTech_RP/textures/blocks/electric_furnace.png",
+    "description": "Smelts items using electricity instead of fuel.",
+    "file": "/LunaTech_BP/blocks/machines/electric_furnace.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/electric_furnace.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:windmill",
+    "name": "Windmill",
+    "texture": "lunatech_windmill",
+    "texturePath": "LunaTech_RP/textures/blocks/windmill.png",
+    "description": "Generates energy from wind; higher altitude increases output.",
+    "file": "/LunaTech_BP/blocks/machines/windmill.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/windmill.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:watermill",
+    "name": "Watermill",
+    "texture": "lunatech_watermill",
+    "texturePath": "LunaTech_RP/textures/blocks/machines/watermill.png",
+    "description": "Generates energy from flowing water.",
+    "file": "/LunaTech_BP/blocks/machines/watermill.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/watermill.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:terminal",
+    "name": "Terminal",
+    "texture": "lunatech_terminal",
+    "texturePath": "LunaTech_RP/textures/blocks/terminal.png",
+    "description": "Central interface for monitoring and controlling machines.",
+    "file": "/LunaTech_BP/blocks/machines/terminal.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/terminal.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:compressor",
+    "name": "Compressor",
+    "texture": "lunatech_compressor",
+    "texturePath": "LunaTech_RP/textures/blocks/compressor.png",
+    "description": "Compresses items into denser forms.",
+    "file": "/LunaTech_BP/blocks/machines/compressor.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:macerator",
+    "name": "Macerator",
+    "texture": "lunatech_macerator",
+    "texturePath": "LunaTech_RP/textures/blocks/macerator.png",
+    "description": "Grinds ores and materials into fine powders.",
+    "file": "/LunaTech_BP/blocks/machines/macerator.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/macerator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:machine_block",
+    "name": "Machine Block",
+    "texture": "lunatech_machine_block",
+    "texturePath": "LunaTech_RP/textures/blocks/machine_block.png",
+    "description": "Basic machine casing.",
+    "file": "/LunaTech_BP/blocks/machines/machine_block.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/machine_block.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:microcontroller",
+    "name": "Microcontroller",
+    "texture": "lunatech_microcontroller",
+    "texturePath": "LunaTech_RP/textures/blocks/machines/microcontroller.png",
+    "description": "Processes redstone logic and automation.",
+    "file": "/LunaTech_BP/blocks/machines/microcontroller.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:item_reciever",
+    "name": "Item Reciever",
+    "texture": "lunatech_item_reciever",
+    "texturePath": "LunaTech_RP/textures/blocks/item_reciever.png",
+    "description": "Receives items from pipes and networks.",
+    "file": "/LunaTech_BP/blocks/item_reciever.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:quarry_corner",
+    "name": "Querry Corner",
+    "texture": "lunatech_quarry_corner",
+    "texturePath": "LunaTech_RP/textures/blocks/quarry_corner.png",
+    "description": "Corner block for defining quarry boundaries.",
+    "file": "/LunaTech_BP/blocks/quarry_corner.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:item_junction",
+    "name": "Item Junction",
+    "texture": "lunatech_item_junction",
+    "texturePath": "LunaTech_RP/textures/blocks/item_junction.png",
+    "description": "Junction point for item transport pipes.",
+    "file": "/LunaTech_BP/blocks/item_junction.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:wireless_charger",
+    "name": "Wireless Charger",
+    "texture": "lunatech_wireless_charger",
+    "texturePath": "LunaTech_RP/textures/blocks/wireless_charger.png",
+    "description": "Wirelessly charges tools and devices.",
+    "file": "/LunaTech_BP/blocks/wireless_charger.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/wireless_charger.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:analog_redstone_block",
+    "name": "Analog Redstone Block",
+    "texture": "acacia_leaves",
+    "texturePath": null,
+    "description": "Emits analog redstone signal based on stored energy.",
+    "file": "/LunaTech_BP/blocks/analog_redstone_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_grate",
+    "name": "Composite Plate Grate",
+    "texture": "lunatech_composite_plate_grate",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_grate.png",
+    "description": "Grated plate for floors.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_grate.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_scrap_plate_block",
+    "name": "Composite Scrap Plate Block",
+    "texture": "lunatech_composite_scrap_plate_block",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_scrap_plate_block.png",
+    "description": "Block made from scrap composite plates.",
+    "file": "/LunaTech_BP/blocks/building/composite_scrap_plate_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_frame_glass",
+    "name": "Composite Frame Glass",
+    "texture": "lunatech_composite_frame_glass",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_frame_glass.png",
+    "description": "Reinforced glass with composite frame.",
+    "file": "/LunaTech_BP/blocks/building/composite_frame_glass.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_block",
+    "name": "Composite Plate Block",
+    "texture": "lunatech_composite_plate_block",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_block.png",
+    "description": "Solid plate block for construction.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_ornament",
+    "name": "Composite Plate Ornament",
+    "texture": "lunatech_composite_plate_ornament",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_ornament.png",
+    "description": "Ornamental plate for decoration.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_ornament.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_open_plate_grate",
+    "name": "Composite Open Plate Grate",
+    "texture": "lunatech_composite_open_plate_grate",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_open_plate_grate.png",
+    "description": "Grated plate for ventilation.",
+    "file": "/LunaTech_BP/blocks/building/composite_open_plate_grate.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_shingles",
+    "name": "Composite Plate Shingles",
+    "texture": "lunatech_composite_plate_shingles",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_shingles.png",
+    "description": "Roofing shingles made of composite.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_shingles.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:sturdy_composite_block",
+    "name": "Sturdy Composite Block",
+    "texture": "lunatech_sturdy_composite_block",
+    "texturePath": "LunaTech_RP/textures/blocks/sturdy_composite_block.png",
+    "description": "Extra durable composite block.",
+    "file": "/LunaTech_BP/blocks/building/sturdy_composite_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_path_block",
+    "name": "Composite Path Block",
+    "texture": "lunatech_composite_path_block",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_path_block.png",
+    "description": "Decorative path block.",
+    "file": "/LunaTech_BP/blocks/building/composite_path_block.json",
+    "recipes": []
+  }
+];
+
+const blockGeometryMap: Record<string, string> = {
+  "lunatech:quarry_beam": "geometry.quarry_beam",
+  "lunatech:item_extractor": "geometry.item_emitter",
+  "lunatech:resin_jungle_log": "minecraft:geometry.full_block",
+  "lunatech:quarry_controller": "geometry.quarry_controller",
+  "lunatech:block_breaker": "geometry.block_breaker",
+  "lunatech:recycler": "geometry.stiched_full_block",
+  "lunatech:solid_fuel_generator": "geometry.stiched_full_block",
+  "lunatech:power_node": "geometry.stiched_full_block",
+  "lunatech:solar_panel": "geometry.stiched_full_block",
+  "lunatech:accumulator": "geometry.stiched_full_block",
+  "lunatech:electric_furnace": "geometry.stiched_full_block",
+  "lunatech:windmill": "geometry.stiched_full_block",
+  "lunatech:watermill": "geometry.stiched_full_block",
+  "lunatech:terminal": "geometry.stiched_full_block",
+  "lunatech:compressor": "geometry.stiched_full_block",
+  "lunatech:macerator": "geometry.stiched_full_block",
+  "lunatech:machine_block": "geometry.machine_block",
+  "lunatech:microcontroller": "geometry.microcontroller",
+  "lunatech:item_reciever": "geometry.item_reciever",
+  "lunatech:quarry_corner": "geometry.quarry_corner",
+  "lunatech:item_junction": "geometry.item_junction",
+  "lunatech:wireless_charger": "geometry.stiched_full_block",
+  "lunatech:analog_redstone_block": "geometry.invisible",
+  "lunatech:composite_plate_grate": "geometry.alloy_plating",
+  "lunatech:composite_scrap_plate_block": "geometry.alloy_plating",
+  "lunatech:composite_frame_glass": "geometry.alloy_plating",
+  "lunatech:composite_plate_block": "geometry.alloy_plating",
+  "lunatech:composite_plate_ornament": "geometry.alloy_plating",
+  "lunatech:composite_open_plate_grate": "geometry.alloy_plating",
+  "lunatech:composite_plate_shingles": "geometry.alloy_plating",
+  "lunatech:sturdy_composite_block": "geometry.alloy_plating",
+  "lunatech:composite_path_block": "geometry.alloy_plating",
+};
 ---
 
 <WikiLayout title="LunaTech">
-    
+    <section class="intro">
+        <p>Welcome to the LunaTech wiki! This page catalogs all items and blocks available in the LunaTech addon for Minecraft Bedrock Edition.</p>
+    </section>
+
+    <section class="items">
+        <h2>Items (43)</h2>
+        <div class="grid">
+            {items.map(item => (
+                <div class="card">
+                    <div class="card-image">
+                        {item.texturePath ? (
+                            <img src={"/" + item.texturePath} alt={item.name} width="64" height="64" />
+                        ) : (
+                            <div class="placeholder">No texture</div>
+                        )}
+                    </div>
+                    <div class="card-content">
+                        <h3>{item.name}</h3>
+                        <p class="identifier">{item.identifier}</p>
+                        <p class="description">{item.description}</p>
+                        {item.recipes.length > 0 ? (
+                            <div class="recipes">
+                                <strong>Recipes:</strong>
+                                <ul>
+                                    {item.recipes.map(recipe => (
+                                        <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ) : ''}
+                    </div>
+                </div>
+            ))}
+        </div>
+    </section>
+
+    <section class="blocks">
+        <h2>Blocks (32)</h2>
+        <div class="grid">
+            {blocks.map(block => (
+                <div class="card">
+                    <div class="card-image">
+                         <BedrockModelViewer
+                             geoSrc={getGeometryPath(blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`)}
+                             texSrc={block.texturePath ? "/" + block.texturePath : undefined}
+                             size={150}
+                             spinSpeed={0.5}
+                         />
+                    </div>
+                    <div class="card-content">
+                        <h3>{block.name}</h3>
+                        <p class="identifier">{block.identifier}</p>
+                        <p class="description">{block.description}</p>
+                        {block.recipes.length > 0 ? (
+                            <div class="recipes">
+                                <strong>Recipes:</strong>
+                                <ul>
+                                    {block.recipes.map(recipe => (
+                                        <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ) : ''}
+                    </div>
+                </div>
+            ))}
+        </div>
+    </section>
+
+    <style>
+        .intro {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .card {
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #e1ff00;
+        }
+        .card-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            background: #222;
+            border-bottom: 1px solid #444;
+        }
+        .card-image img {
+            image-rendering: pixelated;
+            width: 64px;
+            height: 64px;
+        }
+        .placeholder {
+            width: 64px;
+            height: 64px;
+            background: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.8rem;
+        }
+        .card-content {
+            padding: 1.5rem;
+        }
+        .card-content h3 {
+            margin-top: 0;
+            color: #e1ff00;
+            font-size: 1.2rem;
+        }
+        .identifier {
+            font-family: monospace;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+        .description {
+            color: #ccc;
+            line-height: 1.4;
+        }
+        .recipes {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        .recipes ul {
+            margin: 0.5rem 0 0 0;
+            padding-left: 1.2rem;
+        }
+        .recipes a {
+            color: #aa75ff;
+            text-decoration: none;
+        }
+        .recipes a:hover {
+            text-decoration: underline;
+        }
+        h2 {
+            color: #e1ff00;
+            border-bottom: 2px solid #444;
+            padding-bottom: 0.5rem;
+        }
+        section {
+            margin-bottom: 3rem;
+        }
+    </style>
 </WikiLayout>

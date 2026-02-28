@@ -1,0 +1,41 @@
+{
+	"format_version": "1.21.130",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:quarry_corner",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				]
+			}
+		},
+		"components": {
+			"minecraft:geometry": "geometry.quarry_corner",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_quarry_corner"
+				}
+			},
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"tag:lunatech:machine": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:quarry_corner",
+				"machine_type": "WORKER",
+				"range": 10,
+				"buffer": 1000
+			},
+			"tag:lunatech:quarry_corner": {}
+		}
+	}
+}

@@ -1,0 +1,70 @@
+{
+	"format_version": 2,
+	"metadata": {
+		"authors": [
+			"Verpitek"
+		],
+		"generated_with": {
+			"bridge": [
+				"2.7.54"
+			],
+			"dash": [
+				"0.11.7"
+			]
+		}
+	},
+	"header": {
+		"name": "LunaTech",
+		"description": "Machines, Automation and Programming",
+		"min_engine_version": [
+			1,
+			21,
+			130
+		],
+		"uuid": "fc788ebc-96e4-492b-811a-f39a58cd3e66",
+		"version": [
+			1,
+			0,
+			0
+		]
+	},
+	"modules": [
+		{
+			"type": "data",
+			"uuid": "829738d1-70b7-4412-be1f-3f1beb36ea78",
+			"version": [
+				1,
+				0,
+				0
+			]
+		},
+		{
+			"type": "script",
+			"uuid": "116e4a9e-a359-48d9-9a02-a67e18325ca2",
+			"version": [
+				1,
+				0,
+				0
+			],
+			"entry": "index.js"
+		}
+	],
+	"dependencies": [
+		{
+			"uuid": "a72040e4-511a-4641-8f5a-86fb918217d7",
+			"version": [
+				1,
+				0,
+				0
+			]
+		},
+		{
+			"module_name": "@minecraft/server",
+			"version": "2.4.0"
+		},
+		{
+			"module_name": "@minecraft/server-ui",
+			"version": "2.0.0"
+		}
+	]
+}

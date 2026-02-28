@@ -1,0 +1,26 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shapeless": {
+        "description": {
+            "identifier": "lunatech:composite_ingot"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "ingredients": [
+            {
+                "item": "lunatech:composite_scrap"
+            },
+            {
+                "item": "lunatech:composite_scrap"
+            }
+        ],
+        "result": {
+            "item": "lunatech:composite_ingot",
+            "count": 1
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

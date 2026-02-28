@@ -1,0 +1,57 @@
+{
+    "format_version": "1.21.90",
+    "minecraft:block": {
+        "description": {
+            "identifier": "lunatech:wireless_charger",
+            "menu_category": {
+                "category": "items"
+            },
+            "states": {
+                "lunatech:has_ticked": [
+                    false,
+                    true
+                ]
+            }
+        },
+        "components": {
+            "minecraft:destructible_by_mining": {
+                "seconds_to_destroy": 5,
+                "item_specific_speeds": [
+                    {
+                        "item": {
+                            "tags": "query.any_tag('minecraft:is_pickaxe')&&query.any_tag('minecraft:iron_tier','minecraft:diamond_tier')"
+                        },
+                        "destroy_speed": 1
+                    }
+                ]
+            },
+            "tag:minecraft:is_pickaxe_item_destructible": {},
+            "minecraft:geometry": "geometry.stiched_full_block",
+            "minecraft:material_instances": {
+                "*": {
+                    "texture": "lunatech_wireless_charger",
+                    "render_method": "alpha_test"
+                }
+            },
+            "minecraft:tick": {
+                "interval_range": [
+                    1,
+                    1
+                ],
+                "looping": true
+            },
+            "tag:lunatech:machine": {},
+            "lunatech:step_to_charge": {},
+            "lunatech:machine": {
+                "machine_id": "lunatech:wireless_charger",
+                "machine_type": "WORKERS",
+                "range": 10,
+                "buffer": 1000
+            },
+            "tag:kylowat:electricity.worker": {},
+            "lunatech:machine.display": {
+                "content": 0
+            }
+        }
+    }
+}

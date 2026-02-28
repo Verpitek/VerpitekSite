@@ -1,0 +1,129 @@
+{
+	"resource_pack_name": "pack.name",
+	"texture_name": "atlas.items",
+	"texture_data": {
+		"lunatech_component_kit": {
+			"textures": "textures/items/components/component_kit"
+		},
+		"lunatech_composite_ingot": {
+			"textures": "textures/items/components/composite_ingot"
+		},
+		"lunatech_composite_plate": {
+			"textures": "textures/items/components/composite_plate"
+		},
+		"lunatech_composite_scrap": {
+			"textures": "textures/items/components/composite_scrap"
+		},
+		"lunatech_electric_motor": {
+			"textures": "textures/items/components/electric_motor"
+		},
+		"lunatech_prototyping_pcb": {
+			"textures": "textures/items/components/prototyping_pcb"
+		},
+		"lunatech_screen": {
+			"textures": "textures/items/components/screen"
+		},
+		"lunatech_transformer": {
+			"textures": "textures/items/components/transformer"
+		},
+		"lunatech_wires": {
+			"textures": "textures/items/components/wires"
+		},
+		"lunatech_rubber": {
+			"textures": "textures/items/components/rubber"
+		},
+		"lunatech_rubber_compound": {
+			"textures": "textures/items/components/rubber_compound"
+		},
+		"lunatech_nutrition_brick": {
+			"textures": "textures/items/food/nutrition_brick"
+		},
+		"lunatech_composite_powder": {
+			"textures": "textures/items/powder/composite_powder"
+		},
+		"lunatech_raw_copper_powder": {
+			"textures": "textures/items/powder/raw_copper_powder"
+		},
+		"lunatech_raw_gold_powder": {
+			"textures": "textures/items/powder/raw_gold_powder"
+		},
+		"lunatech_raw_iron_powder": {
+			"textures": "textures/items/powder/raw_iron_powder"
+		},
+		"lunatech_4004_cpu": {
+			"textures": "textures/items/semiconductors/4004"
+		},
+		"lunatech_6502_cpu": {
+			"textures": "textures/items/semiconductors/6502"
+		},
+		"lunatech_8008_cpu": {
+			"textures": "textures/items/semiconductors/8008"
+		},
+		"lunatech_8080_cpu": {
+			"textures": "textures/items/semiconductors/8080"
+		},
+		"lunatech_crystal_oscillator": {
+			"textures": "textures/items/semiconductors/crystal_oscillator"
+		},
+		"lunatech_i386_cpu": {
+			"textures": "textures/items/semiconductors/i386"
+		},
+		"lunatech_transistor": {
+			"textures": "textures/items/semiconductors/transistor"
+		},
+		"lunatech_databank_active": {
+			"textures": "textures/items/storage/databank_active"
+		},
+		"lunatech_databank_full": {
+			"textures": "textures/items/storage/databank_full"
+		},
+		"lunatech_hammer": {
+			"textures": "textures/items/tools/hammer"
+		},
+		"lunatech_multitester": {
+			"textures": "textures/items/tools/multitester"
+		},
+		"lunatech_pliers": {
+			"textures": "textures/items/tools/pliers"
+		},
+		"lunatech_powered_chainsaw": {
+			"textures": "textures/items/tools/powered_chainsaw"
+		},
+		"lunatech_powered_drill": {
+			"textures": "textures/items/tools/powered_drill"
+		},
+		"lunatech_screwdriver": {
+			"textures": "textures/items/tools/screwdriver"
+		},
+		"lunatech_soldering_iron": {
+			"textures": "textures/items/tools/soldering_iron"
+		},
+		"lunatech_standart_issue_pda": {
+			"textures": "textures/items/tools/standart_issue_pda"
+		},
+		"lunatech_standart_issue_visor": {
+			"textures": "textures/items/tools/standart_issue_visor"
+		},
+		"lunatech_wrench": {
+			"textures": "textures/items/tools/wrench"
+		},
+		"lunatech_lunanet_module": {
+			"textures": "textures/items/upgrades/lunanet_module"
+		},
+		"lunatech_machine_module": {
+			"textures": "textures/items/upgrades/machine_module"
+		},
+		"lunatech_redstone_module": {
+			"textures": "textures/items/upgrades/redstone_module"
+		},
+		"lunatech_storage_module": {
+			"textures": "textures/items/upgrades/storage_module"
+		},
+		"lunatech_world_module": {
+			"textures": "textures/items/upgrades/world_module"
+		},
+		"lunatech_redstone_isotope_tier1": {
+			"textures": "textures/items/tier1_redstone_isotope"
+		}
+	}
+}

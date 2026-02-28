@@ -1,0 +1,36 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:wireless_charger"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "AAA",
+            "DBD",
+            "DCD"
+        ],
+        "key": {
+            "A": {
+                "item": "lunatech:wires"
+            },
+            "B": {
+                "item": "minecraft:copper_ingot"
+            },
+            "C": {
+                "item": "lunatech:transistor"
+            },
+            "D": {
+                "item": "lunatech:composite_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:wireless_charger"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

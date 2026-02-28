@@ -1,0 +1,57 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:block": {
+		"description": {
+			"identifier": "lunatech:watermill",
+			"menu_category": {
+				"category": "items",
+				"group": "lunatech:machines"
+			},
+			"states": {
+				"lunatech:has_ticked": [
+					false,
+					true
+				]
+			}
+		},
+		"components": {
+			"minecraft:destructible_by_mining": {
+				"seconds_to_destroy": 5,
+				"item_specific_speeds": [
+					{
+						"item": {
+							"tags": "query.any_tag('minecraft:is_pickaxe')&&query.any_tag('minecraft:iron_tier','minecraft:diamond_tier')"
+						},
+						"destroy_speed": 1
+					}
+				]
+			},
+			"minecraft:geometry": "geometry.stiched_full_block",
+			"minecraft:material_instances": {
+				"*": {
+					"texture": "lunatech_watermill",
+					"render_method": "alpha_test"
+				}
+			},
+			"minecraft:tick": {
+				"interval_range": [
+					1,
+					1
+				],
+				"looping": true
+			},
+			"tag:lunatech:machine": {},
+			"lunatech:machine": {
+				"machine_id": "lunatech:watermill",
+				"machine_type": "GENERATOR",
+				"range": 10,
+				"buffer": 100
+			},
+			"lunatech:machine.watermill": {},
+			"lunatech:machine.display": {
+				"content": 0
+			},
+			"tag:kylowat:electricity.generator": {}
+		}
+	}
+}
