@@ -135,6 +135,30 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
   const texW = geoDef.description.texture_width  || 64;
   const texH = geoDef.description.texture_height || 64;
 
+  // Check if any cube uses per-face UV mapping
+  let usesPerFaceUV = false;
+  for (const bone of (geoDef.bones || [])) {
+    for (const cube of (bone.cubes || [])) {
+      if (!Array.isArray(cube.uv)) {
+        usesPerFaceUV = true;
+        break;
+      }
+    }
+    if (usesPerFaceUV) break;
+  }
+
+  // If per-face UV and we have a texture, show flat image instead
+  if (usesPerFaceUV && texSrc) {
+    canvas.style.display = 'none';
+    const img = document.createElement('img');
+    img.src = texSrc;
+    img.style.width = size + 'px';
+    img.style.height = size + 'px';
+    img.style.imageRendering = 'pixelated';
+    canvas.parentNode.insertBefore(img, canvas);
+    return; // Stop here, don't load Three.js model
+  }
+
   // ── Load texture (optional) ───────────────────────────────────────────────────
   let mat;
   if (texSrc) {
