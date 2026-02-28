@@ -1,6 +1,7 @@
 ---
 import WikiLayout from "../../../components/WikiLayout.astro";
 import BedrockModelViewer from "../../../components/BedrockModelViewer.astro";
+import RecipeRenderer from "../../../components/RecipeRenderer.astro";
 
 function getGeometryPath(geometry: string): string {
   const geometryMap: Record<string, string> = {
@@ -17,12 +18,12 @@ function getGeometryPath(geometry: string): string {
     "geometry.quarry_controller": "/LunaTech_RP/models/blocks/quarry_controller.geo.json",
     "geometry.quarry_corner": "/LunaTech_RP/models/blocks/quarry_corner.geo.json",
   };
-  
+
   if (geometry === "minecraft:geometry.full_block") {
     return "/LunaTech_RP/models/blocks/stitched_full_block.geo.json";
   }
-  
-   return geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
+
+  return geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
 }
 
 const items = [
@@ -150,7 +151,7 @@ const items = [
     "icon": "lunatech_raw_gold_powder",
     "texturePath": "LunaTech_RP/textures/items/powder/raw_gold_powder.png",
     "description": "Powdered gold ore.",
-    "file": "/LunaTech_BP/items/powder/raw_iron_powder.item.json",
+    "file": "/LunaTech_BP/items/powder/raw_gold_powder.item.json",
     "recipes": []
   },
   {
@@ -159,7 +160,7 @@ const items = [
     "icon": "lunatech_raw_iron_powder",
     "texturePath": "LunaTech_RP/textures/items/powder/raw_iron_powder.png",
     "description": "Powdered iron ore.",
-    "file": "/LunaTech_BP/items/powder/raw_gold_powder.item.json",
+    "file": "/LunaTech_BP/items/powder/raw_iron_powder.item.json",
     "recipes": []
   },
   {
@@ -177,7 +178,7 @@ const items = [
     "identifier": "lunatech:redstone_isotope_tier1",
     "name": "Redstone Isotope\\n§9Tier 1",
     "icon": "lunatech_redstone_isotope_tier1",
-    "texturePath": null,
+    "texturePath": "LunaTech_RP/textures/items/tier1_redstone_isotope.png",
     "description": "Radioisotope power source for portable energy.",
     "file": "/LunaTech_BP/items/redstone_isotope_tier1.json",
     "recipes": []
@@ -382,7 +383,7 @@ const items = [
     "identifier": "lunatech:4004_cpu",
     "name": "CPU 4004",
     "icon": "lunatech_4004_cpu",
-    "texturePath": null,
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/4004.png",
     "description": "Early microprocessor for basic computing.",
     "file": "/LunaTech_BP/items/semiconductors/4004_cpu.item.json",
     "recipes": []
@@ -391,27 +392,16 @@ const items = [
     "identifier": "lunatech:8008_cpu",
     "name": "CPU 8008",
     "icon": "lunatech_8008_cpu",
-    "texturePath": null,
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/8008.png",
     "description": "Early 8-bit microprocessor.",
     "file": "/LunaTech_BP/items/semiconductors/8008_cpu.item.json",
     "recipes": []
   },
   {
-    "identifier": "lunatech:crystal_oscillator",
-    "name": "Crystal Oscillator",
-    "icon": "lunatech_crystal_oscillator",
-    "texturePath": "LunaTech_RP/textures/items/semiconductors/crystal_oscillator.png",
-    "description": "Precision timing component for electronics.",
-    "file": "/LunaTech_BP/items/semiconductors/i386_cpu.item.json",
-    "recipes": [
-      "/LunaTech_BP/recipes/crafting/crystal_oscillator.json"
-    ]
-  },
-  {
     "identifier": "lunatech:6502_cpu",
     "name": "CPU 6502",
     "icon": "lunatech_6502_cpu",
-    "texturePath": null,
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/6502.png",
     "description": "Popular 8-bit microprocessor.",
     "file": "/LunaTech_BP/items/semiconductors/6502_cpu.item.json",
     "recipes": []
@@ -431,7 +421,7 @@ const items = [
     "identifier": "lunatech:8080_cpu",
     "name": "CPU 8080",
     "icon": "lunatech_8080_cpu",
-    "texturePath": null,
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/8080.png",
     "description": "Influential 8-bit microprocessor.",
     "file": "/LunaTech_BP/items/semiconductors/8080_cpu.item.json",
     "recipes": []
@@ -440,12 +430,13 @@ const items = [
     "identifier": "lunatech:i386_cpu",
     "name": "CPU i386",
     "icon": "lunatech_i386_cpu",
-    "texturePath": null,
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/i386.png",
     "description": "32-bit microprocessor for advanced computing.",
     "file": "/LunaTech_BP/items/semiconductors/i386.item.json",
     "recipes": []
   }
 ];
+
 const blocks = [
   {
     "identifier": "lunatech:quarry_beam",
@@ -476,7 +467,7 @@ const blocks = [
   },
   {
     "identifier": "lunatech:quarry_controller",
-    "name": "Querry Controller",
+    "name": "Quarry Controller",
     "texture": "lunatech_quarry_controller",
     "texturePath": "LunaTech_RP/textures/blocks/quarry_controller.png",
     "description": "Controls quarry operations for automated mining.",
@@ -633,7 +624,7 @@ const blocks = [
   },
   {
     "identifier": "lunatech:item_reciever",
-    "name": "Item Reciever",
+    "name": "Item Receiver",
     "texture": "lunatech_item_reciever",
     "texturePath": "LunaTech_RP/textures/blocks/item_reciever.png",
     "description": "Receives items from pipes and networks.",
@@ -642,7 +633,7 @@ const blocks = [
   },
   {
     "identifier": "lunatech:quarry_corner",
-    "name": "Querry Corner",
+    "name": "Quarry Corner",
     "texture": "lunatech_quarry_corner",
     "texturePath": "LunaTech_RP/textures/blocks/quarry_corner.png",
     "description": "Corner block for defining quarry boundaries.",
@@ -795,165 +786,207 @@ const blockGeometryMap: Record<string, string> = {
   "lunatech:sturdy_composite_block": "geometry.alloy_plating",
   "lunatech:composite_path_block": "geometry.alloy_plating",
 };
+
+const recipePaths = new Set<string>();
+for (const item of items) for (const r of item.recipes) recipePaths.add(r);
+for (const block of blocks) for (const r of block.recipes) recipePaths.add(r);
+
+const recipeData: Record<string, any> = {};
+for (const path of recipePaths) {
+  try {
+    const response = await fetch(path);
+    if (response.ok) recipeData[path] = await response.json();
+  } catch (e) {
+    console.warn(`Failed to load recipe ${path}:`, e);
+  }
+}
+
+function getShapedRecipe(path: string) {
+  const data = recipeData[path];
+  if (!data) return null;
+  return data["minecraft:recipe_shaped"] || data["minecraft:recipe_shapeless"] || null;
+}
 ---
 
 <WikiLayout title="LunaTech">
-    <section class="intro">
-        <p>Welcome to the LunaTech wiki! This page catalogs all items and blocks available in the LunaTech addon for Minecraft Bedrock Edition.</p>
-    </section>
+  <section class="intro">
+    <p>Welcome to the LunaTech wiki! This page catalogs all items and blocks available in the LunaTech addon for Minecraft Bedrock Edition.</p>
+  </section>
 
-    <section class="items">
-        <h2>Items (43)</h2>
-        <div class="grid">
-            {items.map(item => (
-                <div class="card">
-                    <div class="card-image">
-                        {item.texturePath ? (
-                            <img src={"/" + item.texturePath} alt={item.name} width="64" height="64" />
-                        ) : (
-                            <div class="placeholder">No texture</div>
-                        )}
-                    </div>
-                    <div class="card-content">
-                        <h3>{item.name}</h3>
-                        <p class="identifier">{item.identifier}</p>
-                        <p class="description">{item.description}</p>
-                        {item.recipes.length > 0 ? (
-                            <div class="recipes">
-                                <strong>Recipes:</strong>
-                                <ul>
-                                    {item.recipes.map(recipe => (
-                                        <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ) : ''}
-                    </div>
+  <section>
+    <h2>Items ({items.length})</h2>
+    <div class="grid">
+      {items.map(item => (
+        <div class="card">
+          <div class="card-image">
+            {item.texturePath ? (
+              <img src={"/" + item.texturePath} alt={item.name} width="64" height="64" />
+            ) : (
+              <div class="placeholder">No texture</div>
+            )}
+          </div>
+          <div class="card-content">
+            <h3>{item.name}</h3>
+            <p class="identifier">{item.identifier}</p>
+            <p class="description">{item.description}</p>
+            {item.recipes.length > 0 && (
+              <div class="recipes">
+                <strong>Recipes:</strong>
+                <div class="recipe-grids">
+                  {item.recipes.map(recipePath => {
+                    const recipe = getShapedRecipe(recipePath);
+                    if (!recipe) return null;
+                    return <RecipeRenderer recipe={recipe} items={items} blocks={blocks} />;
+                  })}
                 </div>
-            ))}
+                <ul>
+                  {item.recipes.map(recipe => (
+                    <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
-    </section>
+      ))}
+    </div>
+  </section>
 
-    <section class="blocks">
-        <h2>Blocks (32)</h2>
-        <div class="grid">
-            {blocks.map(block => (
-                <div class="card">
-                    <div class="card-image">
-                         <BedrockModelViewer
-                             geoSrc={getGeometryPath(blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`)}
-                             texSrc={block.texturePath ? "/" + block.texturePath : undefined}
-                             size={150}
-                             spinSpeed={0.5}
-                         />
-                    </div>
-                    <div class="card-content">
-                        <h3>{block.name}</h3>
-                        <p class="identifier">{block.identifier}</p>
-                        <p class="description">{block.description}</p>
-                        {block.recipes.length > 0 ? (
-                            <div class="recipes">
-                                <strong>Recipes:</strong>
-                                <ul>
-                                    {block.recipes.map(recipe => (
-                                        <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ) : ''}
-                    </div>
+  <section>
+    <h2>Blocks ({blocks.length})</h2>
+    <div class="grid">
+      {blocks.map(block => (
+        <div class="card">
+          <div class="card-image">
+            {block.texturePath ? (
+              <BedrockModelViewer
+                geoSrc={getGeometryPath(blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`)}
+                texSrc={"/" + block.texturePath}
+                size={150}
+                spinSpeed={0.5}
+              />
+            ) : (
+              <div class="placeholder">No texture</div>
+            )}
+          </div>
+          <div class="card-content">
+            <h3>{block.name}</h3>
+            <p class="identifier">{block.identifier}</p>
+            <p class="description">{block.description}</p>
+            {block.recipes.length > 0 && (
+              <div class="recipes">
+                <strong>Recipes:</strong>
+                <div class="recipe-grids">
+                  {block.recipes.map(recipePath => {
+                    const recipe = getShapedRecipe(recipePath);
+                    if (!recipe) return null;
+                    return <RecipeRenderer recipe={recipe} items={items} blocks={blocks} />;
+                  })}
                 </div>
-            ))}
+                <ul>
+                  {block.recipes.map(recipe => (
+                    <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
-    </section>
+      ))}
+    </div>
+  </section>
 
-    <style>
-        .intro {
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: #2a2a2a;
-            border-radius: 8px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        .card {
-            background: #333;
-            border: 1px solid #444;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: #e1ff00;
-        }
-        .card-image {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            background: #222;
-            border-bottom: 1px solid #444;
-        }
-        .card-image img {
-            image-rendering: pixelated;
-            width: 64px;
-            height: 64px;
-        }
-        .placeholder {
-            width: 64px;
-            height: 64px;
-            background: #555;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 0.8rem;
-        }
-        .card-content {
-            padding: 1.5rem;
-        }
-        .card-content h3 {
-            margin-top: 0;
-            color: #e1ff00;
-            font-size: 1.2rem;
-        }
-        .identifier {
-            font-family: monospace;
-            color: #aaa;
-            font-size: 0.9rem;
-            margin: 0.5rem 0;
-        }
-        .description {
-            color: #ccc;
-            line-height: 1.4;
-        }
-        .recipes {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-        .recipes ul {
-            margin: 0.5rem 0 0 0;
-            padding-left: 1.2rem;
-        }
-        .recipes a {
-            color: #aa75ff;
-            text-decoration: none;
-        }
-        .recipes a:hover {
-            text-decoration: underline;
-        }
-        h2 {
-            color: #e1ff00;
-            border-bottom: 2px solid #444;
-            padding-bottom: 0.5rem;
-        }
-        section {
-            margin-bottom: 3rem;
-        }
-    </style>
+  <style>
+    .intro {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: #2a2a2a;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .card {
+      background: #333;
+      border: 1px solid #444;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #e1ff00;
+    }
+    .card-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      background: #222;
+      border-bottom: 1px solid #444;
+    }
+    .card-image img {
+      image-rendering: pixelated;
+      width: 64px;
+      height: 64px;
+    }
+    .placeholder {
+      width: 64px;
+      height: 64px;
+      background: #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 0.8rem;
+    }
+    .card-content {
+      padding: 1.5rem;
+    }
+    .card-content h3 {
+      margin-top: 0;
+      color: #e1ff00;
+      font-size: 1.2rem;
+    }
+    .identifier {
+      font-family: monospace;
+      color: #aaa;
+      font-size: 0.9rem;
+      margin: 0.5rem 0;
+    }
+    .description {
+      color: #ccc;
+      line-height: 1.4;
+    }
+    .recipes {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    .recipe-grids {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .recipes ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.2rem;
+    }
+    .recipes a {
+      color: #aa75ff;
+      text-decoration: none;
+    }
+    .recipes a:hover {
+      text-decoration: underline;
+    }
+    h2 {
+      color: #e1ff00;
+      border-bottom: 2px solid #444;
+      padding-bottom: 0.5rem;
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+  </style>
 </WikiLayout>

@@ -1,0 +1,109 @@
+---
+interface Props {
+  /** Recipe object (Minecraft shaped recipe format) */
+  recipe: {
+    pattern: string[];
+    key: Record<string, { item: string }>;
+  };
+  /** Array of item definitions with identifier and texturePath */
+  items: Array<{
+    identifier: string;
+    texturePath: string | null;
+    name: string;
+  }>;
+  /** Array of block definitions with identifier and texturePath */
+  blocks?: Array<{
+    identifier: string;
+    texturePath: string | null;
+    name: string;
+  }>;
+}
+
+const { recipe, items, blocks = [] } = Astro.props;
+
+// Create a 3x3 grid mapping
+const grid = Array(9).fill(null);
+const pattern = recipe.pattern;
+const key = recipe.key;
+
+// Build mapping from character to item identifier
+const charToItem: Record<string, string> = {};
+for (const [char, def] of Object.entries(key)) {
+  charToItem[char] = def.item;
+}
+
+// Fill grid
+for (let row = 0; row < 3; row++) {
+  const patternRow = pattern[row] || '';
+  for (let col = 0; col < 3; col++) {
+    const char = patternRow[col];
+    if (char && char !== ' ' && charToItem[char]) {
+      const index = row * 3 + col;
+      grid[index] = charToItem[char];
+    }
+  }
+}
+
+// Helper to find texture path for an item identifier
+function getTexturePath(identifier: string): string | null {
+  const item = items.find(item => item.identifier === identifier);
+  if (item) return item.texturePath;
+  const block = blocks.find(block => block.identifier === identifier);
+  if (block) return block.texturePath;
+  return null;
+}
+---
+
+<div class="recipe-grid">
+  {grid.map((identifier, index) => {
+    const texturePath = identifier ? getTexturePath(identifier) : null;
+    return (
+      <div class="recipe-slot">
+        {texturePath ? (
+          <img
+            src={"/" + texturePath}
+            alt={identifier}
+            width="32"
+            height="32"
+            class="pixelated"
+          />
+        ) : identifier ? (
+          <div class="placeholder">{identifier.split(':')[1] || identifier}</div>
+        ) : null}
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    width: fit-content;
+    background: #444;
+    padding: 8px;
+    border: 2px solid #666;
+  }
+  .recipe-slot {
+    width: 48px;
+    height: 48px;
+    background: #333;
+    border: 1px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pixelated {
+    image-rendering: pixelated;
+    width: 32px;
+    height: 32px;
+  }
+  .placeholder {
+    color: #aaa;
+    font-size: 0.7rem;
+    text-align: center;
+    word-break: break-all;
+    padding: 2px;
+  }
+</style>
