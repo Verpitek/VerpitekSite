@@ -1,13 +1,13 @@
 ---
 interface Props {
-  /** Path to the .geo.json file (relative to /public). Optional — omit to show a flat texture. */
-  geoSrc?: string;
-  /** Path to the texture PNG (relative to /public). */
-  texSrc?: string;
-  /** Canvas size in pixels (square). Default: 300 */
-  size?: number;
-  /** Auto-spin speed multiplier. 0 = static. Default: 1 */
-  spinSpeed?: number;
+    /** Path to the .geo.json file (relative to /public). Optional — omit to show a flat texture. */
+    geoSrc?: string;
+    /** Path to the texture PNG (relative to /public). */
+    texSrc?: string;
+    /** Canvas size in pixels (square). Default: 300 */
+    size?: number;
+    /** Auto-spin speed multiplier. 0 = static. Default: 1 */
+    spinSpeed?: number;
 }
 
 const { geoSrc, texSrc, size = 300, spinSpeed = 1 } = Astro.props;
@@ -15,297 +15,431 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
 <canvas
-  id={id}
-  width={size}
-  height={size}
-  style={`width:${size}px;height:${size}px;display:block;`}
-></canvas>
+    id={id}
+    width={size}
+    height={size}
+    style={`width:${size}px;height:${size}px;display:block;`}></canvas>
 
 <script
-  define:vars={{ id, geoSrc, texSrc, size, spinSpeed }}
-  src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
-  is:inline
-></script>
+    define:vars={{ id, geoSrc, texSrc, size, spinSpeed }}
+    src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+    is:inline></script>
 
 <script define:vars={{ id, geoSrc, texSrc, size, spinSpeed }}>
-(async () => {
-  while (typeof THREE === 'undefined') await new Promise(r => setTimeout(r, 20));
+    (async () => {
+        while (typeof THREE === "undefined")
+            await new Promise((r) => setTimeout(r, 20));
 
-  const canvas = document.getElementById(id);
+        const canvas = document.getElementById(id);
 
-  // ── Renderer ──────────────────────────────────────────────────────────────────
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setSize(size, size, false);
-  renderer.setClearColor(0x000000, 0);
+        // ── Renderer ──────────────────────────────────────────────────────────────────
+        const renderer = new THREE.WebGLRenderer({
+            canvas,
+            antialias: true,
+            alpha: true,
+        });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(size, size, false);
+        renderer.setClearColor(0x000000, 0);
 
-  const scene  = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 500);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 500);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
-  const key = new THREE.DirectionalLight(0xffffff, 0.9);
-  key.position.set(20, 40, 30);
-  scene.add(key);
-  const fill = new THREE.DirectionalLight(0x8888ff, 0.25);
-  fill.position.set(-20, -10, -20);
-  scene.add(fill);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+        const key = new THREE.DirectionalLight(0xffffff, 0.9);
+        key.position.set(20, 40, 30);
+        scene.add(key);
+        const fill = new THREE.DirectionalLight(0x8888ff, 0.25);
+        fill.position.set(-20, -10, -20);
+        scene.add(fill);
 
-  // ── Orbit ─────────────────────────────────────────────────────────────────────
-  let theta = 0, phi = Math.PI / 3.5, radius = 40;
-  const target = new THREE.Vector3();
+        // ── Orbit ─────────────────────────────────────────────────────────────────────
+        let theta = 0,
+            phi = Math.PI / 3.5,
+            radius = 40;
+        const target = new THREE.Vector3();
 
-  function updateCamera() {
-    camera.position.set(
-      target.x + radius * Math.sin(phi) * Math.sin(theta),
-      target.y + radius * Math.cos(phi),
-      target.z + radius * Math.sin(phi) * Math.cos(theta)
-    );
-    camera.lookAt(target);
-  }
+        function updateCamera() {
+            camera.position.set(
+                target.x + radius * Math.sin(phi) * Math.sin(theta),
+                target.y + radius * Math.cos(phi),
+                target.z + radius * Math.sin(phi) * Math.cos(theta),
+            );
+            camera.lookAt(target);
+        }
 
-  let dragging = false, lx = 0, ly = 0;
-  canvas.addEventListener('mousedown',  e => { dragging = true; lx = e.clientX; ly = e.clientY; });
-  window.addEventListener('mouseup',    ()  => dragging = false);
-  window.addEventListener('mousemove',  e  => {
-    if (!dragging) return;
-    theta -= (e.clientX - lx) * 0.01;
-    phi    = Math.max(0.05, Math.min(Math.PI * 0.95, phi + (e.clientY - ly) * 0.01));
-    lx = e.clientX; ly = e.clientY;
-  });
-  let lt = null;
-  canvas.addEventListener('touchstart', e => { lt = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }, { passive: true });
-  canvas.addEventListener('touchmove',  e => {
-    e.preventDefault();
-    theta -= (e.touches[0].clientX - lt.x) * 0.012;
-    phi    = Math.max(0.05, Math.min(Math.PI * 0.95, phi + (e.touches[0].clientY - lt.y) * 0.012));
-    lt = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  }, { passive: false });
+        let dragging = false,
+            lx = 0,
+            ly = 0;
+        canvas.addEventListener("mousedown", (e) => {
+            dragging = true;
+            lx = e.clientX;
+            ly = e.clientY;
+        });
+        window.addEventListener("mouseup", () => (dragging = false));
+        window.addEventListener("mousemove", (e) => {
+            if (!dragging) return;
+            theta -= (e.clientX - lx) * 0.01;
+            phi = Math.max(
+                0.05,
+                Math.min(Math.PI * 0.95, phi + (e.clientY - ly) * 0.01),
+            );
+            lx = e.clientX;
+            ly = e.clientY;
+        });
+        let lt = null;
+        canvas.addEventListener(
+            "touchstart",
+            (e) => {
+                lt = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            },
+            { passive: true },
+        );
+        canvas.addEventListener(
+            "touchmove",
+            (e) => {
+                e.preventDefault();
+                theta -= (e.touches[0].clientX - lt.x) * 0.012;
+                phi = Math.max(
+                    0.05,
+                    Math.min(
+                        Math.PI * 0.95,
+                        phi + (e.touches[0].clientY - lt.y) * 0.012,
+                    ),
+                );
+                lt = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            },
+            { passive: false },
+        );
 
-  // ── Texture loader helper ─────────────────────────────────────────────────────
-  async function loadTex(src) {
-    const img = await new Promise((res, rej) => {
-      const i = new Image();
-      i.onload = () => res(i);
-      i.onerror = rej;
-      i.src = src;
-    });
-    const cv = document.createElement('canvas');
-    cv.width = img.naturalWidth; cv.height = img.naturalHeight;
-    cv.getContext('2d').drawImage(img, 0, 0);
-    const t = new THREE.CanvasTexture(cv);
-    t.magFilter = THREE.NearestFilter;
-    t.minFilter = THREE.NearestFilter;
-    t.needsUpdate = true;
-    return t;
-  }
+        // ── Texture loader helper ─────────────────────────────────────────────────────
+        async function loadTex(src) {
+            const img = await new Promise((res, rej) => {
+                const i = new Image();
+                i.onload = () => res(i);
+                i.onerror = rej;
+                i.src = src;
+            });
+            const cv = document.createElement("canvas");
+            cv.width = img.naturalWidth;
+            cv.height = img.naturalHeight;
+            cv.getContext("2d").drawImage(img, 0, 0);
+            const t = new THREE.CanvasTexture(cv);
+            t.magFilter = THREE.NearestFilter;
+            t.minFilter = THREE.NearestFilter;
+            t.needsUpdate = true;
+            return t;
+        }
 
-  // ── Cube mesh builder ─────────────────────────────────────────────────────────
-  // All coords are in the cube's own local space (already offset from pivot/bone).
-  // UV formula uses flipY=true (CanvasTexture default): v = 1 - pixelRow / texH
-  function buildBoxMesh(ox, oy, oz, cw, ch, cd, u0, v0, texW, texH, mat) {
-    const x0=ox, x1=ox+cw, y0=oy, y1=oy+ch, z0=oz, z1=oz+cd;
-    const w=cw, h=ch, d=cd;
-    const uv = (pu, pv) => [pu/texW, 1-pv/texH];
+        // ── Cube mesh builder ─────────────────────────────────────────────────────────
+        // All coords are in the cube's own local space (already offset from pivot/bone).
+        // UV formula uses flipY=true (CanvasTexture default): v = 1 - pixelRow / texH
+        function buildBoxMesh(ox, oy, oz, cw, ch, cd, u0, v0, texW, texH, mat) {
+            const x0 = ox,
+                x1 = ox + cw,
+                y0 = oy,
+                y1 = oy + ch,
+                z0 = oz,
+                z1 = oz + cd;
+            const w = cw,
+                h = ch,
+                d = cd;
+            const uv = (pu, pv) => [pu / texW, 1 - pv / texH];
 
-    const pos=[], uvs=[], idx=[];
-    const face = (verts, fuvs) => {
-      const b = pos.length/3;
-      verts.forEach(v => pos.push(...v));
-      fuvs.forEach(t => uvs.push(...t));
-      idx.push(b,b+1,b+2, b,b+2,b+3);
-    };
+            const pos = [],
+                uvs = [],
+                idx = [];
+            const face = (verts, fuvs) => {
+                const b = pos.length / 3;
+                verts.forEach((v) => pos.push(...v));
+                fuvs.forEach((t) => uvs.push(...t));
+                idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
+            };
 
-    // North (-Z)
-    face([[x1,y0,z0],[x0,y0,z0],[x0,y1,z0],[x1,y1,z0]], [
-      uv(u0+d+w,v0+d+h), uv(u0+d,v0+d+h), uv(u0+d,v0+d), uv(u0+d+w,v0+d)]);
-    // South (+Z)
-    face([[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]], [
-      uv(u0+2*d+2*w,v0+d+h), uv(u0+2*d+w,v0+d+h), uv(u0+2*d+w,v0+d), uv(u0+2*d+2*w,v0+d)]);
-    // East (+X)
-    face([[x1,y0,z1],[x1,y0,z0],[x1,y1,z0],[x1,y1,z1]], [
-      uv(u0+d+w,v0+d+h), uv(u0+2*d+w,v0+d+h), uv(u0+2*d+w,v0+d), uv(u0+d+w,v0+d)]);
-    // West (-X)
-    face([[x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0]], [
-      uv(u0,v0+d+h), uv(u0+d,v0+d+h), uv(u0+d,v0+d), uv(u0,v0+d)]);
-    // Top (+Y)
-    face([[x0,y1,z1],[x1,y1,z1],[x1,y1,z0],[x0,y1,z0]], [
-      uv(u0+d,v0+d), uv(u0+d+w,v0+d), uv(u0+d+w,v0), uv(u0+d,v0)]);
-    // Bottom (-Y)
-    face([[x1,y0,z1],[x0,y0,z1],[x0,y0,z0],[x1,y0,z0]], [
-      uv(u0+d+w,v0+d), uv(u0+2*d+w,v0+d), uv(u0+2*d+w,v0), uv(u0+d+w,v0)]);
+            // North (-Z)
+            face(
+                [
+                    [x1, y0, z0],
+                    [x0, y0, z0],
+                    [x0, y1, z0],
+                    [x1, y1, z0],
+                ],
+                [
+                    uv(u0 + d + w, v0 + d + h),
+                    uv(u0 + d, v0 + d + h),
+                    uv(u0 + d, v0 + d),
+                    uv(u0 + d + w, v0 + d),
+                ],
+            );
+            // South (+Z)
+            face(
+                [
+                    [x0, y0, z1],
+                    [x1, y0, z1],
+                    [x1, y1, z1],
+                    [x0, y1, z1],
+                ],
+                [
+                    uv(u0 + 2 * d + 2 * w, v0 + d + h),
+                    uv(u0 + 2 * d + w, v0 + d + h),
+                    uv(u0 + 2 * d + w, v0 + d),
+                    uv(u0 + 2 * d + 2 * w, v0 + d),
+                ],
+            );
+            // East (+X)
+            face(
+                [
+                    [x1, y0, z1],
+                    [x1, y0, z0],
+                    [x1, y1, z0],
+                    [x1, y1, z1],
+                ],
+                [
+                    uv(u0 + d + w, v0 + d + h),
+                    uv(u0 + 2 * d + w, v0 + d + h),
+                    uv(u0 + 2 * d + w, v0 + d),
+                    uv(u0 + d + w, v0 + d),
+                ],
+            );
+            // West (-X)
+            face(
+                [
+                    [x0, y0, z0],
+                    [x0, y0, z1],
+                    [x0, y1, z1],
+                    [x0, y1, z0],
+                ],
+                [
+                    uv(u0, v0 + d + h),
+                    uv(u0 + d, v0 + d + h),
+                    uv(u0 + d, v0 + d),
+                    uv(u0, v0 + d),
+                ],
+            );
+            // Top (+Y)
+            face(
+                [
+                    [x0, y1, z1],
+                    [x1, y1, z1],
+                    [x1, y1, z0],
+                    [x0, y1, z0],
+                ],
+                [
+                    uv(u0 + d, v0 + d),
+                    uv(u0 + d + w, v0 + d),
+                    uv(u0 + d + w, v0),
+                    uv(u0 + d, v0),
+                ],
+            );
+            // Bottom (-Y)
+            face(
+                [
+                    [x1, y0, z1],
+                    [x0, y0, z1],
+                    [x0, y0, z0],
+                    [x1, y0, z0],
+                ],
+                [
+                    uv(u0 + d + w, v0 + d),
+                    uv(u0 + 2 * d + w, v0 + d),
+                    uv(u0 + 2 * d + w, v0),
+                    uv(u0 + d + w, v0),
+                ],
+            );
 
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    geo.setAttribute('uv',       new THREE.Float32BufferAttribute(uvs, 2));
-    geo.setIndex(idx);
-    geo.computeVertexNormals();
-    return new THREE.Mesh(geo, mat);
-  }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute(
+                "position",
+                new THREE.Float32BufferAttribute(pos, 3),
+            );
+            geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+            geo.setIndex(idx);
+            geo.computeVertexNormals();
+            return new THREE.Mesh(geo, mat);
+        }
 
-  // ── Mode A: flat texture ──────────────────────────────────────────────────────
-  // No geoSrc — render a double-sided billboard quad showing the full texture.
-  if (!geoSrc) {
-    if (!texSrc) { console.warn('BedrockModelViewer: no geoSrc or texSrc provided'); return; }
+        // ── Mode A: flat texture ──────────────────────────────────────────────────────
+        // No geoSrc — render a double-sided billboard quad showing the full texture.
+        if (!geoSrc) {
+            if (!texSrc) {
+                console.warn(
+                    "BedrockModelViewer: no geoSrc or texSrc provided",
+                );
+                return;
+            }
 
-    const tex = await loadTex(texSrc);
-    const aspect = tex.image.width / tex.image.height;
-    const planeW = 16, planeH = 16 / aspect;
+            const tex = await loadTex(texSrc);
+            const aspect = tex.image.width / tex.image.height;
+            const planeW = 16,
+                planeH = 16 / aspect;
 
-    const geo = new THREE.PlaneGeometry(planeW, planeH);
-    const mat = new THREE.MeshLambertMaterial({ map: tex, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide });
-    const mesh = new THREE.Mesh(geo, mat);
-    // Rotate so it faces the camera's default direction
-    mesh.position.set(0, 0, 0);
-    scene.add(mesh);
+            const geo = new THREE.PlaneGeometry(planeW, planeH);
+            const mat = new THREE.MeshLambertMaterial({
+                map: tex,
+                transparent: true,
+                alphaTest: 0.1,
+                side: THREE.DoubleSide,
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            // Rotate so it faces the camera's default direction
+            mesh.position.set(0, 0, 0);
+            scene.add(mesh);
 
-    radius = planeW * 1.5;
-    phi    = Math.PI / 2; // look straight at it
+            radius = planeW * 1.5;
+            phi = Math.PI / 2; // look straight at it
 
-    const clock = new THREE.Clock();
-    (function loop() {
-      requestAnimationFrame(loop);
-      theta += clock.getDelta() * spinSpeed * 0.8;
-      updateCamera();
-      renderer.render(scene, camera);
+            const clock = new THREE.Clock();
+            (function loop() {
+                requestAnimationFrame(loop);
+                theta += clock.getDelta() * spinSpeed * 0.8;
+                updateCamera();
+                renderer.render(scene, camera);
+            })();
+            return;
+        }
+
+        // ── Mode B: geo model ─────────────────────────────────────────────────────────
+        const json = await fetch(geoSrc).then((r) => r.json());
+        const geoDef = json["minecraft:geometry"]?.[0];
+        if (!geoDef) {
+            console.error("BedrockModelViewer: no minecraft:geometry found");
+            return;
+        }
+
+        const texW = geoDef.description.texture_width || 64;
+        const texH = geoDef.description.texture_height || 64;
+
+        const mat = texSrc
+            ? new THREE.MeshLambertMaterial({
+                  map: await loadTex(texSrc),
+                  transparent: true,
+                  alphaTest: 0.1,
+              })
+            : new THREE.MeshLambertMaterial({ color: 0x4fffb0 });
+
+        // ── Build bone hierarchy ──────────────────────────────────────────────────────
+        //
+        // In Bedrock, all pivots/origins are in model space.
+        // For Three.js we represent each bone as a Group positioned at its pivot.
+        // A child bone's position is expressed relative to its parent's pivot, so:
+        //   childGroup.position = childBone.pivot - parentBone.pivot
+        // Cube origins are also in model space, so relative to their bone group:
+        //   cubeLocalOrigin = cube.origin - bone.pivot
+        //
+        // Per-cube rotation: a cube may carry its own pivot + rotation (in degrees, XYZ order).
+        // We wrap it in a sub-Group at (cube.pivot - bone.pivot), rotated, then place
+        // the mesh at (cube.origin - cube.pivot) inside that sub-Group.
+
+        const deg = THREE.MathUtils.degToRad;
+
+        // Pass 1: create a Group and metadata for every bone
+        const boneMap = new Map(); // name -> { group, pivot: [x,y,z] }
+        for (const bone of geoDef.bones || []) {
+            const pivot = bone.pivot || [0, 0, 0];
+            const g = new THREE.Group();
+            g.position.set(...pivot);
+            boneMap.set(bone.name, { group: g, pivot });
+        }
+
+        // Pass 2: wire up parent-child relationships
+        const rootGroup = new THREE.Group();
+        for (const bone of geoDef.bones || []) {
+            const { group, pivot } = boneMap.get(bone.name);
+            if (bone.parent && boneMap.has(bone.parent)) {
+                const parent = boneMap.get(bone.parent);
+                // Re-express child pivot as offset from parent pivot
+                group.position.set(
+                    pivot[0] - parent.pivot[0],
+                    pivot[1] - parent.pivot[1],
+                    pivot[2] - parent.pivot[2],
+                );
+                parent.group.add(group);
+            } else {
+                rootGroup.add(group);
+            }
+        }
+
+        // Pass 3: add cube meshes to their bone groups
+        for (const bone of geoDef.bones || []) {
+            const {
+                group,
+                pivot: [bpx, bpy, bpz],
+            } = boneMap.get(bone.name);
+
+            for (const cube of bone.cubes || []) {
+                if (!Array.isArray(cube.uv)) continue; // skip per-face UV for now
+
+                const [ox, oy, oz] = cube.origin;
+                const [cw, ch, cd] = cube.size;
+                const [u0, v0] = cube.uv;
+
+                if (cube.rotation) {
+                    // Cube has its own local rotation around cube.pivot (model space)
+                    const [cpx, cpy, cpz] = cube.pivot || [ox, oy, oz];
+                    const [rx, ry, rz] = cube.rotation;
+
+                    // Sub-group sits at cube.pivot relative to bone.pivot
+                    const pivotGroup = new THREE.Group();
+                    pivotGroup.position.set(cpx - bpx, cpy - bpy, cpz - bpz);
+
+                    // Use default rotation order (XYZ) – matches Bedrock intrinsic rotations
+                    pivotGroup.rotation.set(deg(rx), deg(ry), deg(rz));
+
+                    // Mesh sits at cube.origin relative to cube.pivot
+                    const mesh = buildBoxMesh(
+                        ox - cpx,
+                        oy - cpy,
+                        oz - cpz,
+                        cw,
+                        ch,
+                        cd,
+                        u0,
+                        v0,
+                        texW,
+                        texH,
+                        mat,
+                    );
+                    pivotGroup.add(mesh);
+                    group.add(pivotGroup);
+                } else {
+                    // Plain cube — just offset from bone pivot
+                    const mesh = buildBoxMesh(
+                        ox - bpx,
+                        oy - bpy,
+                        oz - bpz,
+                        cw,
+                        ch,
+                        cd,
+                        u0,
+                        v0,
+                        texW,
+                        texH,
+                        mat,
+                    );
+                    group.add(mesh);
+                }
+            }
+        }
+
+        // Center + fit camera
+        const box = new THREE.Box3().setFromObject(rootGroup);
+        const ctr = new THREE.Vector3();
+        box.getCenter(ctr);
+        rootGroup.position.sub(ctr);
+
+        const sz = new THREE.Vector3();
+        box.getSize(sz);
+        radius = Math.max(sz.x, sz.y, sz.z) * 2.4;
+
+        scene.add(rootGroup);
+
+        // ── Render loop ───────────────────────────────────────────────────────────────
+        const clock = new THREE.Clock();
+        (function loop() {
+            requestAnimationFrame(loop);
+            theta += clock.getDelta() * spinSpeed * 0.8;
+            updateCamera();
+            renderer.render(scene, camera);
+        })();
     })();
-    return;
-  }
-
-  // ── Mode B: geo model ─────────────────────────────────────────────────────────
-  // Try to fetch the geo JSON. If it 404s or is malformed, fall back to flat mode.
-  let json, geoDef;
-  try {
-    const res = await fetch(geoSrc);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    json   = await res.json();
-    geoDef = json['minecraft:geometry']?.[0];
-    if (!geoDef) throw new Error('no minecraft:geometry');
-  } catch (e) {
-    console.warn(`BedrockModelViewer: geo load failed (${e.message}), falling back to flat texture`);
-    if (!texSrc) return;
-    const tex = await loadTex(texSrc);
-    const planeW = 16, planeH = 16 / (tex.image.width / tex.image.height);
-    const fgeo = new THREE.PlaneGeometry(planeW, planeH);
-    const fmat = new THREE.MeshLambertMaterial({ map: tex, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide });
-    scene.add(new THREE.Mesh(fgeo, fmat));
-    radius = planeW * 1.5;
-    phi    = Math.PI / 2;
-    const clock = new THREE.Clock();
-    (function loop() { requestAnimationFrame(loop); theta += clock.getDelta() * spinSpeed * 0.8; updateCamera(); renderer.render(scene, camera); })();
-    return;
-  }
-
-  const texW = geoDef.description.texture_width  || 64;
-  const texH = geoDef.description.texture_height || 64;
-
-  const mat = texSrc
-    ? new THREE.MeshLambertMaterial({ map: await loadTex(texSrc), transparent: true, alphaTest: 0.1 })
-    : new THREE.MeshLambertMaterial({ color: 0x4fffb0 });
-
-  // ── Build bone hierarchy ──────────────────────────────────────────────────────
-  //
-  // In Bedrock, all pivots/origins are in model space.
-  // For Three.js we represent each bone as a Group positioned at its pivot.
-  // A child bone's position is expressed relative to its parent's pivot, so:
-  //   childGroup.position = childBone.pivot - parentBone.pivot
-  // Cube origins are also in model space, so relative to their bone group:
-  //   cubeLocalOrigin = cube.origin - bone.pivot
-  //
-  // Per-cube rotation: a cube may carry its own pivot + rotation (in degrees, XYZ order).
-  // We wrap it in a sub-Group at (cube.pivot - bone.pivot), rotated, then place
-  // the mesh at (cube.origin - cube.pivot) inside that sub-Group.
-
-  const deg = THREE.MathUtils.degToRad;
-
-  // Pass 1: create a Group and metadata for every bone
-  const boneMap = new Map(); // name -> { group, pivot: [x,y,z] }
-  for (const bone of (geoDef.bones || [])) {
-    const pivot = bone.pivot || [0, 0, 0];
-    const g = new THREE.Group();
-    g.position.set(...pivot);
-    boneMap.set(bone.name, { group: g, pivot });
-  }
-
-  // Pass 2: wire up parent-child relationships
-  const rootGroup = new THREE.Group();
-  for (const bone of (geoDef.bones || [])) {
-    const { group, pivot } = boneMap.get(bone.name);
-    if (bone.parent && boneMap.has(bone.parent)) {
-      const parent = boneMap.get(bone.parent);
-      // Re-express child pivot as offset from parent pivot
-      group.position.set(
-        pivot[0] - parent.pivot[0],
-        pivot[1] - parent.pivot[1],
-        pivot[2] - parent.pivot[2]
-      );
-      parent.group.add(group);
-    } else {
-      rootGroup.add(group);
-    }
-  }
-
-  // Pass 3: add cube meshes to their bone groups
-  for (const bone of (geoDef.bones || [])) {
-    const { group, pivot: [bpx, bpy, bpz] } = boneMap.get(bone.name);
-
-    for (const cube of (bone.cubes || [])) {
-      if (!Array.isArray(cube.uv)) continue; // skip per-face UV for now
-
-      const [ox, oy, oz] = cube.origin;
-      const [cw, ch, cd] = cube.size;
-      const [u0, v0]     = cube.uv;
-
-      if (cube.rotation) {
-        // Cube has its own local rotation around cube.pivot (model space)
-        const [cpx, cpy, cpz] = cube.pivot || [ox, oy, oz];
-        const [rx,  ry,  rz]  = cube.rotation;
-
-        // Sub-group sits at cube.pivot relative to bone.pivot
-        const pivotGroup = new THREE.Group();
-        pivotGroup.position.set(cpx - bpx, cpy - bpy, cpz - bpz);
-
-        // Bedrock applies rotations extrinsic XYZ (global X → global Y → global Z),
-        // which equals intrinsic ZYX in Three.js Euler terms.
-        pivotGroup.rotation.order = 'XYZ';
-        pivotGroup.rotation.set(-deg(rx), -deg(ry), deg(rz));
-
-        // Mesh sits at cube.origin relative to cube.pivot
-        const mesh = buildBoxMesh(
-          ox - cpx, oy - cpy, oz - cpz,
-          cw, ch, cd, u0, v0, texW, texH, mat
-        );
-        pivotGroup.add(mesh);
-        group.add(pivotGroup);
-      } else {
-        // Plain cube — just offset from bone pivot
-        const mesh = buildBoxMesh(
-          ox - bpx, oy - bpy, oz - bpz,
-          cw, ch, cd, u0, v0, texW, texH, mat
-        );
-        group.add(mesh);
-      }
-    }
-  }
-
-  // Center + fit camera
-  const box = new THREE.Box3().setFromObject(rootGroup);
-  const ctr = new THREE.Vector3();
-  box.getCenter(ctr);
-  rootGroup.position.sub(ctr);
-
-  const sz = new THREE.Vector3();
-  box.getSize(sz);
-  radius = Math.max(sz.x, sz.y, sz.z) * 2.4;
-
-  scene.add(rootGroup);
-
-  // ── Render loop ───────────────────────────────────────────────────────────────
-  const clock = new THREE.Clock();
-  (function loop() {
-    requestAnimationFrame(loop);
-    theta += clock.getDelta() * spinSpeed * 0.8;
-    updateCamera();
-    renderer.render(scene, camera);
-  })();
-})();
 </script>

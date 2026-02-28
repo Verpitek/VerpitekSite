@@ -831,7 +831,6 @@ function getShapedRecipe(path: string) {
             <p class="description">{item.description}</p>
             {item.recipes.length > 0 && (
               <div class="recipes">
-                <strong>Recipes:</strong>
                 <div class="recipe-grids">
                   {item.recipes.map(recipePath => {
                     const recipe = getShapedRecipe(recipePath);
@@ -839,11 +838,7 @@ function getShapedRecipe(path: string) {
                     return <RecipeRenderer recipe={recipe} items={items} blocks={blocks} />;
                   })}
                 </div>
-                <ul>
-                  {item.recipes.map(recipe => (
-                    <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
-                  ))}
-                </ul>
+
               </div>
             )}
           </div>
@@ -875,7 +870,6 @@ function getShapedRecipe(path: string) {
             <p class="description">{block.description}</p>
             {block.recipes.length > 0 && (
               <div class="recipes">
-                <strong>Recipes:</strong>
                 <div class="recipe-grids">
                   {block.recipes.map(recipePath => {
                     const recipe = getShapedRecipe(recipePath);
@@ -883,11 +877,7 @@ function getShapedRecipe(path: string) {
                     return <RecipeRenderer recipe={recipe} items={items} blocks={blocks} />;
                   })}
                 </div>
-                <ul>
-                  {block.recipes.map(recipe => (
-                    <li><a href={"/" + recipe} target="_blank">{recipe.split('/').pop()}</a></li>
-                  ))}
-                </ul>
+
               </div>
             )}
           </div>
@@ -903,9 +893,9 @@ function getShapedRecipe(path: string) {
       background: #2a2a2a;
     }
     .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
       margin-top: 1rem;
     }
     .card {
@@ -913,6 +903,9 @@ function getShapedRecipe(path: string) {
       border: 1px solid #444;
       overflow: hidden;
       transition: transform 0.2s;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
     }
     .card:hover {
       transform: translateY(-4px);
@@ -924,7 +917,8 @@ function getShapedRecipe(path: string) {
       align-items: center;
       padding: 1.5rem;
       background: #222;
-      border-bottom: 1px solid #444;
+      border-right: 1px solid #444;
+      flex-shrink: 0;
     }
     .card-image img {
       image-rendering: pixelated;
@@ -943,6 +937,7 @@ function getShapedRecipe(path: string) {
     }
     .card-content {
       padding: 1.5rem;
+      flex-grow: 1;
     }
     .card-content h3 {
       margin-top: 0;
@@ -987,6 +982,16 @@ function getShapedRecipe(path: string) {
     }
     section {
       margin-bottom: 3rem;
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        flex-direction: column;
+      }
+      .card-image {
+        border-right: none;
+        border-bottom: 1px solid #444;
+      }
     }
   </style>
 </WikiLayout>
