@@ -132,19 +132,52 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
         }
 
         // ── Cube mesh builder ─────────────────────────────────────────────────────────
-        // All coords are in the cube's own local space (already offset from pivot/bone).
-        // UV formula uses flipY=true (CanvasTexture default): v = 1 - pixelRow / texH
-        function buildBoxMesh(ox, oy, oz, cw, ch, cd, u0, v0, texW, texH, mat) {
-            const x0 = ox,
-                x1 = ox + cw,
-                y0 = oy,
-                y1 = oy + ch,
-                z0 = oz,
-                z1 = oz + cd;
-            const w = cw,
-                h = ch,
-                d = cd;
-            const uv = (pu, pv) => [pu / texW, 1 - pv / texH];
+         // All coords are in the cube's own local space (already offset from pivot/bone).
+         // UV formula uses flipY=true (CanvasTexture default): v = 1 - pixelRow / texH
+         // Supports both simple array UV [u, v] and per-face UV object {north, east, south, west, up, down}
+         function buildBoxMesh(ox, oy, oz, cw, ch, cd, uvData, texW, texH, mat) {
+             const x0 = ox,
+                 x1 = ox + cw,
+                 y0 = oy,
+                 y1 = oy + ch,
+                 z0 = oz,
+                 z1 = oz + cd;
+             const w = cw,
+                 h = ch,
+                 d = cd;
+             const uv = (pu, pv) => [pu / texW, 1 - pv / texH];
+             
+             // Parse per-face or simple UV format
+             let faceUVs = {};
+             if (Array.isArray(uvData)) {
+                 // Simple array [u0, v0] - use standard T-cross layout
+                 const [u0, v0] = uvData;
+                 faceUVs = {
+                     north: [[u0 + d + w, v0 + d + h], [u0 + d, v0 + d + h], [u0 + d, v0 + d], [u0 + d + w, v0 + d]],
+                     south: [[u0 + 2*d + 2*w, v0 + d + h], [u0 + 2*d + w, v0 + d + h], [u0 + 2*d + w, v0 + d], [u0 + 2*d + 2*w, v0 + d]],
+                     east: [[u0 + d + w, v0 + d + h], [u0 + 2*d + w, v0 + d + h], [u0 + 2*d + w, v0 + d], [u0 + d + w, v0 + d]],
+                     west: [[u0, v0 + d + h], [u0 + d, v0 + d + h], [u0 + d, v0 + d], [u0, v0 + d]],
+                     up: [[u0 + d, v0 + d], [u0 + d + w, v0 + d], [u0 + d + w, v0], [u0 + d, v0]],
+                     down: [[u0 + d + w, v0 + d], [u0 + 2*d + w, v0 + d], [u0 + 2*d + w, v0], [u0 + d + w, v0]]
+                 };
+             } else if (typeof uvData === 'object' && uvData !== null) {
+                 // Per-face UV format {north: {uv: [u,v], uv_size: [w,h]}, ...}
+                 const faces = ['north', 'east', 'south', 'west', 'up', 'down'];
+                 for (const face of faces) {
+                     if (uvData[face]) {
+                         const faceData = uvData[face];
+                         const [u, v] = faceData.uv;
+                         const [fw, fh] = faceData.uv_size;
+                         // Handle negative sizes (UV flipping)
+                         faceUVs[face] = [
+                             [u, v],
+                             [u + fw, v],
+                             [u + fw, v + fh],
+                             [u, v + fh]
+                         ];
+                     }
+                 }
+             }
 
             const pos = [],
                 uvs = [],
@@ -156,96 +189,66 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
                 idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
             };
 
-            // North (-Z)
-            face(
-                [
-                    [x1, y0, z0],
-                    [x0, y0, z0],
-                    [x0, y1, z0],
-                    [x1, y1, z0],
-                ],
-                [
-                    uv(u0 + d + w, v0 + d + h),
-                    uv(u0 + d, v0 + d + h),
-                    uv(u0 + d, v0 + d),
-                    uv(u0 + d + w, v0 + d),
-                ],
-            );
-            // South (+Z)
-            face(
-                [
-                    [x0, y0, z1],
-                    [x1, y0, z1],
-                    [x1, y1, z1],
-                    [x0, y1, z1],
-                ],
-                [
-                    uv(u0 + 2 * d + 2 * w, v0 + d + h),
-                    uv(u0 + 2 * d + w, v0 + d + h),
-                    uv(u0 + 2 * d + w, v0 + d),
-                    uv(u0 + 2 * d + 2 * w, v0 + d),
-                ],
-            );
-            // East (+X)
-            face(
-                [
-                    [x1, y0, z1],
-                    [x1, y0, z0],
-                    [x1, y1, z0],
-                    [x1, y1, z1],
-                ],
-                [
-                    uv(u0 + d + w, v0 + d + h),
-                    uv(u0 + 2 * d + w, v0 + d + h),
-                    uv(u0 + 2 * d + w, v0 + d),
-                    uv(u0 + d + w, v0 + d),
-                ],
-            );
-            // West (-X)
-            face(
-                [
-                    [x0, y0, z0],
-                    [x0, y0, z1],
-                    [x0, y1, z1],
-                    [x0, y1, z0],
-                ],
-                [
-                    uv(u0, v0 + d + h),
-                    uv(u0 + d, v0 + d + h),
-                    uv(u0 + d, v0 + d),
-                    uv(u0, v0 + d),
-                ],
-            );
-            // Top (+Y)
-            face(
-                [
-                    [x0, y1, z1],
-                    [x1, y1, z1],
-                    [x1, y1, z0],
-                    [x0, y1, z0],
-                ],
-                [
-                    uv(u0 + d, v0 + d),
-                    uv(u0 + d + w, v0 + d),
-                    uv(u0 + d + w, v0),
-                    uv(u0 + d, v0),
-                ],
-            );
-            // Bottom (-Y)
-            face(
-                [
-                    [x1, y0, z1],
-                    [x0, y0, z1],
-                    [x0, y0, z0],
-                    [x1, y0, z0],
-                ],
-                [
-                    uv(u0 + d + w, v0 + d),
-                    uv(u0 + 2 * d + w, v0 + d),
-                    uv(u0 + 2 * d + w, v0),
-                    uv(u0 + d + w, v0),
-                ],
-            );
+             // North (-Z)
+             face(
+                 [
+                     [x1, y0, z0],
+                     [x0, y0, z0],
+                     [x0, y1, z0],
+                     [x1, y1, z0],
+                 ],
+                 faceUVs.north ? faceUVs.north.map(([pu, pv]) => uv(pu, pv)) : [uv(0,0), uv(0,0), uv(0,0), uv(0,0)],
+             );
+             // South (+Z)
+             face(
+                 [
+                     [x0, y0, z1],
+                     [x1, y0, z1],
+                     [x1, y1, z1],
+                     [x0, y1, z1],
+                 ],
+                 faceUVs.south ? faceUVs.south.map(([pu, pv]) => uv(pu, pv)) : [uv(0,0), uv(0,0), uv(0,0), uv(0,0)],
+             );
+             // East (+X)
+             face(
+                 [
+                     [x1, y0, z1],
+                     [x1, y0, z0],
+                     [x1, y1, z0],
+                     [x1, y1, z1],
+                 ],
+                 faceUVs.east ? faceUVs.east.map(([pu, pv]) => uv(pu, pv)) : [uv(0,0), uv(0,0), uv(0,0), uv(0,0)],
+             );
+             // West (-X)
+             face(
+                 [
+                     [x0, y0, z0],
+                     [x0, y0, z1],
+                     [x0, y1, z1],
+                     [x0, y1, z0],
+                 ],
+                 faceUVs.west ? faceUVs.west.map(([pu, pv]) => uv(pu, pv)) : [uv(0,0), uv(0,0), uv(0,0), uv(0,0)],
+             );
+             // Top (+Y)
+             face(
+                 [
+                     [x0, y1, z1],
+                     [x1, y1, z1],
+                     [x1, y1, z0],
+                     [x0, y1, z0],
+                 ],
+                 faceUVs.up ? faceUVs.up.map(([pu, pv]) => uv(pu, pv)) : [uv(0,0), uv(0,0), uv(0,0), uv(0,0)],
+             );
+             // Bottom (-Y)
+             face(
+                 [
+                     [x1, y0, z1],
+                     [x0, y0, z1],
+                     [x0, y0, z0],
+                     [x1, y0, z0],
+                 ],
+                 faceUVs.down ? faceUVs.down.map(([pu, pv]) => uv(pu, pv)) : [uv(0,0), uv(0,0), uv(0,0), uv(0,0)],
+             );
 
             const geo = new THREE.BufferGeometry();
             geo.setAttribute(
@@ -366,12 +369,11 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
                 pivot: [bpx, bpy, bpz],
             } = boneMap.get(bone.name);
 
-            for (const cube of bone.cubes || []) {
-                if (!Array.isArray(cube.uv)) continue; // skip per-face UV for now
+             for (const cube of bone.cubes || []) {
+                 if (!cube.uv) continue; // skip if no UV data at all
 
-                const [ox, oy, oz] = cube.origin;
-                const [cw, ch, cd] = cube.size;
-                const [u0, v0] = cube.uv;
+                 const [ox, oy, oz] = cube.origin;
+                 const [cw, ch, cd] = cube.size;
 
                 if (cube.rotation) {
                     // Cube has its own local rotation around cube.pivot (model space)
@@ -385,37 +387,35 @@ const id = `bmv-${Math.random().toString(36).slice(2, 8)}`;
                     // Use default rotation order (XYZ) – matches Bedrock intrinsic rotations
                     pivotGroup.rotation.set(deg(rx), deg(ry), deg(rz));
 
-                    // Mesh sits at cube.origin relative to cube.pivot
-                    const mesh = buildBoxMesh(
-                        ox - cpx,
-                        oy - cpy,
-                        oz - cpz,
-                        cw,
-                        ch,
-                        cd,
-                        u0,
-                        v0,
-                        texW,
-                        texH,
-                        mat,
-                    );
+                     // Mesh sits at cube.origin relative to cube.pivot
+                     const mesh = buildBoxMesh(
+                         ox - cpx,
+                         oy - cpy,
+                         oz - cpz,
+                         cw,
+                         ch,
+                         cd,
+                         cube.uv,
+                         texW,
+                         texH,
+                         mat,
+                     );
                     pivotGroup.add(mesh);
                     group.add(pivotGroup);
-                } else {
-                    // Plain cube — just offset from bone pivot
-                    const mesh = buildBoxMesh(
-                        ox - bpx,
-                        oy - bpy,
-                        oz - bpz,
-                        cw,
-                        ch,
-                        cd,
-                        u0,
-                        v0,
-                        texW,
-                        texH,
-                        mat,
-                    );
+                 } else {
+                     // Plain cube — just offset from bone pivot
+                     const mesh = buildBoxMesh(
+                         ox - bpx,
+                         oy - bpy,
+                         oz - bpz,
+                         cw,
+                         ch,
+                         cd,
+                         cube.uv,
+                         texW,
+                         texH,
+                         mat,
+                     );
                     group.add(mesh);
                 }
             }
