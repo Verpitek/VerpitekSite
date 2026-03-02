@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>PanSpark Debugger</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="./editor.css"/>
+
+    </head>
+    <body>
+        <div class="shell">
+            <!-- ── Topbar ── -->
+            <div class="topbar">
+                <div class="logo">
+                    <img src="/panspark.png" alt="PanSpark" class="logo-image">
+                    <sub>DEBUGGER</sub>
+                </div>
+                <div class="topbar-right">
+                    <a href="/" style="color:var(--amber-dim);text-decoration:none;margin-right:10px;">← Home</a>
+                    <span id="heap-info">HEAP: 0/1280</span>
+                    <span id="spill" class="sp idle">IDLE</span>
+                </div>
+            </div>
+
+            <!-- ── Workspace ── -->
+            <div class="workspace">
+                <!-- Editor -->
+                <div class="epane">
+                    <div class="ph">
+                        SOURCE EDITOR <span class="pb" id="lcnt">0 lines</span>
+                    </div>
+                    <div class="ewrap">
+                        <div id="gutter"></div>
+                        <div id="hll"></div>
+                        <div id="ipbar"></div>
+                        <textarea
+                            id="code"
+                            spellcheck="false"
+                            autocomplete="off"
+                            autocorrect="off"
+                            autocapitalize="off"
+                        >// PanSpark — Fibonacci Sequence
+$a   = r0
+$b   = r1
+$tmp = r2
+$n   = r3
+$i   = r4
+
+POINT main
+  SET 0 >> $a
+  SET 1 >> $b
+  SET 0 >> $tmp
+  SET 10 >> $n
+  SET 0 >> $i
+
+POINT loop
+  IF $i >= $n >> done
+  PRINT $a
+  ADD $a $b >> $tmp
+  SET $b >> $a
+  SET $tmp >> $b
+  INC $i
+  JUMP loop
+
+POINT done
+  HALT</textarea>
+                        <div id="ac"></div>
+                    </div>
+                </div>
+
+                <!-- Right pane / mobile bottom drawer -->
+                <div class="rpane" id="rpane">
+                    <!-- Mobile-only tab bar -->
+                    <div class="mob-tabbar" id="mob-tabbar">
+                        <button class="rtab act" data-sect="rs">REGS</button>
+                        <button class="rtab" data-sect="sk">STACK</button>
+                        <button class="rtab" data-sect="op">OUTPUT</button>
+                        <button class="rtog" id="rtog">▾</button>
+                    </div>
+
+                    <!-- Registers / MCU -->
+                    <div class="rs-wrap" id="rs">
+                        <div class="ph">
+                            REGISTERS <span class="pb" id="reg-bank-label">r0–r15</span>
+                        </div>
+                        <!-- Bank tabs (desktop only) -->
+                        <div class="reg-tabs" id="reg-tabs">
+                            <div class="reg-tab act" data-bank="r">R-BANK</div>
+                            <div class="reg-tab" data-bank="x">X-BANK</div>
+                            <div class="reg-tab" data-bank="mcu">MCU</div>
+                        </div>
+                        <!-- Normal register grid -->
+                        <div id="regs" class="rg"></div>
+                        <!-- MCU view (hidden unless MCU tab active) -->
+                        <div id="mcu-view" class="mcu-view" style="display:none">
+
+                            <!-- TOP: FRONT output wire only -->
+                            <div class="mcu-row mcu-top">
+                                <div class="mcu-wire-zone mcu-wire-v" id="mcu-wire-front">
+                                    <svg class="mcu-wire-svg" viewBox="0 0 20 40" preserveAspectRatio="none">
+                                        <rect class="rs-wire" x="7" y="0" width="6" height="40"/>
+                                    </svg>
+                                    <span class="mcu-dir-tag mcu-dir-below">FRONT</span>
+                                </div>
+                            </div>
+
+                            <!-- MIDDLE: LEFT wire — BLOCK (with all regs inside) — RIGHT wire -->
+                            <div class="mcu-row mcu-mid">
+
+                                <!-- LEFT wire -->
+                                <div class="mcu-side-zone">
+                                    <div class="mcu-wire-zone mcu-wire-h" id="mcu-wire-left">
+                                        <svg class="mcu-wire-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
+                                            <rect class="rs-wire" x="0" y="7" width="40" height="6"/>
+                                        </svg>
+                                    </div>
+                                    <span class="mcu-dir-tag mcu-dir-side">LEFT</span>
+                                </div>
+
+                                <!-- Central block: 3×3 cross grid, groups at cardinal positions -->
+                                <div class="mcu-block" id="mcu-block">
+                                    <!-- row 1: empty · FRONT · empty -->
+                                    <div class="mcu-cross-empty"></div>
+                                    <div class="mcu-reg-group mcu-rg-front">
+                                        <div class="mcu-rm-row out-row" id="mcu-rm-x0">
+                                            <span class="mcu-rm-name mcu-rm-out">x0</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x0">0</span>
+                                        </div>
+                                        <div class="mcu-rm-row in-row" id="mcu-rm-x4">
+                                            <span class="mcu-rm-name mcu-rm-in">x4</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x4">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="mcu-cross-empty"></div>
+                                    <!-- row 2: LEFT · empty · RIGHT -->
+                                    <div class="mcu-reg-group mcu-rg-left">
+                                        <div class="mcu-rm-row out-row" id="mcu-rm-x2">
+                                            <span class="mcu-rm-name mcu-rm-out">x2</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x2">0</span>
+                                        </div>
+                                        <div class="mcu-rm-row in-row" id="mcu-rm-x6">
+                                            <span class="mcu-rm-name mcu-rm-in">x6</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x6">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="mcu-cross-empty mcu-cross-center"></div>
+                                    <div class="mcu-reg-group mcu-rg-right">
+                                        <div class="mcu-rm-row out-row" id="mcu-rm-x3">
+                                            <span class="mcu-rm-name mcu-rm-out">x3</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x3">0</span>
+                                        </div>
+                                        <div class="mcu-rm-row in-row" id="mcu-rm-x7">
+                                            <span class="mcu-rm-name mcu-rm-in">x7</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x7">0</span>
+                                        </div>
+                                    </div>
+                                    <!-- row 3: empty · BACK · empty -->
+                                    <div class="mcu-cross-empty"></div>
+                                    <div class="mcu-reg-group mcu-rg-back">
+                                        <div class="mcu-rm-row out-row" id="mcu-rm-x1">
+                                            <span class="mcu-rm-name mcu-rm-out">x1</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x1">0</span>
+                                        </div>
+                                        <div class="mcu-rm-row in-row" id="mcu-rm-x5">
+                                            <span class="mcu-rm-name mcu-rm-in">x5</span>
+                                            <span class="mcu-rm-val" id="mcu-rmv-x5">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="mcu-cross-empty"></div>
+                                </div>
+
+                                <!-- RIGHT wire -->
+                                <div class="mcu-side-zone">
+                                    <span class="mcu-dir-tag mcu-dir-side">RIGHT</span>
+                                    <div class="mcu-wire-zone mcu-wire-h" id="mcu-wire-right">
+                                        <svg class="mcu-wire-svg" viewBox="0 0 40 20" preserveAspectRatio="none">
+                                            <rect class="rs-wire" x="0" y="7" width="40" height="6"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BOTTOM: BACK output wire only -->
+                            <div class="mcu-row mcu-bot">
+                                <div class="mcu-wire-zone mcu-wire-v" id="mcu-wire-back">
+                                    <span class="mcu-dir-tag mcu-dir-above">BACK</span>
+                                    <svg class="mcu-wire-svg" viewBox="0 0 20 40" preserveAspectRatio="none">
+                                        <rect class="rs-wire" x="7" y="0" width="6" height="40"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- All 4 analog inputs at the bottom -->
+                            <div class="mcu-inputs-row">
+                                <div class="mcu-input-grp">
+                                    <label class="mcu-in-lbl">FRONT</label>
+                                    <input type="number" class="mcu-num-input" id="mcu-in-front" min="0" max="15" value="0" />
+                                </div>
+                                <div class="mcu-input-grp">
+                                    <label class="mcu-in-lbl">BACK</label>
+                                    <input type="number" class="mcu-num-input" id="mcu-in-back" min="0" max="15" value="0" />
+                                </div>
+                                <div class="mcu-input-grp">
+                                    <label class="mcu-in-lbl">LEFT</label>
+                                    <input type="number" class="mcu-num-input" id="mcu-in-left" min="0" max="15" value="0" />
+                                </div>
+                                <div class="mcu-input-grp">
+                                    <label class="mcu-in-lbl">RIGHT</label>
+                                    <input type="number" class="mcu-num-input" id="mcu-in-right" min="0" max="15" value="0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call stack -->
+                    <div class="rs-wrap ska" id="sk">
+                        <div class="ph" style="font-size:14px">CALL STACK</div>
+                        <div id="stk">
+                            <div class="ski sys" style="padding:4px 13px">— empty —</div>
+                        </div>
+                    </div>
+
+                    <!-- Output -->
+                    <div class="rs-wrap" id="op" style="flex:1;overflow:hidden">
+                        <div class="ph">
+                            OUTPUT <span class="pb" id="ocnt">0 lines</span>
+                        </div>
+                        <div id="out" class="oa"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Toolbar ── -->
+            <div class="toolbar">
+                <button class="btn primary" id="bcompile">COMPILE</button>
+                <div class="ts"></div>
+                <button class="btn" id="brun" disabled>RUN</button>
+                <button class="btn" id="bstep" disabled>STEP</button>
+                <button class="btn" id="bpause" disabled>PAUSE</button>
+                <button class="btn danger" id="breset">RESET</button>
+                <div class="ts"></div>
+                <span class="slb">SPEED</span>
+                <select id="speed">
+                    <option value="0">MAX</option>
+                    <option value="50" selected>NORMAL</option>
+                    <option value="200">SLOW</option>
+                    <option value="600">CRAWL</option>
+                    <option value="realtime">REALTIME</option>
+                </select>
+                <div class="ts"></div>
+                <button class="btn" id="bdocs">DOCS</button>
+                <div class="ipc">IP&nbsp;<span id="ipv">—</span>&nbsp;/&nbsp;<span id="icnt">—</span></div>
+            </div>
+        </div>
+
+        <!-- ── Docs overlay ── -->
+        <div class="dov" id="dov">
+            <div class="dp">
+                <div class="dh">
+                    <span class="dt">PANSPARK REF</span>
+                    <button class="dx" id="dclose">✕ CLOSE</button>
+                </div>
+                <div class="dtabs">
+                    <div class="dtab act" data-tab="overview">OVERVIEW</div>
+                    <div class="dtab" data-tab="memory">MEMORY</div>
+                    <div class="dtab" data-tab="ops">OPS</div>
+                    <div class="dtab" data-tab="arrays">ARRAYS</div>
+                    <div class="dtab" data-tab="flow">FLOW</div>
+                    <div class="dtab" data-tab="examples">EXAMPLES</div>
+                </div>
+                <div class="db" id="dbody"></div>
+            </div>
+        </div>
+<script src="editor.js" type="module"></script>
+    </body>
+</html>
