@@ -1,30 +1,103 @@
 ---
 import WikiLayout from "../../../components/WikiLayout.astro";
 import BedrockModelViewer from "../../../components/BedrockModelViewer.astro";
-import RecipeRenderer from "../../../components/RecipeRenderer.astro";
+import RecipeRenderer from "../../../components/recipes/RecipeRenderer.astro";
+import { parseRecipeJSON } from "../../../lib/recipes/parsers";
 
-function getGeometryPath(geometry: string): string {
-  const geometryMap: Record<string, string> = {
-    "geometry.stiched_full_block": "/LunaTech_RP/models/blocks/stitched_full_block.geo.json",
-    "geometry.alloy_plating": "/LunaTech_RP/models/blocks/alloy_plating.geo.json",
-    "geometry.invisible": "/LunaTech_RP/models/blocks/invisibile.geo.json",
-    "geometry.block_breaker": "/LunaTech_RP/models/blocks/block_breaker.geo.json",
-    "geometry.item_emitter": "/LunaTech_RP/models/blocks/item_emitter.geo.json",
-    "geometry.item_junction": "/LunaTech_RP/models/blocks/item_junction.geo.json",
-    "geometry.item_reciever": "/LunaTech_RP/models/blocks/item_reciever.geo.json",
-    "geometry.machine_block": "/LunaTech_RP/models/blocks/machine_block.geo.json",
-    "geometry.microcontroller": "/LunaTech_RP/models/blocks/microcontroller.geo.json",
-    "geometry.quarry_beam": "/LunaTech_RP/models/blocks/quarry_beam.geo.json",
-    "geometry.quarry_controller": "/LunaTech_RP/models/blocks/quarry_controller.geo.json",
-    "geometry.quarry_corner": "/LunaTech_RP/models/blocks/quarry_corner.geo.json",
-  };
+// Global recipe data cache
+const recipeData: Record<string, any> = {};
 
-  if (geometry === "minecraft:geometry.full_block") {
-    return "/LunaTech_RP/models/blocks/stitched_full_block.geo.json";
+// Use import.meta.glob to load all recipe files
+const allCraftingRecipeModules = import.meta.glob<{ default: any }>('../../../../public/LunaTech_BP/recipes/crafting/*.json', { eager: true });
+const allSmeltingRecipeModules = import.meta.glob<{ default: any }>('../../../../public/LunaTech_BP/recipes/smelting/*.json', { eager: true });
+
+// Build recipe map and populate recipeData cache
+const recipesByOutput: Record<string, string[]> = {};
+
+// Process crafting recipes
+for (const [filePath, mod] of Object.entries(allCraftingRecipeModules)) {
+  const recipeJson = mod.default;
+  let recipeType = '';
+  let recipeDataItem: any = null;
+  
+  if (recipeJson['minecraft:recipe_shaped']) {
+    recipeType = 'minecraft:recipe_shaped';
+    recipeDataItem = recipeJson['minecraft:recipe_shaped'];
+  } else if (recipeJson['minecraft:recipe_shapeless']) {
+    recipeType = 'minecraft:recipe_shapeless';
+    recipeDataItem = recipeJson['minecraft:recipe_shapeless'];
   }
-
-  return geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
+  
+  if (recipeDataItem && recipeDataItem.result) {
+    let outputItem = '';
+    if (typeof recipeDataItem.result === 'string') {
+      outputItem = recipeDataItem.result;
+    } else if (Array.isArray(recipeDataItem.result)) {
+      outputItem = recipeDataItem.result[0]?.item || '';
+    } else if (recipeDataItem.result.item) {
+      outputItem = recipeDataItem.result.item;
+    }
+    
+    if (outputItem) {
+      const recipePath = `/LunaTech_BP/recipes/crafting/${filePath.split('/').pop()}`;
+      recipeData[recipePath] = recipeJson;
+      
+      if (!recipesByOutput[outputItem]) {
+        recipesByOutput[outputItem] = [];
+      }
+      recipesByOutput[outputItem].push(recipePath);
+    }
+  }
 }
+
+// Process smelting recipes
+for (const [filePath, mod] of Object.entries(allSmeltingRecipeModules)) {
+  const recipeJson = mod.default;
+  if (recipeJson['minecraft:recipe_furnace']) {
+    const furnaceData = recipeJson['minecraft:recipe_furnace'];
+    let outputItem = '';
+    if (typeof furnaceData.output === 'string') {
+      outputItem = furnaceData.output;
+    } else if (furnaceData.output?.item) {
+      outputItem = furnaceData.output.item;
+    }
+    
+    if (outputItem) {
+      const recipePath = `/LunaTech_BP/recipes/smelting/${filePath.split('/').pop()}`;
+      recipeData[recipePath] = recipeJson;
+      
+      if (!recipesByOutput[outputItem]) {
+        recipesByOutput[outputItem] = [];
+      }
+      recipesByOutput[outputItem].push(recipePath);
+    }
+  }
+}
+
+function applyRecipesToItems<T extends { identifier: string; recipes: string[] }>(
+  items: T[]
+): T[] {
+  return items.map(item => {
+    const recipes = recipesByOutput[item.identifier] || [];
+    return { ...item, recipes };
+  });
+}
+
+// Geometry file path mapping
+const geometryMap: Record<string, string> = {
+  "geometry.stiched_full_block": "/LunaTech_RP/models/blocks/stitched_full_block.geo.json",
+  "geometry.alloy_plating": "/LunaTech_RP/models/blocks/alloy_plating.geo.json",
+  "geometry.invisible": "/LunaTech_RP/models/blocks/invisibile.geo.json",
+  "geometry.block_breaker": "/LunaTech_RP/models/blocks/block_breaker.geo.json",
+  "geometry.item_emitter": "/LunaTech_RP/models/blocks/item_emitter.geo.json",
+  "geometry.item_junction": "/LunaTech_RP/models/blocks/item_junction.geo.json",
+  "geometry.item_reciever": "/LunaTech_RP/models/blocks/item_reciever.geo.json",
+  "geometry.machine_block": "/LunaTech_RP/models/blocks/machine_block.geo.json",
+  "geometry.microcontroller": "/LunaTech_RP/models/blocks/microcontroller.geo.json",
+  "geometry.quarry_beam": "/LunaTech_RP/models/blocks/quarry_beam.geo.json",
+  "geometry.quarry_controller": "/LunaTech_RP/models/blocks/quarry_controller.geo.json",
+  "geometry.quarry_corner": "/LunaTech_RP/models/blocks/quarry_corner.geo.json",
+};
 
 const items = [
   {
@@ -752,6 +825,10 @@ const blocks = [
   }
 ];
 
+// Apply auto-discovered recipes to items and blocks
+const itemsWithRecipes = applyRecipesToItems(items);
+const blocksWithRecipes = applyRecipesToItems(blocks);
+
 const blockGeometryMap: Record<string, string> = {
   "lunatech:quarry_beam": "geometry.quarry_beam",
   "lunatech:item_extractor": "geometry.item_emitter",
@@ -787,24 +864,37 @@ const blockGeometryMap: Record<string, string> = {
   "lunatech:composite_path_block": "geometry.alloy_plating",
 };
 
-const recipePaths = new Set<string>();
-for (const item of items) for (const r of item.recipes) recipePaths.add(r);
-for (const block of blocks) for (const r of block.recipes) recipePaths.add(r);
+// Load geometries (used for model rendering)
+const geometryData: Record<string, any> = {};
+const geometryPaths = new Set<string>();
+for (const block of blocksWithRecipes) {
+  const geomId = blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`;
+  const path = geomId === "minecraft:geometry.full_block" 
+    ? "/LunaTech_RP/models/blocks/stitched_full_block.geo.json"
+    : geometryMap[geomId] || `/LunaTech_RP/models/blocks/${geomId.replace('geometry.', '')}.geo.json`;
+  geometryPaths.add(path);
+}
 
-const recipeData: Record<string, any> = {};
-for (const path of recipePaths) {
+for (const path of geometryPaths) {
   try {
     const response = await fetch(path);
-    if (response.ok) recipeData[path] = await response.json();
+    if (response.ok) geometryData[path] = await response.json();
   } catch (e) {
-    console.warn(`Failed to load recipe ${path}:`, e);
+    console.warn(`Failed to load geometry ${path}:`, e);
   }
 }
 
 function getShapedRecipe(path: string) {
   const data = recipeData[path];
   if (!data) return null;
-  return data["minecraft:recipe_shaped"] || data["minecraft:recipe_shapeless"] || null;
+  return parseRecipeJSON(data);
+}
+
+function getGeometryJson(geometry: string): any {
+  const path = geometry === "minecraft:geometry.full_block" 
+    ? "/LunaTech_RP/models/blocks/stitched_full_block.geo.json"
+    : geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
+  return geometryData[path] || { "minecraft:geometry": [{ "description": { "identifier": "fallback", "texture_width": 16, "texture_height": 16 }, "bones": [] }] };
 }
 ---
 
@@ -814,9 +904,9 @@ function getShapedRecipe(path: string) {
   </section>
 
   <section>
-    <h2>Items ({items.length})</h2>
+    <h2>Items ({itemsWithRecipes.length})</h2>
     <div class="grid">
-      {items.map(item => (
+      {itemsWithRecipes.map(item => (
         <div class="card">
           <div class="card-image">
             {item.texturePath ? (
@@ -835,7 +925,7 @@ function getShapedRecipe(path: string) {
                   {item.recipes.map(recipePath => {
                     const recipe = getShapedRecipe(recipePath);
                     if (!recipe) return null;
-                    return <RecipeRenderer recipe={recipe} items={items} blocks={blocks} />;
+                    return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} />;
                   })}
                 </div>
 
@@ -848,16 +938,18 @@ function getShapedRecipe(path: string) {
   </section>
 
   <section>
-    <h2>Blocks ({blocks.length})</h2>
+    <h2>Blocks ({blocksWithRecipes.length})</h2>
     <div class="grid">
-      {blocks.map(block => (
+      {blocksWithRecipes.map(block => (
         <div class="card">
           <div class="card-image">
             {block.texturePath ? (
               <BedrockModelViewer
-                geoSrc={getGeometryPath(blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`)}
-                texSrc={"/" + block.texturePath}
-                size={150}
+                geometryJson={getGeometryJson(blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`)}
+                textureUrl={"/" + block.texturePath}
+                width={150}
+                height={150}
+                mode="block"
                 spinSpeed={0.5}
               />
             ) : (
@@ -874,7 +966,7 @@ function getShapedRecipe(path: string) {
                   {block.recipes.map(recipePath => {
                     const recipe = getShapedRecipe(recipePath);
                     if (!recipe) return null;
-                    return <RecipeRenderer recipe={recipe} items={items} blocks={blocks} />;
+                    return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} />;
                   })}
                 </div>
 
