@@ -17,7 +17,8 @@ const TEXTURE_NAME_MAP: Record<string, string> = {
 
 /**
  * Get texture path for an item identifier from items and blocks
- * Falls back to vanilla item textures from /items/ directory
+ * Falls back to vanilla item textures from items/ directory
+ * Note: Paths should NOT include leading slash as ItemIcon adds it
  */
 export function getTexturePath(
   identifier: string,
@@ -35,12 +36,12 @@ export function getTexturePath(
   // Fallback to vanilla item texture
   // Check if there's a custom mapping for this identifier
   if (TEXTURE_NAME_MAP[identifier]) {
-    return `/items/${TEXTURE_NAME_MAP[identifier]}.png`;
+    return `items/${TEXTURE_NAME_MAP[identifier]}.png`;
   }
 
   // Extract item name from identifier (e.g., "minecraft:iron_ingot" -> "iron_ingot")
   const itemName = identifier.includes(":") ? identifier.split(":")[1] : identifier;
-  return `/items/${itemName}.png`;
+  return `items/${itemName}.png`;
 }
 
 /**
