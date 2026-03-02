@@ -30,5 +30,22 @@
     .footer-link {
         text-decoration: none;
         color: #aa75ff;
+        transition: color 0.3s;
+    }
+    .footer-link:hover {
+        color: #e1ff00;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .footer {
+            padding: 2rem 1rem;
+            margin-left: 2vw;
+            margin-right: 2vw;
+            margin-top: 2rem;
+        }
+        .footer-content p {
+            font-size: 0.9rem;
+        }
     }
 </style>

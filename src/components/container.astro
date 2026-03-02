@@ -15,12 +15,21 @@
         margin-bottom: 2rem;
         margin-left: 5vw;
         margin-right: 5vw;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .container:hover {
+        border-color: #aa75ff;
+        box-shadow: 0 0 15px rgba(170, 117, 255, 0.2);
     }
     @media (max-width: 768px) {
         .container {
             padding: 1.5rem;
             margin-left: 2vw;
             margin-right: 2vw;
+        }
+        .container:hover {
+            border-color: #333;
+            box-shadow: none;
         }
     }
 </style>

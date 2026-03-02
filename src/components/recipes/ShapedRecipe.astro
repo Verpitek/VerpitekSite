@@ -1,0 +1,105 @@
+---
+import ItemIcon from "./ItemIcon.astro";
+import RecipeTypeLabel from "./RecipeTypeLabel.astro";
+import { normalizeResult } from "../../lib/recipes/utils";
+import type { ShapedRecipe } from "../../lib/recipes/types";
+import type { RecipeItem } from "../../lib/recipes/types";
+
+interface Props {
+  recipe: ShapedRecipe;
+  items: RecipeItem[];
+  blocks?: RecipeItem[];
+  geometryPaths?: Record<string, string>;
+}
+
+const { recipe, items, blocks = [], geometryPaths = {} } = Astro.props;
+
+// Build the 3x3 grid
+const grid = Array(9).fill(null);
+const charToItem: Record<string, string> = {};
+
+for (const [char, def] of Object.entries(recipe.key)) {
+  charToItem[char] = def.item;
+}
+
+for (let row = 0; row < 3; row++) {
+  const patternRow = recipe.pattern[row] || "";
+  for (let col = 0; col < 3; col++) {
+    const char = patternRow[col];
+    if (char && char !== " " && charToItem[char]) {
+      const index = row * 3 + col;
+      grid[index] = charToItem[char];
+    }
+  }
+}
+
+const results = normalizeResult(recipe.result);
+---
+
+<div class="recipe-container">
+  <div class="recipe-header">
+    <RecipeTypeLabel type="shaped" />
+  </div>
+
+  <div class="recipe-content">
+    <div class="crafting-grid">
+      {grid.map((identifier) => (
+        <ItemIcon identifier={identifier} items={items} blocks={blocks} modelPath={identifier ? (geometryPaths[identifier] ?? null) : null} />
+      ))}
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="results">
+      {results.map((result) => (
+        <ItemIcon
+          identifier={result.item}
+          items={items}
+          blocks={blocks}
+          count={result.count}
+          modelPath={result.item ? (geometryPaths[result.item] ?? null) : null}
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .recipe-container {
+    background: #2a2a2a;
+    border: 2px solid #444;
+    padding: 12px;
+    max-width: fit-content;
+  }
+
+  .recipe-header {
+    margin-bottom: 8px;
+  }
+
+  .recipe-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .crafting-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    background: #444;
+    padding: 8px;
+    border: 1px solid #555;
+  }
+
+  .arrow {
+    font-size: 2rem;
+    color: #888;
+    font-weight: bold;
+  }
+
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+</style>

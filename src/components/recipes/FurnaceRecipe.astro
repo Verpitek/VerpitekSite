@@ -1,0 +1,92 @@
+---
+import ItemIcon from "./ItemIcon.astro";
+import RecipeTypeLabel from "./RecipeTypeLabel.astro";
+import type { FurnaceRecipe } from "../../lib/recipes/types";
+import type { RecipeItem } from "../../lib/recipes/types";
+
+interface Props {
+  recipe: FurnaceRecipe;
+  items: RecipeItem[];
+  blocks?: RecipeItem[];
+  geometryPaths?: Record<string, string>;
+}
+
+const { recipe, items, blocks = [], geometryPaths = {} } = Astro.props;
+---
+
+<div class="recipe-container">
+  <div class="recipe-header">
+    <RecipeTypeLabel type="furnace" />
+  </div>
+
+  <div class="recipe-content">
+    <div class="furnace-input">
+      <div class="label">Input:</div>
+      <ItemIcon identifier={recipe.input} items={items} blocks={blocks} modelPath={geometryPaths[recipe.input] ?? null} />
+    </div>
+
+    <div class="furnace-visual">
+      <div class="furnace-icon">⚒️</div>
+      <div class="arrow">→</div>
+    </div>
+
+    <div class="furnace-output">
+      <div class="label">Output:</div>
+      <ItemIcon identifier={recipe.output} items={items} blocks={blocks} modelPath={geometryPaths[recipe.output] ?? null} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .recipe-container {
+    background: #2a2a2a;
+    border: 2px solid #444;
+
+    padding: 12px;
+    max-width: fit-content;
+  }
+
+  .recipe-header {
+    margin-bottom: 8px;
+  }
+
+  .recipe-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .furnace-input,
+  .furnace-output {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .label {
+    font-size: 0.85rem;
+    color: #aaa;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .furnace-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .furnace-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 2px rgba(255, 100, 0, 0.5));
+  }
+
+  .arrow {
+    font-size: 1.5rem;
+    color: #888;
+    font-weight: bold;
+  }
+</style>

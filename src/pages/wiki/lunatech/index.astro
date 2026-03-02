@@ -1,7 +1,8 @@
 ---
 import WikiLayout from "../../../components/WikiLayout.astro";
-import BedrockModelViewer from "../../../components/BedrockModelViewer.astro";
+import BedrockRenderer from "../../../components/BedrockRender.astro";
 import RecipeRenderer from "../../../components/recipes/RecipeRenderer.astro";
+import WikiSearch from "../../../components/WikiSearch.astro";
 import { parseRecipeJSON } from "../../../lib/recipes/parsers";
 
 // Global recipe data cache
@@ -896,18 +897,32 @@ function getGeometryJson(geometry: string): any {
     : geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
   return geometryData[path] || { "minecraft:geometry": [{ "description": { "identifier": "fallback", "texture_width": 16, "texture_height": 16 }, "bones": [] }] };
 }
+
+function getGeometryPath(identifier: string): string {
+  const geomId = blockGeometryMap[identifier] || `geometry.${identifier.split(':')[1]}`;
+  return geomId === "minecraft:geometry.full_block"
+    ? "/LunaTech_RP/models/blocks/stitched_full_block.geo.json"
+    : geometryMap[geomId] || `/LunaTech_RP/models/blocks/${geomId.replace('geometry.', '')}.geo.json`;
+}
+
+// Map of block identifier → geometry file path, used by recipe item slots
+const blockGeometryPathMap: Record<string, string> = {};
+for (const block of blocksWithRecipes) {
+  blockGeometryPathMap[block.identifier] = getGeometryPath(block.identifier);
+}
 ---
 
 <WikiLayout title="LunaTech Bedrock Wiki">
   <section class="intro">
     <p>LunaTech Bedrock Wiki</p>
+    <WikiSearch />
   </section>
 
   <section>
     <h2>Items ({itemsWithRecipes.length})</h2>
     <div class="grid">
       {itemsWithRecipes.map(item => (
-        <div class="card">
+        <div class="card" data-identifier={item.identifier}>
           <div class="card-image">
             {item.texturePath ? (
               <img src={"/" + item.texturePath} alt={item.name} width="64" height="64" />
@@ -925,7 +940,7 @@ function getGeometryJson(geometry: string): any {
                   {item.recipes.map(recipePath => {
                     const recipe = getShapedRecipe(recipePath);
                     if (!recipe) return null;
-                    return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} />;
+                    return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} geometryPaths={blockGeometryPathMap} />;
                   })}
                 </div>
 
@@ -940,23 +955,21 @@ function getGeometryJson(geometry: string): any {
   <section>
     <h2>Blocks ({blocksWithRecipes.length})</h2>
     <div class="grid">
-      {blocksWithRecipes.map(block => (
-        <div class="card">
-          <div class="card-image">
-            {block.texturePath ? (
-              <BedrockModelViewer
-                geometryJson={getGeometryJson(blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`)}
-                textureUrl={"/" + block.texturePath}
-                width={150}
-                height={150}
-                mode="block"
-                spinSpeed={0.5}
-              />
-            ) : (
-              <div class="placeholder">No texture</div>
-            )}
-          </div>
-          <div class="card-content">
+       {blocksWithRecipes.map(block => (
+         <div class="card" data-identifier={block.identifier}>
+           <div class="card-image">
+             {block.texturePath ? (
+               <BedrockRenderer
+                 modelPath={getGeometryPath(block.identifier)}
+                 texturePath={"/" + block.texturePath}
+                 height="150px"
+                 autoRotateSpeed={30}
+               />
+             ) : (
+               <div class="placeholder">No texture</div>
+             )}
+           </div>
+           <div class="card-content">
             <h3>{block.name}</h3>
             <p class="identifier">{block.identifier}</p>
             <p class="description">{block.description}</p>
@@ -966,7 +979,7 @@ function getGeometryJson(geometry: string): any {
                   {block.recipes.map(recipePath => {
                     const recipe = getShapedRecipe(recipePath);
                     if (!recipe) return null;
-                    return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} />;
+                    return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} geometryPaths={blockGeometryPathMap} />;
                   })}
                 </div>
 
@@ -993,7 +1006,6 @@ function getGeometryJson(geometry: string): any {
     .card {
       background: #333;
       border: 1px solid #444;
-      overflow: hidden;
       transition: transform 0.2s;
       display: flex;
       flex-direction: row;
@@ -1011,6 +1023,8 @@ function getGeometryJson(geometry: string): any {
       background: #222;
       border-right: 1px solid #444;
       flex-shrink: 0;
+      width: 180px;
+      box-sizing: border-box;
     }
     .card-image img {
       image-rendering: pixelated;
@@ -1072,11 +1086,27 @@ function getGeometryJson(geometry: string): any {
       border-bottom: 2px solid #444;
       padding-bottom: 0.5rem;
     }
-    section {
-      margin-bottom: 3rem;
-    }
-    
-    @media (max-width: 768px) {
+     section {
+       margin-bottom: 3rem;
+     }
+     .card.highlighted {
+       animation: highlight 0.5s ease;
+       border-color: #e1ff00;
+       box-shadow: 0 0 12px rgba(225, 255, 0, 0.3);
+     }
+     @keyframes highlight {
+       0% {
+         box-shadow: 0 0 0 rgba(225, 255, 0, 0.5);
+       }
+       50% {
+         box-shadow: 0 0 16px rgba(225, 255, 0, 0.5);
+       }
+       100% {
+         box-shadow: 0 0 0 rgba(225, 255, 0, 0);
+       }
+     }
+     
+     @media (max-width: 768px) {
       .card {
         flex-direction: column;
       }

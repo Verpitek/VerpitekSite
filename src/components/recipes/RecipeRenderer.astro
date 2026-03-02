@@ -1,0 +1,44 @@
+---
+import ShapedRecipe from "./ShapedRecipe.astro";
+import ShapelessRecipe from "./ShapelessRecipe.astro";
+import FurnaceRecipe from "./FurnaceRecipe.astro";
+import { parseRecipeJSON } from "../../lib/recipes/parsers";
+import type { Recipe, RecipeItem } from "../../lib/recipes/types";
+
+interface Props {
+  recipe: Recipe | Record<string, any>;
+  items: RecipeItem[];
+  blocks?: RecipeItem[];
+  geometryPaths?: Record<string, string>;
+}
+
+const { recipe: rawRecipe, items, blocks = [], geometryPaths = {} } = Astro.props;
+
+// Parse recipe if it's raw JSON
+let recipe: Recipe;
+if ("type" in rawRecipe) {
+  recipe = rawRecipe as Recipe;
+} else {
+  const parsed = parseRecipeJSON(rawRecipe);
+  if (!parsed) {
+    throw new Error("Failed to parse recipe JSON");
+  }
+  recipe = parsed;
+}
+---
+
+{
+  recipe.type === "shaped" && (
+    <ShapedRecipe recipe={recipe} items={items} blocks={blocks} geometryPaths={geometryPaths} />
+  )
+}
+{
+  recipe.type === "shapeless" && (
+    <ShapelessRecipe recipe={recipe} items={items} blocks={blocks} geometryPaths={geometryPaths} />
+  )
+}
+{
+  recipe.type === "furnace" && (
+    <FurnaceRecipe recipe={recipe} items={items} blocks={blocks} geometryPaths={geometryPaths} />
+  )
+}

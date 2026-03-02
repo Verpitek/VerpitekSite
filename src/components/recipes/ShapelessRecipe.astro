@@ -1,0 +1,104 @@
+---
+import ItemIcon from "./ItemIcon.astro";
+import RecipeTypeLabel from "./RecipeTypeLabel.astro";
+import { normalizeResult } from "../../lib/recipes/utils";
+import type { ShapelessRecipe } from "../../lib/recipes/types";
+import type { RecipeItem } from "../../lib/recipes/types";
+
+interface Props {
+  recipe: ShapelessRecipe;
+  items: RecipeItem[];
+  blocks?: RecipeItem[];
+  geometryPaths?: Record<string, string>;
+}
+
+const { recipe, items, blocks = [], geometryPaths = {} } = Astro.props;
+const results = normalizeResult(recipe.result);
+---
+
+<div class="recipe-container">
+  <div class="recipe-header">
+    <RecipeTypeLabel type="shapeless" />
+  </div>
+
+  <div class="recipe-content">
+    <div class="ingredients">
+      <div class="label">Ingredients:</div>
+      <div class="ingredients-grid">
+        {recipe.ingredients.map((ingredient) => (
+          <ItemIcon
+            identifier={ingredient.item}
+            items={items}
+            blocks={blocks}
+            modelPath={ingredient.item ? (geometryPaths[ingredient.item] ?? null) : null}
+          />
+        ))}
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <div class="results">
+      <div class="label">Result:</div>
+      <div class="result-items">
+        {results.map((result) => (
+          <ItemIcon
+            identifier={result.item}
+            items={items}
+            blocks={blocks}
+            count={result.count}
+            modelPath={result.item ? (geometryPaths[result.item] ?? null) : null}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .recipe-container {
+    background: #2a2a2a;
+    border: 2px solid #444;
+    padding: 12px;
+    max-width: fit-content;
+  }
+
+  .recipe-header {
+    margin-bottom: 8px;
+  }
+
+  .recipe-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ingredients,
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .label {
+    font-size: 0.85rem;
+    color: #aaa;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ingredients-grid,
+  .result-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .arrow {
+    font-size: 2rem;
+    color: #888;
+    font-weight: bold;
+    align-self: center;
+  }
+</style>

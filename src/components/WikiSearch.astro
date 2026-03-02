@@ -1,0 +1,208 @@
+---
+// WikiSearch Component - Filters wiki items and blocks in real-time
+---
+
+<div class="wiki-search-container">
+  <div class="search-input-wrapper">
+    <input
+      type="text"
+      id="wiki-search-input"
+      class="search-input"
+      placeholder="Search items and blocks by name or identifier..."
+      autocomplete="off"
+    />
+    <button id="clear-search-btn" class="clear-btn" style="display: none;">clear</button>
+  </div>
+</div>
+
+<script>
+  // Wait for DOM to be fully loaded
+  function initSearch() {
+    // Fuzzy search implementation
+    function levenshteinDistance(str1: string, str2: string): number {
+    const track = Array(str2.length + 1).fill(null).map(() =>
+      Array(str1.length + 1).fill(null)
+    );
+    
+    for (let i = 0; i <= str1.length; i += 1) {
+      track[0][i] = i;
+    }
+    for (let j = 0; j <= str2.length; j += 1) {
+      track[j][0] = j;
+    }
+    
+    for (let j = 1; j <= str2.length; j += 1) {
+      for (let i = 1; i <= str1.length; i += 1) {
+        const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        track[j][i] = Math.min(
+          track[j][i - 1] + 1,
+          track[j - 1][i] + 1,
+          track[j - 1][i - 1] + indicator
+        );
+      }
+    }
+    
+    return track[str2.length][str1.length];
+  }
+
+  function fuzzyMatch(query: string, text: string): number {
+    const queryLower = query.toLowerCase();
+    const textLower = text.toLowerCase();
+    
+    // Exact substring match gets highest score
+    if (textLower.includes(queryLower)) {
+      return 1000 - levenshteinDistance(queryLower, textLower);
+    }
+    
+    // Calculate fuzzy match score
+    const distance = levenshteinDistance(queryLower, textLower);
+    const maxLen = Math.max(queryLower.length, textLower.length);
+    
+    // Normalize distance to 0-100 score (higher is better)
+    return Math.max(0, 100 - (distance / maxLen) * 100);
+  }
+
+  const searchInput = document.getElementById('wiki-search-input') as HTMLInputElement | null;
+  const clearBtn = document.getElementById('clear-search-btn') as HTMLButtonElement | null;
+
+  function filterCards(query: string): void {
+    const items = document.querySelectorAll('[data-identifier]');
+    
+    if (!query.trim()) {
+      // Show all cards when search is empty
+      items.forEach(card => {
+        (card as HTMLElement).style.display = '';
+      });
+      if (clearBtn) clearBtn.style.display = 'none';
+      return;
+    }
+
+    if (clearBtn) clearBtn.style.display = 'block';
+
+    const queryLower = query.toLowerCase();
+    const scores: Array<[HTMLElement, number]> = [];
+
+    items.forEach(card => {
+      const element = card as HTMLElement;
+      const identifier = element.getAttribute('data-identifier') || '';
+      const name = element.querySelector('h3')?.textContent || '';
+      const description = element.querySelector('.description')?.textContent || '';
+
+      // Calculate match score
+      let score = 0;
+      
+      // Identifier match (highest priority)
+      const identifierScore = fuzzyMatch(queryLower, identifier);
+      if (identifierScore > 0) {
+        score += identifierScore * 2;
+      }
+
+      // Name match (high priority)
+      const nameScore = fuzzyMatch(queryLower, name);
+      if (nameScore > 0) {
+        score += nameScore * 1.5;
+      }
+
+      // Description match (lower priority)
+      const descriptionScore = fuzzyMatch(queryLower, description);
+      if (descriptionScore > 0) {
+        score += descriptionScore * 0.5;
+      }
+
+      if (score > 0) {
+        element.style.display = '';
+        scores.push([element, score]);
+      } else {
+        element.style.display = 'none';
+      }
+    });
+
+    // Sort by score to reorder visible items (optional - remove if you want to keep original order)
+    scores.sort((a, b) => b[1] - a[1]);
+    
+    // Reorder DOM elements based on relevance
+    const parent = items[0]?.parentElement;
+    if (parent) {
+      scores.forEach(([element]) => {
+        parent.appendChild(element);
+      });
+    }
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value;
+      filterCards(query);
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (searchInput) {
+        searchInput.value = '';
+        filterCards('');
+        searchInput.focus();
+      }
+    });
+  }
+  }
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearch);
+  } else {
+    initSearch();
+  }
+</script>
+
+<style>
+  .wiki-search-container {
+    margin-bottom: 2rem;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: #333;
+    color: #e1ff00;
+    border: 2px solid #444;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #e1ff00;
+    box-shadow: 0 0 8px rgba(225, 255, 0, 0.2);
+  }
+
+  .search-input::placeholder {
+    color: #888;
+  }
+
+  .clear-btn {
+    padding: 0.5rem 1rem;
+    background: #444;
+    color: #888;
+    border: 1px solid #555;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .clear-btn:hover {
+    background: #555;
+    color: #e1ff00;
+    border-color: #e1ff00;
+  }
+</style>

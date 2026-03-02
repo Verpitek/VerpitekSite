@@ -10,7 +10,7 @@ interface Props {
 const { title, description, link, linkText, videoId, secondVideoId } = Astro.props;
 
 const logoMap = {
-    "LunaTech": "/LunaTechLogo.webp",
+    "LunaTech": "/pack_icon.png",
     "BedPak": "/bedpak_mascot.webp",
     "PanSpark": "/panspark.png",
 } as const;
@@ -97,9 +97,21 @@ const isExternal = link?.startsWith('http') ?? false;
         display: block;
     }
     @media (max-width: 768px) {
+        .project-card {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
         .project-logo {
             width: 80px;
             height: 80px;
+        }
+        .video-wrapper iframe {
+            flex: 1 1 100%;
+            min-width: 100%;
+        }
+        .project-card:hover {
+            transform: none;
+            border-color: #333;
         }
     }
     .project-link {

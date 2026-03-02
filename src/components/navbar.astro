@@ -43,6 +43,25 @@ const { highlighted = undefined } = Astro.props;
     .navbar-img {
         height: 64px;
     }
+
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 1rem;
+            gap: 1rem;
+            margin-left: 2vw;
+            margin-right: 2vw;
+        }
+        .navbar-img {
+            height: 48px;
+        }
+        .navlink {
+            padding: 0.75rem 1rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
 </style>
 
 <script>

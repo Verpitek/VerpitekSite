@@ -1,0 +1,565 @@
+---
+/**
+ * BedrockRender.astro
+ *
+ * Renders a Minecraft Bedrock Edition .geo.json model with a texture using Three.js.
+ *
+ * Props:
+ *   modelPath       - URL to a .geo.json file (optional; omit for a plain 16×16×16 block)
+ *   texturePath     - URL to the texture PNG (required)
+ *   height          - CSS height string, e.g. "150px" (default: "200px")
+ *   autoRotateSpeed - Degrees per second for auto-spin (default: 40; set 0 to disable)
+ *   background      - CSS colour for the canvas bg (default: "transparent")
+ */
+
+interface Props {
+  modelPath?: string;
+  texturePath: string;
+  height?: string;
+  autoRotateSpeed?: number;
+  background?: string;
+}
+
+const {
+  modelPath,
+  texturePath,
+  height = '200px',
+  autoRotateSpeed = 40,
+  background = 'transparent',
+} = Astro.props;
+---
+
+<bedrock-render
+  data-model={modelPath ?? ''}
+  data-texture={texturePath}
+  data-speed={String(autoRotateSpeed)}
+  data-bg={background}
+  style={`display:block;width:100%;height:${height};position:relative;`}
+>
+  <canvas style="display:block;width:100%;height:100%;"></canvas>
+  <div class="br-status">Loading…</div>
+</bedrock-render>
+
+<style>
+  bedrock-render canvas { cursor: grab; }
+  bedrock-render canvas:active { cursor: grabbing; }
+  .br-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #888;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .br-status.done { opacity: 0; }
+  .br-status.error { color: #e94560; opacity: 1 !important; }
+</style>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// Three.js singleton loader
+// ─────────────────────────────────────────────────────────────────────────────
+const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+let _three: Promise<any> | null = null;
+function loadThree(): Promise<any> {
+  const w = window as any;
+  if (w.THREE) return Promise.resolve(w.THREE);
+  if (_three) return _three;
+  _three = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = CDN;
+    s.onload = () => res(w.THREE);
+    s.onerror = () => rej(new Error('Failed to load Three.js'));
+    document.head.appendChild(s);
+  });
+  return _three;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Custom element
+// ─────────────────────────────────────────────────────────────────────────────
+class BedrockRenderElement extends HTMLElement {
+  private _raf = 0;
+  private _dead = false;
+
+  async connectedCallback() {
+    const THREE = await loadThree();
+    if (this._dead) return;
+
+    const canvas  = this.querySelector('canvas') as HTMLCanvasElement;
+    const status  = this.querySelector('.br-status') as HTMLElement;
+    const modelPath  = this.dataset.model ?? '';
+    const texPath    = this.dataset.texture ?? '';
+    const rotSpeed   = parseFloat(this.dataset.speed ?? '40');
+    const bgColor    = this.dataset.bg ?? 'transparent';
+    const transparent = bgColor === 'transparent';
+
+    // ── Renderer ──────────────────────────────────────────────────────────
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: transparent,
+    });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    if (!transparent) renderer.setClearColor(new THREE.Color(bgColor), 1);
+    else renderer.setClearColor(0x000000, 0);
+
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 1000);
+
+    // ── Lighting ──────────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+    sun.position.set(10, 20, 15);
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.25);
+    fill.position.set(-8, -4, -10);
+    scene.add(fill);
+
+    // ── Resize observer ───────────────────────────────────────────────────
+    const resize = () => {
+      const { width, height } = this.getBoundingClientRect();
+      if (!width || !height) return;
+      renderer.setSize(width, height);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(this);
+
+    // ── Orbit state ───────────────────────────────────────────────────────
+    const orbit = {
+      theta: Math.PI / 4,
+      phi:   Math.PI / 2.8,
+      r:     50,
+      target: new THREE.Vector3(),
+    };
+    let dragging = false;
+    let lp = { x: 0, y: 0 };
+
+    const pd = (x: number, y: number) => { dragging = true;  lp = { x, y }; };
+    const pm = (x: number, y: number) => {
+      if (!dragging) return;
+      orbit.theta -= (x - lp.x) * 0.005;
+      orbit.phi    = Math.max(0.08, Math.min(Math.PI - 0.08,
+                      orbit.phi - (y - lp.y) * 0.005));
+      lp = { x, y };
+    };
+    const pu = () => { dragging = false; };
+
+    canvas.addEventListener('mousedown', e => pd(e.clientX, e.clientY));
+    window.addEventListener('mouseup',   pu);
+    canvas.addEventListener('mousemove', e => pm(e.clientX, e.clientY));
+    canvas.addEventListener('touchstart', e => { if (e.touches.length === 1) pd(e.touches[0].clientX, e.touches[0].clientY); });
+    canvas.addEventListener('touchmove',  e => { e.preventDefault(); if (e.touches.length === 1) pm(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+    canvas.addEventListener('touchend',   pu);
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    const applyOrbit = () => {
+      const { theta, phi, r, target } = orbit;
+      camera.position.set(
+        target.x + r * Math.sin(phi) * Math.sin(theta),
+        target.y + r * Math.cos(phi),
+        target.z + r * Math.sin(phi) * Math.cos(theta),
+      );
+      camera.lookAt(target);
+    };
+
+    // ── Load assets & build scene ─────────────────────────────────────────
+    try {
+      const [texImg, modelJson] = await Promise.all([
+        loadImage(texPath),
+        modelPath ? fetchJson(modelPath) : Promise.resolve(null),
+      ]);
+
+      const texture = new THREE.Texture(texImg);
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      texture.needsUpdate = true;
+
+      const model = modelJson
+        ? buildModel(THREE, modelJson, texture)
+        : buildFallbackBlock(THREE, texture);
+
+      scene.add(model);
+
+      // Frame camera on the model bounding box
+      const box    = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      const size   = box.getSize(new THREE.Vector3());
+      // Bounding sphere radius — the true furthest corner distance from center
+      const sphereR = size.length() / 2;
+      // Distance needed so the sphere fits inside the 40° fov with 15% margin
+      const fovRad  = (40 * Math.PI) / 180;
+      const minDist = sphereR / Math.sin(fovRad / 2);
+
+      orbit.target.copy(center);
+      orbit.r   = minDist * 1.15;
+      orbit.phi = Math.PI / 2.8;
+
+      status?.classList.add('done');
+
+      // ── Render loop ───────────────────────────────────────────────────
+      let last = performance.now();
+      const loop = (now: number) => {
+        if (this._dead) return;
+        this._raf = requestAnimationFrame(loop);
+        const dt = (now - last) / 1000;
+        last = now;
+        if (!dragging && rotSpeed !== 0) {
+          orbit.theta += (rotSpeed * Math.PI / 180) * dt;
+        }
+        applyOrbit();
+        renderer.render(scene, camera);
+      };
+      this._raf = requestAnimationFrame(loop);
+
+    } catch (err: any) {
+      console.error('[BedrockRender]', err);
+      if (status) { status.textContent = err?.message ?? 'Render error'; status.classList.add('error'); }
+    }
+  }
+
+  disconnectedCallback() {
+    this._dead = true;
+    cancelAnimationFrame(this._raf);
+  }
+}
+
+if (!customElements.get('bedrock-render')) {
+  customElements.define('bedrock-render', BedrockRenderElement);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Asset helpers
+// ─────────────────────────────────────────────────────────────────────────────
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload  = () => res(img);
+    img.onerror = () => rej(new Error(`Texture load failed: ${src}`));
+    img.src = src;
+  });
+}
+
+async function fetchJson(url: string): Promise<any> {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Model fetch failed (${r.status}): ${url}`);
+  return r.json();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fallback: plain 16×16×16 block when no .geo.json is provided
+// ─────────────────────────────────────────────────────────────────────────────
+function buildFallbackBlock(THREE: any, texture: any) {
+  const mat  = makeMat(THREE, texture);
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(16, 16, 16), mat);
+  mesh.position.set(0, 8, 0);
+  return mesh;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main model builder — parses the Bedrock geometry JSON and returns a Group
+// ─────────────────────────────────────────────────────────────────────────────
+function buildModel(THREE: any, json: any, texture: any): any {
+  // ── Resolve geometry list ────────────────────────────────────────────────
+  let geos: any[] = json['minecraft:geometry'];
+
+  if (!geos) {
+    // Pre-1.12 legacy: top-level keys like "geometry.name": { bones, texturewidth, … }
+    geos = [];
+    for (const [k, v] of Object.entries(json as Record<string, any>)) {
+      if (k.startsWith('geometry.')) {
+        geos.push({
+          description: {
+            identifier: k,
+            texture_width:  (v as any).texturewidth  ?? 16,
+            texture_height: (v as any).textureheight ?? 16,
+          },
+          bones: (v as any).bones ?? [],
+        });
+      }
+    }
+  }
+
+  if (!geos?.length) return buildFallbackBlock(THREE, texture);
+
+  const geo   = geos[0];
+  const desc  = geo.description ?? {};
+  const texW  = desc.texture_width  ?? 16;
+  const texH  = desc.texture_height ?? 16;
+  const bones: any[] = geo.bones ?? [];
+
+  if (!bones.length) return buildFallbackBlock(THREE, texture);
+
+  // ── Two-pass bone build ──────────────────────────────────────────────────
+  // Pass 1: create a Group per bone
+  const grpMap  = new Map<string, any>(); // name → THREE.Group
+  const dataMap = new Map<string, any>(); // name → raw bone data
+
+  for (const bone of bones) {
+    const g = new THREE.Group();
+    g.name = bone.name;
+    grpMap.set(bone.name, g);
+    dataMap.set(bone.name, bone);
+  }
+
+  // Pass 2: position, rotate, attach cubes, link to parent
+  const root = new THREE.Group();
+
+  for (const bone of bones) {
+    const grp    = grpMap.get(bone.name)!;
+    const pivot  = bone.pivot    as [number,number,number] ?? [0,0,0];
+    const rotDeg = bone.rotation as [number,number,number] ?? [0,0,0];
+
+    // ── Cubes ──────────────────────────────────────────────────────────
+    for (const cube of bone.cubes ?? []) {
+      grp.add(buildCube(THREE, cube, texW, texH, texture, bone.mirror ?? false, pivot));
+    }
+
+    // ── Bone transform (pivot = local rotation centre) ──────────────
+    // We position the group at the pivot point in world-ish space,
+    // then offset each cube to be relative to that pivot (done inside buildCube).
+    grp.position.set(-pivot[0], pivot[1], pivot[2]);
+    grp.rotation.set(
+      -rotDeg[0] * Math.PI / 180,
+      -rotDeg[1] * Math.PI / 180,
+       rotDeg[2] * Math.PI / 180,
+      'ZYX',
+    );
+
+    // ── Parenting ───────────────────────────────────────────────────
+    if (bone.parent && grpMap.has(bone.parent)) {
+      const parentBone  = dataMap.get(bone.parent)!;
+      const parentPivot = parentBone.pivot as [number,number,number] ?? [0,0,0];
+
+      // Re-express this bone's pivot relative to its parent's pivot
+      grp.position.set(
+        -pivot[0] + parentPivot[0],
+         pivot[1] - parentPivot[1],
+         pivot[2] - parentPivot[2],
+      );
+      grpMap.get(bone.parent)!.add(grp);
+    } else {
+      root.add(grp);
+    }
+  }
+
+  return root;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Cube builder
+// ─────────────────────────────────────────────────────────────────────────────
+function buildCube(
+  THREE: any,
+  cube: any,
+  texW: number,
+  texH: number,
+  texture: any,
+  boneMirror: boolean,
+  bonePivot: [number,number,number],
+) {
+  const origin:  [number,number,number] = cube.origin  ?? [0,0,0];
+  const size:    [number,number,number] = cube.size    ?? [1,1,1];
+  const inflate: number                 = cube.inflate ?? 0;
+  const mirror:  boolean                = cube.mirror  ?? boneMirror;
+
+  // Inflated dimensions
+  const sx = size[0] + inflate * 2;
+  const sy = size[1] + inflate * 2;
+  const sz = size[2] + inflate * 2;
+
+  // UV can be [u,v] (box UV) or { north, south, … } (per-face)
+  const isBoxUV     = Array.isArray(cube.uv);
+  const isPerFaceUV = cube.uv && !Array.isArray(cube.uv) && typeof cube.uv === 'object';
+
+  let geo: any, mat: any;
+
+  if (isPerFaceUV) {
+    ({ geo, mat } = perFaceCube(THREE, sx, sy, sz, cube.uv, texW, texH, texture));
+  } else if (isBoxUV) {
+    ({ geo, mat } = boxUVCube(THREE, sx, sy, sz, cube.uv, texW, texH, texture, mirror));
+  } else {
+    geo = new THREE.BoxGeometry(sx, sy, sz);
+    mat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+  }
+
+  const mesh = new THREE.Mesh(geo, mat);
+
+  // Bedrock origin = bottom-south-west corner (before inflate).
+  // Three.js BoxGeometry is centred, so add half-size.
+  // Coordinate flip: negate X.
+  const cx = -(origin[0] + sx/2 - inflate) + bonePivot[0];
+  const cy =  (origin[1] + sy/2 - inflate) - bonePivot[1];
+  const cz =  (origin[2] + sz/2 - inflate) - bonePivot[2];
+
+  // ── Cube-level rotation ───────────────────────────────────────────────
+  if (cube.pivot != null && cube.rotation != null) {
+    const cp:  [number,number,number] = cube.pivot;
+    const cr:  [number,number,number] = cube.rotation;
+    const wrapper = new THREE.Group();
+    wrapper.position.set(
+      -cp[0] + bonePivot[0],
+       cp[1] - bonePivot[1],
+       cp[2] - bonePivot[2],
+    );
+    wrapper.rotation.set(
+      -cr[0] * Math.PI / 180,
+      -cr[1] * Math.PI / 180,
+       cr[2] * Math.PI / 180,
+      'ZYX',
+    );
+    mesh.position.set(
+      -(origin[0] + sx/2 - inflate) + cp[0],
+       (origin[1] + sy/2 - inflate) - cp[1],
+       (origin[2] + sz/2 - inflate) - cp[2],
+    );
+    wrapper.add(mesh);
+    return wrapper;
+  }
+
+  mesh.position.set(cx, cy, cz);
+  return mesh;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Box UV  →  per-face UV conversion, then delegate to perFaceCube
+// ─────────────────────────────────────────────────────────────────────────────
+function boxUVCube(
+  THREE: any,
+  sx: number, sy: number, sz: number,
+  uvOrigin: [number,number],
+  texW: number, texH: number,
+  texture: any,
+  mirror: boolean,
+) {
+  const [u, v] = uvOrigin;
+  // Integer pixel dimensions for the UV layout
+  const d = Math.round(sz); // depth
+  const w = Math.round(sx); // width
+  const h = Math.round(sy); // height
+
+  // Standard Bedrock box UV unwrap:
+  //
+  //         u      u+d    u+d+w  u+d+w+d u+2d+2w
+  //  v      [  up  ][  dn  ]
+  //  v+d    [ west ][ north][ east][ south]
+  //  v+d+h
+  //
+  let faces: Record<string, { u:number; v:number; w:number; h:number }> = {
+    up:    { u: u+d,       v: v,   w, h: d },
+    down:  { u: u+d+w,     v: v,   w, h: d },
+    west:  { u: u,         v: v+d, w: d, h },
+    north: { u: u+d,       v: v+d, w, h },
+    east:  { u: u+d+w,     v: v+d, w: d, h },
+    south: { u: u+d+w+d,   v: v+d, w, h },
+  };
+
+  if (mirror) {
+    [faces.east, faces.west] = [faces.west, faces.east];
+  }
+
+  const perFace: any = {};
+  for (const [name, f] of Object.entries(faces)) {
+    perFace[name] = { uv: [f.u, f.v], uv_size: [f.w, f.h] };
+  }
+
+  return perFaceCube(THREE, sx, sy, sz, perFace, texW, texH, texture);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Per-face UV cube
+//
+// Three.js r128 BoxGeometry UV vertex order per face (4 verts × 6 faces):
+//   face index 0 = +X (east)   1 = -X (west)
+//              2 = +Y (up)     3 = -Y (down)
+//              4 = +Z (south)  5 = -Z (north)
+//
+// Within each face the 4 vertices are:
+//   0 = bottom-left   1 = bottom-right
+//   2 = top-left      3 = top-right
+// ─────────────────────────────────────────────────────────────────────────────
+const FACE_ORDER = ['east','west','up','down','south','north'] as const;
+
+function perFaceCube(
+  THREE: any,
+  sx: number, sy: number, sz: number,
+  faceUVs: any,
+  texW: number, texH: number,
+  texture: any,
+) {
+  const geo    = new THREE.BoxGeometry(sx, sy, sz);
+  const uvAttr = geo.attributes.uv;
+
+  for (let fi = 0; fi < 6; fi++) {
+    const faceName = FACE_ORDER[fi];
+    const fd = faceUVs[faceName];
+
+    if (!fd) {
+      // Collapse invisible face to a single point
+      for (let j = 0; j < 4; j++) uvAttr.setXY(fi*4+j, 0, 0);
+      continue;
+    }
+
+    const fu = fd.uv[0];
+    const fv = fd.uv[1];
+    const fw = fd.uv_size ? fd.uv_size[0] : 0;
+    const fh = fd.uv_size ? fd.uv_size[1] : 0;
+    const rot: number = fd.uv_rotation ?? 0;
+
+    // Bedrock UV: origin top-left, Y goes down.
+    // Three.js UV: origin bottom-left, Y goes up  →  flip V.
+    //
+    // When uv_size is negative the face is flipped along that axis,
+    // handled naturally by the sign of fw/fh once we normalise.
+    const u0 = fu / texW;
+    const v0 = 1 - fv / texH;           // top edge in Three.js coords
+    const u1 = (fu + fw) / texW;
+    const v1 = 1 - (fv + fh) / texH;    // bottom edge in Three.js coords
+
+    // Corners: [BL, BR, TL, TR]
+    let corners: [number,number][] = [
+      [u0, v1],
+      [u1, v1],
+      [u0, v0],
+      [u1, v0],
+    ];
+
+    // uv_rotation: CW in texture space → rotate assignment 90° per step
+    if (rot) {
+      const steps = (((rot % 360) + 360) % 360) / 90;
+      for (let s = 0; s < steps; s++) {
+        const [bl, br, tl, tr] = corners;
+        corners = [tl, bl, tr, br];
+      }
+    }
+
+    for (let j = 0; j < 4; j++) {
+      uvAttr.setXY(fi*4+j, corners[j][0], corners[j][1]);
+    }
+  }
+
+  uvAttr.needsUpdate = true;
+
+  return { geo, mat: makeMat(THREE, texture) };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared material factory
+// ─────────────────────────────────────────────────────────────────────────────
+function makeMat(THREE: any, texture: any) {
+  return new THREE.MeshStandardMaterial({
+    map: texture,
+    transparent: true,
+    alphaTest: 0.05,
+    side: THREE.FrontSide,
+  });
+}
+</script>

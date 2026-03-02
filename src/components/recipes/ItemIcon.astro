@@ -7,17 +7,32 @@ interface Props {
   items: RecipeItem[];
   blocks?: RecipeItem[];
   count?: number;
+  /** If provided, renders a 3D bedrock-render instead of a flat texture image */
+  modelPath?: string | null;
 }
 
-const { identifier, items, blocks = [], count } = Astro.props;
+const { identifier, items, blocks = [], count, modelPath } = Astro.props;
 
 const texturePath = identifier ? getTexturePath(identifier, items, blocks) : null;
 const itemName = identifier ? getItemName(identifier, items, blocks) : null;
+
+const use3d = !!(modelPath && texturePath);
 ---
 
 <div class="item-icon">
   <div class="item-slot">
-    {texturePath ? (
+    {use3d ? (
+      <bedrock-render
+        data-model={modelPath}
+        data-texture={"/" + texturePath}
+        data-speed="40"
+        data-bg="transparent"
+        style="display:block;width:100%;height:100%;position:absolute;inset:0;"
+      >
+        <canvas style="display:block;width:100%;height:100%;"></canvas>
+
+      </bedrock-render>
+    ) : texturePath ? (
       <img
         src={"/" + texturePath}
         alt={itemName || identifier}
@@ -51,6 +66,7 @@ const itemName = identifier ? getItemName(identifier, items, blocks) : null;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
   }
 
   .pixelated {
@@ -79,6 +95,8 @@ const itemName = identifier ? getItemName(identifier, items, blocks) : null;
     padding: 1px 3px;
     min-width: 16px;
     text-align: center;
+    z-index: 2;
+    pointer-events: none;
   }
 
   .item-name {
@@ -98,4 +116,18 @@ const itemName = identifier ? getItemName(identifier, items, blocks) : null;
   .item-icon:hover .item-name {
     opacity: 1;
   }
+
+  .br-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 0.6rem;
+    color: #666;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .br-status.done { opacity: 0; }
 </style>
