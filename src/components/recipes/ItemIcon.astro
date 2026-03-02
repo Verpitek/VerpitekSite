@@ -1,0 +1,99 @@
+---
+import { getTexturePath, getItemName } from "../../lib/recipes/utils";
+import type { RecipeItem } from "../../lib/recipes/types";
+
+interface Props {
+  identifier: string | null;
+  items: RecipeItem[];
+  blocks?: RecipeItem[];
+  count?: number;
+}
+
+const { identifier, items, blocks = [], count } = Astro.props;
+
+const texturePath = identifier ? getTexturePath(identifier, items, blocks) : null;
+const itemName = identifier ? getItemName(identifier, items, blocks) : null;
+---
+
+<div class="item-icon">
+  <div class="item-slot">
+    {texturePath ? (
+      <img
+        src={"/" + texturePath}
+        alt={itemName || identifier}
+        width="32"
+        height="32"
+        class="pixelated"
+        title={itemName || identifier}
+      />
+    ) : identifier ? (
+      <div class="placeholder" title={identifier}>{identifier.split(":")[1] || identifier}</div>
+    ) : null}
+    {count && count > 1 && <div class="count">{count}</div>}
+  </div>
+  {itemName && <div class="item-name">{itemName}</div>}
+</div>
+
+<style>
+  .item-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .item-slot {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    background: #333;
+    border: 1px solid #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pixelated {
+    image-rendering: pixelated;
+    width: 32px;
+    height: 32px;
+  }
+
+  .placeholder {
+    color: #aaa;
+    font-size: 0.65rem;
+    text-align: center;
+    word-break: break-all;
+    padding: 2px;
+    max-width: 100%;
+  }
+
+  .count {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 1px 3px;
+    min-width: 16px;
+    text-align: center;
+  }
+
+  .item-name {
+    font-size: 0.75rem;
+    color: #ccc;
+    text-align: center;
+    max-width: 60px;
+    word-break: break-word;
+    line-height: 1.2;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+
+  .item-icon:hover .item-name {
+    opacity: 1;
+  }
+</style>
