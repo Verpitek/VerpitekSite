@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Block Components — Jepia</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Block Components Reference</h1>
+        <div class="note-box">
+            <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+            <div><strong>Target:</strong> Minecraft Bedrock 1.26.0+ &mdash; format_version 1.21.40</div>
+        </div>
+        <p>These components are passed to <code>block.addComponent()</code> in Jepia. The <code>minecraft:</code> prefix is optional.</p>
+        <button class="sidebar-toggle" id="sidebar-toggle">Contents <span class="toggle-arrow">&#9660;</span></button>
+        <div class="layout">
+            <nav class="sidebar" id="sidebar">
+                <h3>Block Components</h3>
+                <input type="text" class="sidebar-search" id="sidebar-search" placeholder="Filter components...">
+                <ul>
+                    <!-- Appearance -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Appearance</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-geometry">geometry</a></li>
+                                <li><a href="#comp-material-instances">material_instances</a></li>
+                                <li><a href="#comp-map-color">map_color</a></li>
+                                <li><a href="#comp-destruction-particles">destruction_particles</a></li>
+                                <li><a href="#comp-embedded-visual">embedded_visual</a></li>
+                                <li><a href="#comp-item-visual">item_visual</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Physics & Collision -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Physics &amp; Collision</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-collision-box">collision_box</a></li>
+                                <li><a href="#comp-selection-box">selection_box</a></li>
+                                <li><a href="#comp-friction">friction</a></li>
+                                <li><a href="#comp-support">support</a></li>
+                                <li><a href="#comp-random-offset">random_offset</a></li>
+                                <li><a href="#comp-transformation">transformation</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Destruction -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Destruction</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-destructible-by-mining">destructible_by_mining</a></li>
+                                <li><a href="#comp-destructible-by-explosion">destructible_by_explosion</a></li>
+                                <li><a href="#comp-flammable">flammable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Light -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Light</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-light-emission">light_emission</a></li>
+                                <li><a href="#comp-light-dampening">light_dampening</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Interaction -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Interaction</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-crafting-table">crafting_table</a></li>
+                                <li><a href="#comp-display-name">display_name</a></li>
+                                <li><a href="#comp-loot">loot</a></li>
+                                <li><a href="#comp-placement-filter">placement_filter</a></li>
+                                <li><a href="#comp-entity-fall-on">entity_fall_on</a></li>
+                                <li><a href="#comp-tick">tick</a></li>
+                                <li><a href="#comp-tag">tag</a></li>
+                                <li><a href="#comp-liquid-detection">liquid_detection</a></li>
+                                <li><a href="#comp-flower-pottable">flower_pottable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Redstone -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Redstone</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-redstone-conductivity">redstone_conductivity</a></li>
+                                <li><a href="#comp-redstone-consumer">redstone_consumer</a></li>
+                                <li><a href="#comp-redstone-producer">redstone_producer</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Experimental -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Experimental</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-chest-obstruction">chest_obstruction</a></li>
+                                <li><a href="#comp-connection-rule">connection_rule</a></li>
+                                <li><a href="#comp-movable">movable</a></li>
+                                <li><a href="#comp-precipitation-interactions">precipitation_interactions</a></li>
+                                <li><a href="#comp-replaceable">replaceable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <main class="content">
+
+                <!-- ============================================================ -->
+                <!-- APPEARANCE -->
+                <!-- ============================================================ -->
+                <h2 id="cat-appearance">Appearance</h2>
+
+                <section class="comp-entry" id="comp-geometry">
+                    <h3>minecraft:geometry</h3>
+                    <p>The description identifier of the geometry to use to render this block. This identifier must either match an existing geometry identifier in any of the loaded resource packs or be one of the currently supported Vanilla identifiers: <code>"minecraft:geometry.full_block"</code> or <code>"minecraft:geometry.cross"</code>.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple string shorthand. From 1.21.80 onward, when using <code>minecraft:geometry</code> you must also include <a href="#comp-material-instances">minecraft:material_instances</a>.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>identifier</code></td><td>String</td><td><em>not set</em></td><td>The geometry description identifier to use. Must match a geometry identifier in loaded resource packs.</td></tr>
+                        <tr><td><code>bone_visibility</code></td><td>Object</td><td><em>not set</em></td><td>An optional map of bone names to boolean values defining the visibility of individual bones in the geometry file.</td></tr>
+                        <tr><td><code>culling</code></td><td>String</td><td><em>not set</em></td><td>An optional identifier of a culling definition used to determine which faces should be culled when rendering.</td></tr>
+                        <tr><td><code>culling_layer</code></td><td>String</td><td><code>"minecraft:culling_layer.undefined"</code></td><td>Allows culling rules to group multiple blocks together when comparing them.</td></tr>
+                        <tr><td><code>uv_lock</code></td><td>Boolean | String[]</td><td><em>not set</em></td><td>A boolean locking UV orientation of all bones, or an array of strings locking UV orientation of specific bones.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Custom Stairs', 'myaddon:custom_stairs');
+block.addComponent('minecraft:geometry', {
+    identifier: 'geometry.custom_stairs',
+    bone_visibility: { step_top: false },
+    culling: 'myaddon:custom_stairs_culling'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-material-instances">
+                    <h3>minecraft:material_instances</h3>
+                    <p>Maps face or material_instance names in a geometry file to an actual material instance. You can assign a material instance object to any of these faces: <code>"up"</code>, <code>"down"</code>, <code>"north"</code>, <code>"south"</code>, <code>"east"</code>, <code>"west"</code>, or <code>"*"</code> (all faces). You can also create named instances and assign them to faces.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> From 1.21.80 onward, when using <code>minecraft:material_instances</code> you must also include <a href="#comp-geometry">minecraft:geometry</a>.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>texture</code></td><td>String</td><td><em>not set</em></td><td>Texture name for the material (references <code>terrain_texture.json</code>).</td></tr>
+                        <tr><td><code>render_method</code></td><td>String</td><td><em>not set</em></td><td>Render method: <code>"opaque"</code>, <code>"blend"</code>, <code>"alpha_test"</code>, <code>"double_sided"</code>, <code>"alpha_test_single_sided"</code>, <code>"blend_to_opaque"</code>, <code>"alpha_test_to_opaque"</code>, or <code>"alpha_test_single_sided_to_opaque"</code>.</td></tr>
+                        <tr><td><code>ambient_occlusion</code></td><td>Number</td><td><em>not set</em></td><td>If set, shadows will be created around and underneath the block. Controls the exponent applied to lighting.</td></tr>
+                        <tr><td><code>face_dimming</code></td><td>Boolean</td><td><em>not set</em></td><td>Whether this material should be dimmed by the direction it is facing.</td></tr>
+                        <tr><td><code>isotropic</code></td><td>Boolean</td><td>false</td><td>Whether the faces using this material should randomize their UVs. Requires format_version 1.21.80+.</td></tr>
+                        <tr><td><code>tint_method</code></td><td>String</td><td><em>not set</em></td><td>Tint multiplied to the color. Options: <code>"none"</code>, <code>"default_foliage"</code>, <code>"birch_foliage"</code>, <code>"evergreen_foliage"</code>, <code>"dry_foliage"</code>, <code>"grass"</code>, <code>"water"</code>. Requires 1.21.80+.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Glass Panel', 'myaddon:glass_panel');
+block.addComponent('minecraft:material_instances', {
+    '*': { texture: 'custom_glass', render_method: 'blend', face_dimming: false },
+    'up': { texture: 'custom_glass_top', render_method: 'opaque' }
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-map-color">
+                    <h3>minecraft:map_color</h3>
+                    <p>Sets the color of the block when rendered to a map. If this component is omitted, the block will not show up on the map.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>color</code></td><td>String | Array</td><td><em>not set</em></td><td>The color as a hex string <code>"#RRGGBB"</code> or an array of <code>[R, G, B]</code> values (0&ndash;255).</td></tr>
+                        <tr><td><code>tint_method</code></td><td>String</td><td><em>not set</em></td><td>Optional tint multiplied to the color. Options: <code>"none"</code>, <code>"default_foliage"</code>, <code>"birch_foliage"</code>, <code>"evergreen_foliage"</code>, <code>"dry_foliage"</code>, <code>"grass"</code>, <code>"water"</code>. Requires 1.21.80+.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Ruby Ore', 'myaddon:ruby_ore');
+block.addComponent('minecraft:map_color', { color: '#FF1744' });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-destruction-particles">
+                    <h3>minecraft:destruction_particles</h3>
+                    <p>Sets the particles that will be used when the block is destroyed. Requires format_version 1.21.80+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>texture</code></td><td>String</td><td><em>not set</em></td><td>The texture name used for the particle.</td></tr>
+                        <tr><td><code>particle_count</code></td><td>Integer</td><td>100</td><td>Number of particles to spawn on destruction. Maximum is 255.</td></tr>
+                        <tr><td><code>tint_method</code></td><td>String</td><td><em>not set</em></td><td>Tint multiplied to the color. Options: <code>"none"</code>, <code>"default_foliage"</code>, <code>"birch_foliage"</code>, <code>"evergreen_foliage"</code>, <code>"dry_foliage"</code>, <code>"grass"</code>, <code>"water"</code>.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Leafy Block', 'myaddon:leafy_block');
+block.addComponent('minecraft:destruction_particles', {
+    texture: 'leafy_block',
+    tint_method: 'default_foliage'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-embedded-visual">
+                    <h3>minecraft:embedded_visual</h3>
+                    <p>The geometry and material used to render this block when it is embedded inside of another block (for example, a flower inside of a flower pot). Requires format_version 1.21.120+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>geometry</code></td><td>Object</td><td><em>not set</em></td><td>The <a href="#comp-geometry">minecraft:geometry</a> component that will be used when rendered inside of another block.</td></tr>
+                        <tr><td><code>material_instances</code></td><td>Object</td><td><em>not set</em></td><td>The <a href="#comp-material-instances">minecraft:material_instances</a> component that will be used when rendered inside of another block.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Custom Flower', 'myaddon:custom_flower');
+block.addComponent('minecraft:embedded_visual', {
+    geometry: { identifier: 'geometry.potted_flower' },
+    material_instances: { '*': { texture: 'custom_flower', render_method: 'alpha_test' } }
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-item-visual">
+                    <h3>minecraft:item_visual</h3>
+                    <p>The geometry and material used to render the item representation of this block. Requires format_version 1.21.60+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>geometry</code></td><td>Object</td><td><em>not set</em></td><td>[Required] The <a href="#comp-geometry">minecraft:geometry</a> component that will be used for the item.</td></tr>
+                        <tr><td><code>material_instances</code></td><td>Object</td><td><em>not set</em></td><td>[Required] The <a href="#comp-material-instances">minecraft:material_instances</a> component that will be used for the item.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Display Block', 'myaddon:display_block');
+block.addComponent('minecraft:item_visual', {
+    geometry: { identifier: 'minecraft:geometry.full_block' },
+    material_instances: { '*': { texture: 'display_block', render_method: 'opaque' } }
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- PHYSICS & COLLISION -->
+                <!-- ============================================================ -->
+                <h2 id="cat-physics">Physics &amp; Collision</h2>
+
+                <section class="comp-entry" id="comp-collision-box">
+                    <h3>minecraft:collision_box</h3>
+                    <p>Defines the area of the block that collides with entities. If set to <code>true</code>, default values are used (a full 16x16x16 block). If set to <code>false</code>, the block's collision with entities is disabled. If omitted, default values are used.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple <code>true</code>/<code>false</code> boolean. See also <a href="#comp-selection-box">minecraft:selection_box</a>.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>origin</code></td><td>[x, y, z]</td><td>[-8, 0, -8]</td><td>Minimal position of the bounds. Must be in the range (-8, 0, -8) to (8, 24, 8), inclusive.</td></tr>
+                        <tr><td><code>size</code></td><td>[x, y, z]</td><td>[16, 24, 16]</td><td>Size of each side. <code>origin + size</code> must be in the range (-8, 0, -8) to (8, 24, 8), inclusive.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Half Slab', 'myaddon:half_slab');
+block.addComponent('minecraft:collision_box', {
+    origin: [-8, 0, -8],
+    size: [16, 8, 16]
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-selection-box">
+                    <h3>minecraft:selection_box</h3>
+                    <p>Defines the area of the block that is selected by the player's cursor (the outline shown when looking at the block). If set to <code>true</code>, default values are used. If set to <code>false</code>, this block is not selectable. If omitted, default values are used.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple <code>true</code>/<code>false</code> boolean. See also <a href="#comp-collision-box">minecraft:collision_box</a>.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>origin</code></td><td>[x, y, z]</td><td>[-8, 0, -8]</td><td>Minimal position of the bounds. Must be in the range (-8, 0, -8) to (8, 16, 8), inclusive.</td></tr>
+                        <tr><td><code>size</code></td><td>[x, y, z]</td><td>[16, 16, 16]</td><td>Size of each side. <code>origin + size</code> must be in the range (-8, 0, -8) to (8, 16, 8), inclusive.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Small Lamp', 'myaddon:small_lamp');
+block.addComponent('minecraft:selection_box', {
+    origin: [-4, 0, -4],
+    size: [8, 10, 8]
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-friction">
+                    <h3>minecraft:friction</h3>
+                    <p>Describes the friction for this block in a range of 0.0 to 0.9. Friction affects an entity's movement speed when it travels on the block. Higher values result in more friction (less sliding). The default value is 0.4, which is used by most blocks. Ice uses 0.02.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple decimal number shorthand.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(value)</td><td>Decimal</td><td>0.4</td><td>Friction coefficient from 0.0 (slippery) to 0.9 (sticky).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Slippery Floor', 'myaddon:slippery_floor');
+block.addComponent('minecraft:friction', 0.02);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-support">
+                    <h3>minecraft:support</h3>
+                    <p>Defines the support shape of the block. Currently only allows for blocks to have the same shape as a Vanilla fence or Vanilla stair. Custom blocks without this component default to unit cube support.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>shape</code></td><td>String</td><td><em>not set</em></td><td>[Required] The type of support shape: <code>"fence"</code> or <code>"stair"</code>.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Custom Fence', 'myaddon:custom_fence');
+block.addComponent('minecraft:support', { shape: 'fence' });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-random-offset">
+                    <h3>minecraft:random_offset</h3>
+                    <p>Defines a random offset for the block, seeded based on the block's position. It affects the block's rendered position, outline, and collision. If the offset causes the collision box to extend beyond cube bounds, the range will automatically adjust.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>x</code></td><td>Object</td><td><em>not set</em></td><td>X offset with <code>range</code> (<code>{ min, max }</code>) and <code>steps</code> (integer).</td></tr>
+                        <tr><td><code>y</code></td><td>Object</td><td><em>not set</em></td><td>Y offset with <code>range</code> (<code>{ min, max }</code>) and <code>steps</code> (integer).</td></tr>
+                        <tr><td><code>z</code></td><td>Object</td><td><em>not set</em></td><td>Z offset with <code>range</code> (<code>{ min, max }</code>) and <code>steps</code> (integer).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Wild Grass', 'myaddon:wild_grass');
+block.addComponent('minecraft:random_offset', {
+    x: { range: { min: -0.2, max: 0.2 }, steps: 4 },
+    z: { range: { min: -0.2, max: 0.2 }, steps: 4 }
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-transformation">
+                    <h3>minecraft:transformation</h3>
+                    <p>The block's translation, rotation, and scale with respect to the center of its world position.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>translation</code></td><td>[x, y, z]</td><td><em>not set</em></td><td>The block's translation.</td></tr>
+                        <tr><td><code>rotation</code></td><td>[x, y, z]</td><td><em>not set</em></td><td>The block's rotation in increments of 90 degrees.</td></tr>
+                        <tr><td><code>rotation_pivot</code></td><td>[x, y, z]</td><td><em>not set</em></td><td>The point to apply rotation around.</td></tr>
+                        <tr><td><code>scale</code></td><td>[x, y, z]</td><td><em>not set</em></td><td>The block's scale.</td></tr>
+                        <tr><td><code>scale_pivot</code></td><td>[x, y, z]</td><td><em>not set</em></td><td>The point to apply scale around.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Rotated Block', 'myaddon:rotated_block');
+block.addComponent('minecraft:transformation', {
+    translation: [0, 0.5, 0],
+    rotation: [0, 90, 0],
+    scale: [0.5, 0.5, 0.5]
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- DESTRUCTION -->
+                <!-- ============================================================ -->
+                <h2 id="cat-destruction">Destruction</h2>
+
+                <section class="comp-entry" id="comp-destructible-by-mining">
+                    <h3>minecraft:destructible_by_mining</h3>
+                    <p>Describes the destructible by mining properties for this block. If set to <code>true</code>, the block will take the default number of seconds to destroy. If set to <code>false</code>, this block is indestructible by mining. If omitted, the block will take the default number of seconds to destroy.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple <code>true</code>/<code>false</code> boolean.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>seconds_to_destroy</code></td><td>Decimal</td><td>0</td><td>Number of seconds it takes to destroy the block with base equipment. Greater numbers result in greater mining times.</td></tr>
+                        <tr><td><code>item_specific_speeds</code></td><td>Array</td><td><em>not set</em></td><td>Array of objects with <code>item</code> (string identifier or object with <code>tags</code> Molang query) and <code>destroy_speed</code> (decimal).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Hard Ore', 'myaddon:hard_ore');
+block.addComponent('minecraft:destructible_by_mining', {
+    seconds_to_destroy: 10,
+    item_specific_speeds: [
+        { item: { tags: "q.any_tag('minecraft:is_pickaxe')" }, destroy_speed: 5.0 }
+    ]
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-destructible-by-explosion">
+                    <h3>minecraft:destructible_by_explosion</h3>
+                    <p>Describes the destructible by explosion properties for this block. If set to <code>true</code>, the block will have the default explosion resistance. If set to <code>false</code>, this block is indestructible by explosion. If omitted, the block will have the default explosion resistance.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple <code>true</code>/<code>false</code> boolean.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>explosion_resistance</code></td><td>Decimal</td><td>0</td><td>Sets the explosion resistance. Greater values result in greater resistance. A negative value or 0 means it will easily explode.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Reinforced Stone', 'myaddon:reinforced_stone');
+block.addComponent('minecraft:destructible_by_explosion', {
+    explosion_resistance: 1200
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-flammable">
+                    <h3>minecraft:flammable</h3>
+                    <p>Describes the flammable properties for this block. If set to <code>true</code>, default values are used (catch: 5, destroy: 20, same as planks). If set to <code>false</code> or omitted, the block will not catch on fire naturally from neighbors, but it can still be directly ignited.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple <code>true</code>/<code>false</code> boolean.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>catch_chance_modifier</code></td><td>Integer</td><td>5</td><td>A modifier affecting the chance that this block will catch flame when next to a fire. Values &ge; 0; higher = more likely.</td></tr>
+                        <tr><td><code>destroy_chance_modifier</code></td><td>Integer</td><td>20</td><td>A modifier affecting the chance that this block will be destroyed by flames when on fire. Values &ge; 0; higher = more likely. 0 means the block will never be destroyed by fire.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Hay Bale', 'myaddon:hay_bale');
+block.addComponent('minecraft:flammable', {
+    catch_chance_modifier: 60,
+    destroy_chance_modifier: 100
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- LIGHT -->
+                <!-- ============================================================ -->
+                <h2 id="cat-light">Light</h2>
+
+                <section class="comp-entry" id="comp-light-emission">
+                    <h3>minecraft:light_emission</h3>
+                    <p>The amount of light this block will emit in a range of 0&ndash;15. Higher value means more light. Reference values: torch (14), glowstone (15), redstone torch (7), soul torch (10). Monsters cannot spawn on blocks with light level 8 or higher.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple integer shorthand.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(value)</td><td>Integer</td><td>0</td><td>Light emission level from 0 (none) to 15 (maximum).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Glow Lamp', 'myaddon:glow_lamp');
+block.addComponent('minecraft:light_emission', 15);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-light-dampening">
+                    <h3>minecraft:light_dampening</h3>
+                    <p>The amount that light will be dampened when it passes through the block, in a range of 0&ndash;15. Higher value means the light will be dampened more. A value of 15 means fully opaque (like stone), while 0 means fully transparent (like glass). Leaves use 1, water uses 2.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple integer shorthand.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(value)</td><td>Integer</td><td>15</td><td>Light dampening level from 0 (transparent) to 15 (fully opaque).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Tinted Glass', 'myaddon:tinted_glass');
+block.addComponent('minecraft:light_dampening', 2);</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- INTERACTION -->
+                <!-- ============================================================ -->
+                <h2 id="cat-interaction">Interaction</h2>
+
+                <section class="comp-entry" id="comp-crafting-table">
+                    <h3>minecraft:crafting_table</h3>
+                    <p>Makes your block into a custom crafting table which enables the crafting table UI and the ability to craft recipes. This component supports only <code>"recipe_shaped"</code> and <code>"recipe_shapeless"</code> typed recipes.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>crafting_tags</code></td><td>String[]</td><td><em>not set</em></td><td>Tags that recipes should define to be crafted on this table. Limited to 64 tags, each limited to 64 characters.</td></tr>
+                        <tr><td><code>table_name</code></td><td>String</td><td><em>not set</em></td><td>Language file key or raw string displayed in the table UI. If omitted, falls back to <a href="#comp-display-name">display_name</a> or the block name.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Forge', 'myaddon:forge');
+block.addComponent('minecraft:crafting_table', {
+    crafting_tags: ['crafting_table', 'forge_recipes'],
+    table_name: 'Forge'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-display-name">
+                    <h3>minecraft:display_name</h3>
+                    <p>Specifies the language file key that maps to what text will be displayed when you hover over the block in your inventory and hotbar. If the string cannot be resolved as a localization key, the raw string is displayed. If omitted, the block name is used.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple string shorthand.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(value)</td><td>String</td><td><em>not set</em></td><td>Display name string or localization key.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Copper Wire', 'myaddon:copper_wire');
+block.addComponent('minecraft:display_name', 'tile.myaddon:copper_wire.name');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-loot">
+                    <h3>minecraft:loot</h3>
+                    <p>Specifies the path to the loot table that determines what items are dropped when the block is destroyed. The path is relative to the behavior pack root folder. Path string is limited to 256 characters. If omitted, the block drops itself.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> This component can also be represented as a simple string shorthand.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(value)</td><td>String</td><td><em>not set</em></td><td>Path to the loot table JSON file (e.g. <code>"loot_tables/blocks/my_block.json"</code>).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Gem Ore', 'myaddon:gem_ore');
+block.addComponent('minecraft:loot', 'loot_tables/blocks/gem_ore.json');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-placement-filter">
+                    <h3>minecraft:placement_filter</h3>
+                    <p>Sets rules for under what conditions the block can be placed and survive. If placement conditions are not met, the block cannot be placed. If the block is already placed and conditions become invalid, the block will pop off and drop as an item.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>conditions</code></td><td>Array</td><td><em>not set</em></td><td>List of conditions (limited to 64). Each condition has <code>allowed_faces</code> (array of <code>"up"</code>, <code>"down"</code>, <code>"north"</code>, <code>"south"</code>, <code>"east"</code>, <code>"west"</code>, <code>"side"</code>, <code>"all"</code>) and <code>block_filter</code> (array of block names or BlockDescriptors with <code>name</code>, <code>states</code>, or <code>tags</code>).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Wall Torch', 'myaddon:wall_torch');
+block.addComponent('minecraft:placement_filter', {
+    conditions: [{
+        allowed_faces: ['side'],
+        block_filter: [{ tags: "q.any_tag('stone', 'wood')" }]
+    }]
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-entity-fall-on">
+                    <h3>minecraft:entity_fall_on</h3>
+                    <p>Configures what distance an entity must fall onto this block to cause the <code>onEntityFallOn</code> block custom component event to be sent to script. Without this component, the default fall distance is 1 block.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>minimum_fall_distance</code></td><td>Decimal</td><td>1</td><td>The minimum distance in blocks that an entity needs to fall before events are raised.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Bounce Pad', 'myaddon:bounce_pad');
+block.addComponent('minecraft:entity_fall_on', {
+    minimum_fall_distance: 2
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-tick">
+                    <h3>minecraft:tick</h3>
+                    <p>Causes the block to tick based on a regular interval equal to a number of ticks randomly chosen from the <code>interval_range</code>. This sends the <code>onTick</code> event to blocks with custom components subscribed for the event.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>interval_range</code></td><td>[min, max]</td><td>[0, 0]</td><td>A range of values in ticks to decide the next tick interval. The first value must be &le; the second.</td></tr>
+                        <tr><td><code>looping</code></td><td>Boolean</td><td>true</td><td>If false, the block will only be ticked once. If true, it will continue ticking with a new random interval each time.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Growing Crystal', 'myaddon:growing_crystal');
+block.addComponent('minecraft:tick', {
+    interval_range: [20, 60],
+    looping: true
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-tag">
+                    <h3>tag:</h3>
+                    <p>An empty JSON object that defines a tag to be added to a block. The component has no body or parameters &mdash; it is simply a flag. When the block is parsed, the tag is added to the block's tag list. Use Vanilla block tags or create your own with a proper namespace.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Note:</strong> Tags use the <code>tag:</code> prefix instead of <code>minecraft:</code>. Multiple tags are added as separate components.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(none)</td><td>Empty object <code>{}</code></td><td>&mdash;</td><td>The tag name is the component key itself.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Custom Ore', 'myaddon:custom_ore');
+block.addComponent('tag:minecraft:is_pickaxe_item_destructible', {});
+block.addComponent('tag:minecraft:diamond_tier_destructible', {});
+block.addComponent('tag:myaddon:custom_ore_tag', {});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-liquid-detection">
+                    <h3>minecraft:liquid_detection</h3>
+                    <p>Defines how a block behaves when detecting liquid. Only one rule definition is allowed per liquid type. Requires format_version 1.21.60+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>liquid_type</code></td><td>String</td><td><code>"water"</code></td><td>The type of liquid this detection rule is for. Currently only <code>"water"</code> is supported.</td></tr>
+                        <tr><td><code>can_contain_liquid</code></td><td>Boolean</td><td>false</td><td>Whether this block can contain the liquid (e.g. be waterlogged).</td></tr>
+                        <tr><td><code>on_liquid_touches</code></td><td>String</td><td><code>"blocking"</code></td><td>Reaction to flowing water: <code>"blocking"</code>, <code>"broken"</code>, <code>"popped"</code>, or <code>"no_reaction"</code>.</td></tr>
+                        <tr><td><code>stops_liquid_flowing_from_direction</code></td><td>String[]</td><td>[]</td><td>Directions where liquid can't flow out: <code>"up"</code>, <code>"down"</code>, <code>"north"</code>, <code>"south"</code>, <code>"east"</code>, <code>"west"</code>.</td></tr>
+                        <tr><td><code>use_liquid_clipping</code></td><td>Boolean</td><td>false</td><td>Whether the block uses the encompassing collider to visually clip the liquid.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Coral Block', 'myaddon:coral_block');
+block.addComponent('minecraft:liquid_detection', {
+    can_contain_liquid: true,
+    on_liquid_touches: 'no_reaction'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-flower-pottable">
+                    <h3>minecraft:flower_pottable</h3>
+                    <p>When added to a block, indicates that this block can be placed inside a flower pot. This component has no parameters. Requires format_version 1.21.120+.</p>
+                    <div class="tip-box"><img src="assets/jepia_question.svg" alt="" class="box-icon"><div><strong>Tip:</strong> Use with <a href="#comp-embedded-visual">minecraft:embedded_visual</a> to customize how the block looks inside a flower pot.</div></div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(none)</td><td>Empty object <code>{}</code></td><td>&mdash;</td><td>No parameters. Simply adding this component enables flower pot placement.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Custom Flower', 'myaddon:custom_flower');
+block.addComponent('minecraft:flower_pottable', {});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- REDSTONE -->
+                <!-- ============================================================ -->
+                <h2 id="cat-redstone">Redstone</h2>
+
+                <section class="comp-entry" id="comp-redstone-conductivity">
+                    <h3>minecraft:redstone_conductivity</h3>
+                    <p>The basic redstone properties of a block. If the component is not provided, the default values are used.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>redstone_conductor</code></td><td>Boolean</td><td>false</td><td>Specifies if the block can be powered by redstone.</td></tr>
+                        <tr><td><code>allows_wire_to_step_down</code></td><td>Boolean</td><td>true</td><td>Specifies if redstone wire can stair-step downward on the block.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Conductive Block', 'myaddon:conductive_block');
+block.addComponent('minecraft:redstone_conductivity', {
+    redstone_conductor: true,
+    allows_wire_to_step_down: true
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-redstone-consumer">
+                    <h3>minecraft:redstone_consumer</h3>
+                    <p>Describes how a block can consume and potentially propagate a redstone signal. This component is not available for block permutations.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>min_power</code></td><td>Integer</td><td>0</td><td>Minimum incoming signal strength. If signal &ge; this value, the <code>onRedstoneUpdate</code> event is sent to Scripts. 0 means always emitted.</td></tr>
+                        <tr><td><code>propagates_power</code></td><td>Boolean</td><td>false</td><td>Whether a signal can pass through this block.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Redstone Receiver', 'myaddon:redstone_receiver');
+block.addComponent('minecraft:redstone_consumer', {
+    min_power: 5,
+    propagates_power: false
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-redstone-producer">
+                    <h3>minecraft:redstone_producer</h3>
+                    <p>Indicates that the block produces a redstone signal. Requires format_version 1.21.120+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>power</code></td><td>Integer</td><td><em>not set</em></td><td>Signal strength from 0 to 15.</td></tr>
+                        <tr><td><code>connected_faces</code></td><td>String[]</td><td>all faces</td><td>Faces that provide power: <code>"north"</code>, <code>"east"</code>, <code>"south"</code>, <code>"west"</code>, <code>"up"</code>, <code>"down"</code>. By default all faces are connected.</td></tr>
+                        <tr><td><code>strongly_powered_face</code></td><td>String</td><td><em>not set</em></td><td>The block touching this face becomes strongly powered. Strongly powered blocks power adjacent blocks.</td></tr>
+                        <tr><td><code>transform_relative</code></td><td>Boolean</td><td>false</td><td>If true, <code>strongly_powered_face</code> and <code>connected_faces</code> are rotated according to <a href="#comp-transformation">minecraft:transformation</a>.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Power Source', 'myaddon:power_source');
+block.addComponent('minecraft:redstone_producer', {
+    power: 15,
+    connected_faces: ['north', 'south'],
+    strongly_powered_face: 'down'
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- EXPERIMENTAL -->
+                <!-- ============================================================ -->
+                <h2 id="cat-experimental">Experimental</h2>
+
+                <section class="comp-entry" id="comp-chest-obstruction">
+                    <h3>minecraft:chest_obstruction <span class="badge-experimental">Experimental</span></h3>
+                    <p>Controls how the block is evaluated by a chest during chest opening. Requires the Upcoming Creator Features experiment.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>obstruction_rule</code></td><td>String</td><td><code>"shape"</code></td><td>How the block should be evaluated: <code>"always"</code> (always obstructs), <code>"never"</code> (never obstructs), or <code>"shape"</code> (uses the block's AABB shape).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Glass Shelf', 'myaddon:glass_shelf');
+block.addComponent('minecraft:chest_obstruction', {
+    obstruction_rule: 'never'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-connection-rule">
+                    <h3>minecraft:connection_rule <span class="badge-experimental">Experimental</span></h3>
+                    <p>Defines whether other blocks such as fences, walls, bars, and glass panes are allowed to connect to this block.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>accepts_connections_from</code></td><td>String</td><td><code>"all"</code></td><td>The type of block allowed to connect: <code>"all"</code>, <code>"only_fences"</code>, or <code>"none"</code>.</td></tr>
+                        <tr><td><code>enabled_directions</code></td><td>String[]</td><td>["north", "south", "east", "west"]</td><td>Cardinal directions that connection is enabled for.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Custom Post', 'myaddon:custom_post');
+block.addComponent('minecraft:connection_rule', {
+    accepts_connections_from: 'only_fences',
+    enabled_directions: ['north', 'south']
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-movable">
+                    <h3>minecraft:movable <span class="badge-experimental">Experimental</span></h3>
+                    <p>Controls how the block reacts to being pushed by pistons.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>movement_type</code></td><td>String</td><td><code>"push_pull"</code></td><td>[Required] Reaction to pistons: <code>"push_pull"</code>, <code>"push"</code> (ignores sticky pistons), <code>"popped"</code> (destroyed), or <code>"immovable"</code>.</td></tr>
+                        <tr><td><code>sticky</code></td><td>String</td><td><code>"none"</code></td><td>How the block handles adjacent blocks when pushed: <code>"same"</code> (moves adjacent blocks, only with <code>"push_pull"</code>) or <code>"none"</code>.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Immovable Pillar', 'myaddon:immovable_pillar');
+block.addComponent('minecraft:movable', {
+    movement_type: 'immovable'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-precipitation-interactions">
+                    <h3>minecraft:precipitation_interactions <span class="badge-experimental">Experimental</span></h3>
+                    <p>Determines how the block will interact with rain and snow.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>precipitation_behavior</code></td><td>String</td><td><code>"accumulate snow"</code></td><td>Behavior options: <code>"obrain"</code>, <code>"obstruct_rain_accumulate_snow"</code>, or <code>"none"</code>.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Heated Plate', 'myaddon:heated_plate');
+block.addComponent('minecraft:precipitation_interactions', {
+    precipitation_behavior: 'none'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-replaceable">
+                    <h3>minecraft:replaceable <span class="badge-experimental">Experimental</span></h3>
+                    <p>A block with this component can be replaced when another block is placed in the same block position. This component has no parameters. Requires format_version 1.21.70+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td>(none)</td><td>Empty object <code>{}</code></td><td>&mdash;</td><td>No parameters. Simply adding this component makes the block replaceable.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const block = new Block('Tall Grass', 'myaddon:tall_grass');
+block.addComponent('minecraft:replaceable', {});</code></pre>
+                </section>
+
+            </main>
+        </div>
+        <footer>
+            <p>Jepia &mdash; a TypeScript framework for Minecraft Bedrock Add-On generation.</p>
+        </footer>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>

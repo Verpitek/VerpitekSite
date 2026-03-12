@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Jepia Component Reference</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Minecraft Bedrock Component Reference</h1>
+        <div class="note-box">
+            <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+            <div><strong>Target Version:</strong> Minecraft Bedrock Edition 1.26.0+ &mdash; all components listed here are available in stable release builds.</div>
+        </div>
+
+        <p>Minecraft Bedrock components are JSON data objects that define the behavior and appearance of blocks, items, and entities. In Jepia, you attach them using <code>addComponent()</code>:</p>
+
+        <pre><code class="language-typescript">// The minecraft: prefix is optional — Jepia adds it automatically
+block.addComponent('minecraft:destructible_by_mining', { seconds_to_destroy: 2 });
+item.addComponent('minecraft:food', { nutrition: 4, saturation_modifier: 1.2 });
+entity.addComponent('minecraft:health', { value: 20, max: 20 });</code></pre>
+
+        <p>Choose a component type below to browse the full reference:</p>
+
+        <div class="index-grid">
+            <div class="grid-item">
+                <h3><a href="block-components.html">Block Components</a></h3>
+                <p>Appearance, physics, destruction, lighting, redstone, and interaction components for custom blocks. Includes geometry, material instances, collision boxes, and more.</p>
+            </div>
+            <div class="grid-item">
+                <h3><a href="item-components.html">Item Components</a></h3>
+                <p>Durability, combat, food, projectiles, equipment, and storage components for custom items. Covers everything from stack sizes to wearable armor.</p>
+            </div>
+            <div class="grid-item">
+                <h3><a href="entity-components.html">Entity Components</a></h3>
+                <p>Over 200 components and 180 AI goals for custom entities. Health, movement, navigation, combat, breeding, sensing, equipment, and special abilities.</p>
+            </div>
+        </div>
+
+        <h2>How Components Work</h2>
+        <p>Each component is identified by a namespaced string (e.g. <code>minecraft:health</code>) and accepts a JSON object of parameters. Jepia's <code>addComponent()</code> method stores these and serializes them into the correct Bedrock JSON format when <code>addon.generate()</code> is called.</p>
+
+        <div class="tip-box">
+            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+            <div><strong>Tip:</strong> For the Jepia class API (constructors, methods, events), see the <a href="api.html">API Reference</a>. This section covers the Minecraft-defined components you pass <em>into</em> those classes.</div>
+        </div>
+
+        <footer>
+            <p>Jepia &mdash; a TypeScript framework for Minecraft Bedrock Add-On generation.</p>
+        </footer>
+        </div><!-- /.page-wrapper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>

@@ -13,6 +13,7 @@ const logoMap = {
     "LunaTech": "/pack_icon.png",
     "BedPak": "/bedpak_mascot.webp",
     "PanSpark": "/panspark.png",
+    "Jepia": "/jepia/assets/jepia.svg",
 } as const;
 const logoPath = title in logoMap ? logoMap[title as keyof typeof logoMap] : undefined;
 const isExternal = link?.startsWith('http') ?? false;

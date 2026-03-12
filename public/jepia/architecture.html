@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Jepia Architecture</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Architecture</h1>
+        <p>Internal design and structure of the Jepia framework.</p>
+        <button class="sidebar-toggle" id="sidebar-toggle">Contents <span class="toggle-arrow">▼</span></button>
+        <div class="layout">
+            <nav class="sidebar" id="sidebar">
+                <h3>Contents</h3>
+                <ul>
+                    <li><a href="#overview">Project Overview</a></li>
+                    <li><a href="#diagram">Architecture Diagram</a></li>
+                    <li><a href="#component-system">Component System</a></li>
+                    <li><a href="#pack-system">Pack System</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#behavior-pack">BehaviorPack</a></li>
+                                <li><a href="#resource-pack">ResourcePack</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#rendering-pipeline">Rendering Pipeline</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#phase-texture-layer">TextureLayer</a></li>
+                                <li><a href="#phase-texture-set">TextureSet</a></li>
+                                <li><a href="#phase-material">Material</a></li>
+                                <li><a href="#phase-render-controller">RenderController</a></li>
+                                <li><a href="#phase-texture-atlas">TextureAtlas</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#scripting-pipeline">Scripting Pipeline</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#script-extraction">Extraction</a></li>
+                                <li><a href="#script-bundling">Bundling</a></li>
+                                <li><a href="#script-manifest">Manifest Integration</a></li>
+                                <li><a href="#script-execution">Execution Model</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#visual-client-systems">Visual &amp; Client Systems</a></li>
+                    <li><a href="#file-output">File Output Structure</a></li>
+                    <li><a href="#validation">Validation Strategy</a></li>
+                    <li><a href="#configuration">Configuration System</a></li>
+                    <li><a href="#packaging">Packaging</a></li>
+                    <li><a href="#design-decisions">Design Decisions</a></li>
+                </ul>
+            </nav>
+
+            <main class="content">
+
+                <!-- 1. Project Overview -->
+                <section id="overview">
+                    <h2>1. Project Overview</h2>
+                    <p>Jepia is a TypeScript framework for programmatic Minecraft Bedrock Add-On generation using <a href="https://bun.sh">Bun</a>. It provides a fluent, object-oriented API for creating behavior packs, resource packs, and their components.</p>
+                    <table>
+                        <tr><th>Property</th><th>Value</th></tr>
+                        <tr><td>Language</td><td>TypeScript (Bun runtime)</td></tr>
+                        <tr><td>Target</td><td>Minecraft Bedrock Edition</td></tr>
+                        <tr><td>Format Version</td><td><code>2</code> (stable)</td></tr>
+                        <tr><td>Validation</td><td>AJV + Zod</td></tr>
+                        <tr><td>Output</td><td><code>behavior_pack/</code> + <code>resource_pack/</code> folders, <code>.mcaddon</code> / <code>.mcpack</code></td></tr>
+                    </table>
+                    <p>The core idea: describe your add-on in TypeScript, let Jepia handle manifest generation, file layout, schema validation, and packaging.</p>
+                    <pre><code class="language-typescript">import { Addon } from 'jepia';
+
+const addon = new Addon('TechMod', 'Industrial automation add-on');
+// addon.behaviorPack and addon.resourcePack are auto-created
+addon.addItem(myItem);
+addon.addBlock(myBlock);
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <!-- 2. Architecture Diagram -->
+                <section id="diagram">
+                    <h2>2. Architecture Diagram</h2>
+                    <p>The layered architecture separates concerns into entry point, packs, components, scripting, and utilities.</p>
+                    <pre><code>
+ ┌──────────────────────────────────────────────────────────────┐
+ │                           Addon                              │
+ │                  (entry point, orchestrator)                  │
+ └────────────┬───────────────────────┬──────────┬─────────────┘
+              │                       │          │
+              ▼                       ▼          ▼
+ ┌──────────────────┐  ┌──────────────────┐  ┌─────────────────────┐
+ │   BehaviorPack   │  │  ResourcePack    │  │  ScriptPipeline     │
+ │                  │  │                  │  │                     │
+ │  - Items         │  │  - Textures      │  │  - Script Blocks    │
+ │  - Blocks        │  │  - Models        │  │  - File Refs        │
+ │  - Entities      │  │  - Materials     │  │  - Custom Comps     │
+ │  - Recipes       │  │  - RenderCtrl    │  │  - Custom Commands  │
+ │  - Loot Tables   │  │  - TextureSets   │  │  - Constants        │
+ │  - Script Module │  │  - TextureAtlas  │  │  - Bun.build        │
+ └──────────────────┘  └──────────────────┘  └─────────────────────┘
+          │                       │                    │
+          └───────────────────────┴──────────┬─────────┘
+                                             ▼
+ ┌────────────────────────────────────────────────────────────────┐
+ │                         Components                             │
+ │                                                                │
+ │  Item  Block  Entity  Texture  Model  Material                 │
+ │  RenderController  TextureLayer  TextureSet                    │
+ │  TextureAtlas  ComponentRegistry  DependencyResolver           │
+ └────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+ ┌────────────────────────────────────────────────────────────────┐
+ │                         Utilities                              │
+ │                                                                │
+ │  UUID    Molang    Validation (AJV)    AtlasPacker             │
+ │  FileSystem    Zod Config    Archiver (ZIP)                    │
+ └────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+ ┌────────────────────────────────────────────────────────────────┐
+ │                           Output                               │
+ │                                                                │
+ │   behavior_pack/            resource_pack/                     │
+ │   ├── manifest.json         ├── manifest.json                  │
+ │   ├── scripts/main.js       ├── textures/                      │
+ │   ├── items/                ├── materials/                     │
+ │   ├── blocks/               └── render_controllers/            │
+ │   └── entities/             .mcaddon / .mcpack                 │
+ │   jepia.config.json                                            │
+ └────────────────────────────────────────────────────────────────┘
+                    </code></pre>
+                </section>
+
+                <!-- 3. Component System -->
+                <section id="component-system">
+                    <h2>3. Component System</h2>
+                    <p>All game objects derive from an abstract <code>Component</code> base class that enforces a consistent interface.</p>
+
+                    <h3>Base Component</h3>
+                    <table>
+                        <tr><th>Member</th><th>Type</th><th>Purpose</th></tr>
+                        <tr><td><code>id</code></td><td><code>string</code></td><td>Namespaced identifier (e.g. <code>myaddon:iron_sword</code>)</td></tr>
+                        <tr><td><code>displayName</code></td><td><code>string</code></td><td>Human-readable name</td></tr>
+                        <tr><td><code>description</code></td><td><code>string</code></td><td>Optional description</td></tr>
+                        <tr><td><code>validate()</code></td><td><code>boolean</code></td><td>AJV schema validation</td></tr>
+                        <tr><td><code>toJSON()</code></td><td><code>object</code></td><td>Bedrock-format JSON output</td></tr>
+                    </table>
+
+                    <h3>Component Hierarchy</h3>
+                    <pre><code>
+ Component (abstract)
+ ├── Item           — behavior pack items
+ ├── Block          — behavior pack blocks
+ ├── Entity         — behavior + resource pack entities
+ ├── Texture        — resource pack texture references
+ ├── TextureLayer   — individual images with PBR roles
+ ├── TextureSet     — groups layers into .texture_set.json
+ ├── Material       — .material files with inheritance
+ ├── RenderController — wires geometry + textures + materials
+ ├── Model          — geometry definitions
+ ├── TextureAtlas   — sprite sheet packing
+ ├── Recipe         — crafting, furnace, brewing recipes
+ ├── LootTable      — loot pools and item drops
+ ├── SpawnRule      — natural entity spawning conditions
+ └── TradeTable     — merchant tier trades
+                    </code></pre>
+
+                    <h3>ComponentRegistry</h3>
+                    <p>Centralized registration of all components within a pack, enabling lookup by ID and type-safe retrieval.</p>
+                    <pre><code class="language-typescript">// Components register themselves when added to a pack
+addon.addItem(sword);   // registers in BehaviorPack registry
+addon.addBlock(ore);    // registers in BehaviorPack registry</code></pre>
+
+                    <h3>DependencyResolver</h3>
+                    <p>Resolves cross-component references at build time. For example, an Entity references a RenderController, which in turn references a Material and Texture. The resolver ensures all referenced components exist before output.</p>
+                </section>
+
+                <!-- 4. Pack System -->
+                <section id="pack-system">
+                    <h2>4. Pack System</h2>
+                    <p>Both pack types extend a shared <code>Pack</code> base class that handles manifest generation.</p>
+
+                    <table>
+                        <tr><th>Base Pack Member</th><th>Purpose</th></tr>
+                        <tr><td><code>name</code></td><td>Pack display name</td></tr>
+                        <tr><td><code>description</code></td><td>Pack description</td></tr>
+                        <tr><td><code>uuid</code> / <code>moduleUUID</code></td><td>Persisted identifiers</td></tr>
+                        <tr><td><code>version</code></td><td>Semantic version array <code>[major, minor, patch]</code></td></tr>
+                        <tr><td><code>generateManifest()</code></td><td>Outputs <code>manifest.json</code> per Bedrock spec</td></tr>
+                    </table>
+
+                    <h3 id="behavior-pack">BehaviorPack</h3>
+                    <p>Contains server-side game logic.</p>
+                    <table>
+                        <tr><th>Content Type</th><th>Output Folder</th></tr>
+                        <tr><td>Items</td><td><code>items/</code></td></tr>
+                        <tr><td>Blocks</td><td><code>blocks/</code></td></tr>
+                        <tr><td>Entities</td><td><code>entities/</code></td></tr>
+                        <tr><td>Recipes</td><td><code>recipes/</code></td></tr>
+                        <tr><td>Loot Tables</td><td><code>loot_tables/</code></td></tr>
+                        <tr><td>Spawn Rules</td><td><code>spawn_rules/</code></td></tr>
+                        <tr><td>Trade Tables</td><td><code>trading/</code></td></tr>
+                    </table>
+
+                    <h3 id="resource-pack">ResourcePack</h3>
+                    <p>Contains client-side visuals and rendering definitions.</p>
+                    <table>
+                        <tr><th>Content Type</th><th>Output Folder</th></tr>
+                        <tr><td>Textures</td><td><code>textures/</code></td></tr>
+                        <tr><td>Models / Geometry</td><td><code>models/</code></td></tr>
+                        <tr><td>Materials</td><td><code>materials/</code></td></tr>
+                        <tr><td>Render Controllers</td><td><code>render_controllers/</code></td></tr>
+                        <tr><td>Client Entity Defs</td><td><code>entity/</code></td></tr>
+                        <tr><td>Texture Sets (PBR)</td><td><code>textures/</code> (alongside base textures)</td></tr>
+                    </table>
+                </section>
+
+                <!-- 5. Rendering Pipeline -->
+                <section id="rendering-pipeline">
+                    <h2>5. Rendering Pipeline</h2>
+                    <p>The rendering pipeline was built across Phases 1 through 5 and maps directly to Minecraft Bedrock's deferred rendering system.</p>
+
+                    <pre><code>
+ TextureLayer ──▶ TextureSet ──▶ Material ──▶ RenderController ──▶ TextureAtlas
+   (images)       (PBR groups)   (.material)   (Molang wiring)     (sprite sheets)
+                    </code></pre>
+
+                    <h3 id="phase-texture-layer">Phase 1: TextureLayer</h3>
+                    <p>Represents a single image file with a designated PBR role.</p>
+                    <table>
+                        <tr><th>Role</th><th>Description</th></tr>
+                        <tr><td><code>color</code></td><td>Base color / albedo (RGB)</td></tr>
+                        <tr><td><code>normal</code></td><td>Normal map for surface detail</td></tr>
+                        <tr><td><code>mer</code></td><td>Metalness / Emissive / Roughness packed channels</td></tr>
+                        <tr><td><code>heightmap</code></td><td>Height data for parallax</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const colorLayer = new TextureLayer('iron_color', {
+  role: 'color',
+  path: 'textures/blocks/iron_block',
+  resolution: { width: 16, height: 16 }
+});</code></pre>
+
+                    <h3 id="phase-texture-set">Phase 2: TextureSet</h3>
+                    <p>Groups multiple TextureLayers into a <code>.texture_set.json</code> file for Bedrock's PBR pipeline.</p>
+                    <pre><code class="language-typescript">const textureSet = new TextureSet('iron_pbr');
+textureSet
+  .setColorLayer(colorLayer)
+  .setNormalLayer(normalLayer)
+  .setMERLayer(merLayer);</code></pre>
+
+                    <h3 id="phase-material">Phase 3: Material</h3>
+                    <p>Defines <code>.material</code> files with vanilla inheritance, shader defines, blend states, and render states.</p>
+                    <pre><code class="language-typescript">const mat = new Material('custom:glowing_ore');
+mat
+  .setParent('entity_alphatest')
+  .addDefine('FANCY')
+  .setBlendSrc('SourceAlpha')
+  .setBlendDst('OneMinusSrcAlpha')
+  .setState('DisableCulling', true);</code></pre>
+                    <p>Materials support the full inheritance chain: a child material inherits all defines, states, and blend factors from its parent, then overrides selectively.</p>
+
+                    <h3 id="phase-render-controller">Phase 4: RenderController</h3>
+                    <p>Wires geometry, textures, and materials together using Molang expressions. Outputs <code>.render_controllers.json</code> files.</p>
+                    <pre><code class="language-typescript">const rc = new RenderController('controller.render.my_entity');
+rc
+  .setGeometry("Geometry.default")
+  .addTexture("Texture.default")
+  .addMaterial("Material.default", "*")
+  .setPartVisibility("head", "query.is_baby");</code></pre>
+
+                    <h3 id="phase-texture-atlas">Phase 5: TextureAtlas</h3>
+                    <p>Packs multiple textures into optimized sprite sheets using two strategies.</p>
+                    <table>
+                        <tr><th>Strategy</th><th>Best For</th><th>Algorithm</th></tr>
+                        <tr><td><code>shelf</code></td><td>Uniform-size textures</td><td>Row-based packing with shelf height tracking</td></tr>
+                        <tr><td><code>maxrects</code></td><td>Mixed-size textures</td><td>Maximal rectangles with best-short-side-fit heuristic</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const atlas = new TextureAtlas('item_atlas', {
+  strategy: 'maxrects',
+  maxWidth: 2048,
+  maxHeight: 2048,
+  padding: 1
+});
+atlas.addSprite('sword', 16, 16);
+atlas.addSprite('shield', 32, 32);
+const result = atlas.pack(); // { placements, width, height }</code></pre>
+                </section>
+
+                <!-- 5b. Scripting Pipeline -->
+                <section id="scripting-pipeline">
+                    <h2>5b. Scripting Pipeline</h2>
+                    <p>The scripting pipeline bridges TypeScript source authored at build time with JavaScript that runs inside Minecraft Bedrock at runtime. It is orchestrated by <code>ScriptPipeline</code> (<code>src/script/pipeline.ts</code>) and runs as part of <code>addon.generate()</code>.</p>
+
+                    <pre><code>
+ addon.script(callback)          → ScriptPipeline.addBlock()
+ addon.scriptFile(path)          → ScriptPipeline.addFile()
+ block.addCustomComponent(...)   → ScriptPipeline.addRawSource()
+ addon.addCustomCommand(...)     → ScriptPipeline.addRawSource()
+ constants injection             → ScriptPipeline.addRawSource()
+                 │
+                 ▼
+         ScriptPipeline.process()
+                 │
+         ┌───────┴──────────┐
+         │                  │
+         ▼                  ▼
+   Extractor.ts        FileBundleOptions
+   (inline blocks)     (file-based)
+         │                  │
+         ▼                  ▼
+   assembleScriptFile()  read files
+         │                  │
+         └────────┬──────────┘
+                  ▼
+           Bun.build()
+           @minecraft/* → external
+                  │
+                  ▼
+        behavior_pack/scripts/main.js
+                    </code></pre>
+
+                    <h3 id="script-extraction">Extraction</h3>
+                    <p>Inline script blocks use <code>Function.prototype.toString()</code> to obtain the callback's source text at build time. The extractor (<code>src/script/extractor.ts</code>) then:</p>
+                    <ol>
+                        <li>Strips the outer function wrapper to isolate the body.</li>
+                        <li>Detects <code>ctx.server</code>, <code>ctx.serverUi</code>, etc. with word-boundary matching.</li>
+                        <li>Extracts destructured imports (<code>const { world } = ctx.server</code>) and generates proper ES <code>import</code> statements.</li>
+                        <li>Rewrites inline <code>ctx.server.world</code> references into direct variable references.</li>
+                        <li>Merges multiple blocks into a single ES module with deduplicated imports.</li>
+                    </ol>
+
+                    <pre><code class="language-typescript">// Input (callback at build time):
+addon.script((ctx) => {
+  const { world } = ctx.server;
+  world.afterEvents.playerJoin.subscribe((event) => {
+    world.sendMessage(event.playerName + ' joined!');
+  });
+});
+
+// Extracted and rewritten:
+import { world } from '@minecraft/server';
+
+world.afterEvents.playerJoin.subscribe((event) => {
+  world.sendMessage(event.playerName + ' joined!');
+});</code></pre>
+
+                    <h3 id="script-bundling">Bundling</h3>
+                    <p>The bundler (<code>src/script/bundler.ts</code>) uses <code>Bun.build()</code> with the following configuration:</p>
+                    <table>
+                        <tr><th>Option</th><th>Value</th><th>Reason</th></tr>
+                        <tr><td><code>target</code></td><td><code>"browser"</code></td><td>Closest to Minecraft's QuickJS runtime</td></tr>
+                        <tr><td><code>format</code></td><td><code>"esm"</code></td><td>Bedrock requires ES modules</td></tr>
+                        <tr><td><code>external</code></td><td><code>["@minecraft/*"]</code></td><td>Provided by the game engine at runtime — must not be bundled</td></tr>
+                        <tr><td><code>minify</code></td><td>configurable</td><td>Controlled via <code>addon.setMinify()</code> or ScriptPipeline</td></tr>
+                    </table>
+                    <p>The assembled source is written to a temporary <code>.ts</code> file, passed to <code>Bun.build()</code>, the output is read, and the temp file is cleaned up. The final JS is written to <code>behavior_pack/scripts/main.js</code>.</p>
+
+                    <h3 id="script-manifest">Manifest Integration</h3>
+                    <p>After the pipeline processes scripts, <code>BehaviorPack.addPackSpecificModules()</code> adds two things to the manifest:</p>
+                    <ol>
+                        <li>A <code>"type": "script"</code> module with <code>"language": "javascript"</code> and <code>"entry": "scripts/main.js"</code>.</li>
+                        <li>A <code>dependencies</code> array entry for each detected <code>@minecraft/*</code> module with its semver string version (e.g. <code>"1.17.0"</code>).</li>
+                    </ol>
+                    <p>Script module dependencies use semver strings (not version tuples) — this is the correct format per the official Bedrock pack manifest specification. The script module UUID is persisted to <code>jepia.config.json</code> so Minecraft recognizes the same pack across rebuilds.</p>
+
+                    <h3 id="script-execution">Execution Model</h3>
+                    <p>Per the Minecraft Script API documentation, scripts have three execution contexts with different privilege levels:</p>
+                    <table>
+                        <tr><th>Context</th><th>When</th><th>Privilege</th></tr>
+                        <tr><td><strong>Early (startup)</strong></td><td><code>system.beforeEvents.startup.subscribe()</code></td><td>Registration only — blocks, items, commands. No world writes.</td></tr>
+                        <tr><td><strong>Restricted (beforeEvents)</strong></td><td>Before-event handlers</td><td>Read-only. Use <code>system.run()</code> to defer writes.</td></tr>
+                        <tr><td><strong>Default</strong></td><td>After-events, <code>system.run()</code>, <code>system.runInterval()</code></td><td>Full API access.</td></tr>
+                    </table>
+                    <p>Jepia respects these contexts automatically:</p>
+                    <ul>
+                        <li>Custom component and custom command registrations are always placed inside <code>system.beforeEvents.startup.subscribe()</code> in the generated code.</li>
+                        <li>Inline <code>addon.script()</code> blocks run at the default (module-level) context. Use <code>system.run()</code> inside event handlers when you need to modify world state from a before-event.</li>
+                    </ul>
+
+                    <h3>Source File Layout</h3>
+                    <pre><code>src/script/
+├── types.ts            — ScriptModuleId, ScriptOptions, ScriptBlock, ScriptDependency,
+│                         CustomCommandConfig, CustomCommandRegistration, constants
+├── extractor.ts        — Function.toString() extraction, ctx rewriting, import generation
+├── bundler.ts          — Bun.build() wrapper, @minecraft/* externals, file bundling
+├── pipeline.ts         — Orchestrator: collect → extract → merge → bundle → output
+├── custom-components.ts — Startup registration code generation for custom components
+├── custom-commands.ts  — Startup registration code generation for custom commands
+├── constants-generator.ts — ITEMS / BLOCKS / ENTITIES export generation
+└── index.ts            — Public exports</code></pre>
+                </section>
+
+                <!-- 5c. Visual & Client Systems -->
+                <section id="visual-client-systems">
+                    <h2>5c. Visual &amp; Client Systems</h2>
+                    <p>Phase 9 adds five resource-pack component types covering Minecraft's client-side visual and audio pipeline. Unlike the behavior-pack components from Phases 7–8, all five write exclusively to the resource pack.</p>
+
+                    <h3>Component Overview</h3>
+                    <table>
+                        <tr><th>Component</th><th>Output path</th><th>format_version</th></tr>
+                        <tr><td><code>Particle</code></td><td><code>resource_pack/particles/&lt;id&gt;.json</code></td><td><code>1.10.0</code></td></tr>
+                        <tr><td><code>Animation</code></td><td><code>resource_pack/animations/&lt;id&gt;.json</code></td><td><code>1.8.0</code></td></tr>
+                        <tr><td><code>AnimationController</code></td><td><code>resource_pack/animation_controllers/&lt;id&gt;.json</code></td><td><code>1.10.0</code></td></tr>
+                        <tr><td><code>Attachable</code></td><td><code>resource_pack/attachables/&lt;id&gt;.json</code></td><td><code>1.8.0</code></td></tr>
+                        <tr><td><code>ClientBiome</code></td><td><code>resource_pack/biomes_client/&lt;id&gt;.json</code></td><td><code>1.0.0</code></td></tr>
+                    </table>
+
+                    <h3>Identifier Derivation</h3>
+                    <p>Animation and controller identifiers are derived automatically from the component id to match Minecraft's naming conventions:</p>
+                    <pre><code>Component id          → JSON dict key
+"myaddon:walk"        → "animation.myaddon.walk"        (Animation)
+"myaddon:base"        → "controller.animation.myaddon.base"  (AnimationController)</code></pre>
+                    <p>Both can be overridden with <code>setAnimationId()</code> / <code>setControllerId()</code>.</p>
+
+                    <h3>Source File Layout</h3>
+                    <pre><code>src/component/
+├── particle.ts           — Particle (format_version 1.10.0; emitter rate/lifetime/shape, billboard, tinting, curves)
+├── animation.ts          — Animation (format_version 1.8.0; bone keyframes, timeline events)
+├── animation-controller.ts — AnimationController (format_version 1.10.0; state machine, Molang transitions)
+├── attachable.ts         — Attachable (format_version 1.8.0; materials, textures, geometry, scripts)
+└── client-biome.ts       — ClientBiome (format_version 1.0.0; water/sky/fog/grass/foliage colors)</code></pre>
+
+                    <h3>ResourcePack Storage</h3>
+                    <p>Particles and animations were already stored in <code>ResourcePack</code> maps. Phase 9 adds three new maps:</p>
+                    <pre><code>animationControllers: Map&lt;string, object&gt;  // addAnimationController / getAnimationControllers
+attachables:         Map&lt;string, object&gt;  // addAttachable        / getAttachables
+clientBiomes:        Map&lt;string, object&gt;  // addClientBiome       / getClientBiomes</code></pre>
+                    <p>All three are written to disk in <code>addon.generate()</code> after the existing particle write step, using the standard <code>writeComponent()</code> helper.</p>
+                </section>
+
+                <!-- 6. File Output Structure -->
+                <section id="file-output">
+                    <h2>6. File Output Structure</h2>
+                    <p>When <code>addon.generate()</code> is called, the following directory tree is produced.</p>
+                    <pre><code>
+my_addon/
+├── behavior_pack/
+│   ├── manifest.json
+│   ├── items/
+│   │   └── *.json
+│   ├── blocks/
+│   │   └── *.json
+│   ├── entities/
+│   │   └── *.json
+│   ├── recipes/
+│   │   └── *.json
+│   ├── loot_tables/
+│   │   └── *.json
+│   ├── spawn_rules/
+│   │   └── *.json
+│   └── trading/
+│       └── *.json
+├── resource_pack/
+│   ├── manifest.json
+│   ├── textures/
+│   │   ├── *.png
+│   │   └── *.texture_set.json
+│   ├── models/
+│   │   └── *.geo.json
+│   ├── materials/
+│   │   └── *.material
+│   ├── render_controllers/
+│   │   └── *.render_controllers.json
+│   └── entity/
+│       └── *.entity.json
+└── jepia.config.json
+                    </code></pre>
+                    <p>Each component's <code>toJSON()</code> method produces the exact JSON structure expected by Minecraft Bedrock. Jepia writes files to the correct subfolder automatically based on component type.</p>
+                </section>
+
+                <!-- 7. Validation Strategy -->
+                <section id="validation">
+                    <h2>7. Validation Strategy</h2>
+                    <p>Validation runs at three levels, catching errors before files are written.</p>
+                    <table>
+                        <tr><th>Level</th><th>Tool</th><th>What It Checks</th></tr>
+                        <tr><td>Component</td><td>AJV</td><td>Each component's JSON output against its Bedrock JSON schema</td></tr>
+                        <tr><td>Pack</td><td>AJV</td><td>Manifest structure, required fields, version format</td></tr>
+                        <tr><td>Addon</td><td>Custom</td><td>Cross-pack consistency (e.g. entity in BP has matching client def in RP)</td></tr>
+                    </table>
+
+                    <h3>Bundled Schemas</h3>
+                    <table>
+                        <tr><th>Schema</th><th>Validates</th></tr>
+                        <tr><td><code>item</code></td><td>Item component JSON</td></tr>
+                        <tr><td><code>block</code></td><td>Block component JSON</td></tr>
+                        <tr><td><code>entity</code></td><td>Entity behavior definition</td></tr>
+                        <tr><td><code>material</code></td><td><code>.material</code> file structure</td></tr>
+                        <tr><td><code>render_controller</code></td><td>Render controller JSON</td></tr>
+                        <tr><td><code>texture_set</code></td><td>PBR texture set JSON</td></tr>
+                    </table>
+
+                    <pre><code class="language-typescript">// Validation happens automatically during generate()
+// or can be triggered manually:
+const errors = sword.validate();
+if (errors.length > 0) {
+  console.error('Validation failed:', errors);
+}</code></pre>
+                </section>
+
+                <!-- 8. Configuration System -->
+                <section id="configuration">
+                    <h2>8. Configuration System</h2>
+                    <p>Jepia uses a <code>jepia.config.json</code> (or <code>.ts</code>) file validated with Zod schemas.</p>
+
+                    <table>
+                        <tr><th>Option</th><th>Type</th><th>Purpose</th></tr>
+                        <tr><td><code>output</code></td><td><code>string</code></td><td>Output directory path</td></tr>
+                        <tr><td><code>packagingFormat</code></td><td><code>"mcaddon" | "mcpack"</code></td><td>Archive format for distribution</td></tr>
+                        <tr><td><code>validation</code></td><td><code>boolean</code></td><td>Enable/disable schema validation</td></tr>
+                        <tr><td><code>minify</code></td><td><code>boolean</code></td><td>Minify JSON output</td></tr>
+                        <tr><td><code>uuid</code></td><td><code>object</code></td><td>Persisted UUIDs for stable pack identity across rebuilds</td></tr>
+                    </table>
+
+                    <pre><code class="language-json">{
+  "output": "./build",
+  "packagingFormat": "mcaddon",
+  "validation": true,
+  "minify": false,
+  "uuid": {
+    "behaviorPack": "a1b2c3d4-...",
+    "behaviorModule": "e5f6a7b8-...",
+    "resourcePack": "c9d0e1f2-...",
+    "resourceModule": "a3b4c5d6-..."
+  }
+}</code></pre>
+                    <p>UUIDs are generated on first build and persisted to <code>jepia.config.json</code> so that Minecraft recognizes the same pack across updates rather than treating each build as a new add-on.</p>
+                </section>
+
+                <!-- 9. Packaging -->
+                <section id="packaging">
+                    <h2>9. Packaging</h2>
+                    <p>Jepia uses Archiver to create distributable ZIP archives in Minecraft's expected formats.</p>
+                    <table>
+                        <tr><th>Format</th><th>Extension</th><th>Contents</th></tr>
+                        <tr><td>Combined</td><td><code>.mcaddon</code></td><td>Both behavior pack and resource pack in one archive</td></tr>
+                        <tr><td>Individual</td><td><code>.mcpack</code></td><td>A single pack (behavior or resource) per archive</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">// Package after generation
+await addon.generate('./output');
+// produces: output/MyAddon.mcaddon
+// or: output/MyAddon_BP.mcpack + output/MyAddon_RP.mcpack</code></pre>
+                </section>
+
+                <!-- 10. Design Decisions -->
+                <section id="design-decisions">
+                    <h2>10. Design Decisions</h2>
+
+                    <table>
+                        <tr><th>Decision</th><th>Rationale</th></tr>
+                        <tr>
+                            <td>Auto-create packs on Addon instantiation</td>
+                            <td>Every add-on needs at least one pack. Eliminates boilerplate and prevents forgetting to create a pack.</td>
+                        </tr>
+                        <tr>
+                            <td>Fluent API with method chaining</td>
+                            <td>Reduces verbosity. Component configuration reads like a declarative spec rather than imperative setup code.</td>
+                        </tr>
+                        <tr>
+                            <td>Schema-driven validation with AJV</td>
+                            <td>Catches errors at build time rather than in-game. Schemas stay close to Mojang's official format definitions.</td>
+                        </tr>
+                        <tr>
+                            <td>Bun runtime</td>
+                            <td>Native TypeScript execution without a compile step. Fast file I/O and built-in test runner.</td>
+                        </tr>
+                        <tr>
+                            <td>UUID persistence</td>
+                            <td>Minecraft identifies packs by UUID. Changing UUIDs between builds causes duplicate pack entries and breaks world references.</td>
+                        </tr>
+                        <tr>
+                            <td>Component base class</td>
+                            <td>Enforces a uniform contract (<code>validate()</code>, <code>toJSON()</code>) across all content types, making the system extensible.</td>
+                        </tr>
+                        <tr>
+                            <td>Layered rendering pipeline</td>
+                            <td>Mirrors Bedrock's own rendering stack. Each layer (texture &rarr; texture set &rarr; material &rarr; render controller) maps 1:1 to a Bedrock concept.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Function.prototype.toString()</code> for script extraction</td>
+                            <td>Allows users to write Script API code in the same TypeScript file as JSON components, with IDE type-checking. The extractor handles the build/runtime boundary transparently.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Bun.build()</code> as the script bundler</td>
+                            <td>Zero extra dependencies — Bun is already the runtime. Provides native TypeScript compilation, <code>external</code> support for <code>@minecraft/*</code>, and fast I/O.</td>
+                        </tr>
+                        <tr>
+                            <td>Custom Components V2 auto-registration</td>
+                            <td>Eliminates the need for users to manually write startup registration code. Jepia generates the correct <code>system.beforeEvents.startup.subscribe()</code> block from handler functions automatically.</td>
+                        </tr>
+                    </table>
+
+                    <pre><code class="language-typescript">// The fluent API in action:
+const block = new Block('Reactor Core', 'techmod:reactor_core')
+  .setCategory('construction')
+  .addComponent('minecraft:destructible_by_mining', {
+    seconds_to_destroy: 5.0
+  })
+  .addComponent('minecraft:light_emission', 14)
+  .addComponent('minecraft:map_color', '#00ff88');
+// Each method returns `this`, enabling chaining.</code></pre>
+                </section>
+
+                <footer>
+                    <p>Jepia &mdash; a TypeScript framework for Minecraft Bedrock Add-On generation.</p>
+                </footer>
+            </main>
+        </div><!-- /.layout -->
+        </div><!-- /.page-wrapper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>

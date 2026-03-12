@@ -1,0 +1,980 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Item Components — Jepia</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Item Components Reference</h1>
+        <div class="note-box">
+            <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+            <div><strong>Target:</strong> Minecraft Bedrock 1.26.0+ &mdash; format_version 1.21.40</div>
+        </div>
+        <p>These components are passed to <code>item.addComponent()</code> in Jepia. The <code>minecraft:</code> prefix is optional.</p>
+        <button class="sidebar-toggle" id="sidebar-toggle">Contents <span class="toggle-arrow">&#9660;</span></button>
+        <div class="layout">
+            <nav class="sidebar" id="sidebar">
+                <h3>Item Components</h3>
+                <input type="text" class="sidebar-search" id="sidebar-search" placeholder="Filter components...">
+                <ul>
+                    <!-- General -->
+                    <li><a class="category-toggle" href="javascript:void(0)">General</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-display-name">display_name</a></li>
+                                <li><a href="#comp-icon">icon</a></li>
+                                <li><a href="#comp-max-stack-size">max_stack_size</a></li>
+                                <li><a href="#comp-rarity">rarity</a></li>
+                                <li><a href="#comp-glint">glint</a></li>
+                                <li><a href="#comp-hover-text-color">hover_text_color</a></li>
+                                <li><a href="#comp-tags">tags</a></li>
+                                <li><a href="#comp-stacked-by-data">stacked_by_data</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Durability & Repair -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Durability &amp; Repair</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-durability">durability</a></li>
+                                <li><a href="#comp-durability-sensor">durability_sensor</a></li>
+                                <li><a href="#comp-repairable">repairable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Combat -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Combat</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-damage">damage</a></li>
+                                <li><a href="#comp-damage-absorption">damage_absorption</a></li>
+                                <li><a href="#comp-enchantable">enchantable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Food & Consumables -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Food &amp; Consumables</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-food">food</a></li>
+                                <li><a href="#comp-use-animation">use_animation</a></li>
+                                <li><a href="#comp-use-modifiers">use_modifiers</a></li>
+                                <li><a href="#comp-cooldown">cooldown</a></li>
+                                <li><a href="#comp-compostable">compostable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Projectiles & Ranged -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Projectiles &amp; Ranged</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-projectile">projectile</a></li>
+                                <li><a href="#comp-shooter">shooter</a></li>
+                                <li><a href="#comp-throwable">throwable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Placement & Interaction -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Placement &amp; Interaction</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-block-placer">block_placer</a></li>
+                                <li><a href="#comp-entity-placer">entity_placer</a></li>
+                                <li><a href="#comp-seed">seed</a></li>
+                                <li><a href="#comp-interact-button">interact_button</a></li>
+                                <li><a href="#comp-record">record</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Equipment -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Equipment</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-wearable">wearable</a></li>
+                                <li><a href="#comp-hand-equipped">hand_equipped</a></li>
+                                <li><a href="#comp-allow-off-hand">allow_off_hand</a></li>
+                                <li><a href="#comp-dyeable">dyeable</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <!-- Storage & Misc -->
+                    <li><a class="category-toggle" href="javascript:void(0)">Storage &amp; Misc</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#comp-storage-item">storage_item</a></li>
+                                <li><a href="#comp-storage-weight-limit">storage_weight_limit</a></li>
+                                <li><a href="#comp-storage-weight-modifier">storage_weight_modifier</a></li>
+                                <li><a href="#comp-bundle-interaction">bundle_interaction</a></li>
+                                <li><a href="#comp-fuel">fuel</a></li>
+                                <li><a href="#comp-fire-resistant">fire_resistant</a></li>
+                                <li><a href="#comp-should-despawn">should_despawn</a></li>
+                                <li><a href="#comp-can-destroy-in-creative">can_destroy_in_creative</a></li>
+                                <li><a href="#comp-liquid-clipped">liquid_clipped</a></li>
+                                <li><a href="#comp-swing-duration">swing_duration</a></li>
+                                <li><a href="#comp-swing-sounds">swing_sounds</a></li>
+                                <li><a href="#comp-digger">digger</a></li>
+                                <li><a href="#comp-kinetic-weapon">kinetic_weapon</a></li>
+                                <li><a href="#comp-piercing-weapon">piercing_weapon</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+            <main class="content">
+
+                <!-- ============================================================ -->
+                <!-- GENERAL -->
+                <!-- ============================================================ -->
+                <h2 id="cat-general">General</h2>
+
+                <section class="comp-entry" id="comp-display-name">
+                    <h3>minecraft:display_name</h3>
+                    <p>Sets the item display name within Minecraft: Bedrock Edition. This component may also be used to pull from the localization file by referencing a key from it.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>String</td><td><em>""</em></td><td>Name shown for an item. Can be a raw string or a localization key (e.g. <code>"item.apple.name"</code>).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Secret Weapon', 'myaddon:secret_weapon');
+item.addComponent('minecraft:display_name', { value: 'Secret Weapon' });
+
+// Using a localization key
+item.addComponent('minecraft:display_name', { value: 'item.secret_weapon.name' });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-icon">
+                    <h3>minecraft:icon</h3>
+                    <p>Determines the icon to represent the item in the UI and elsewhere. References texture short names defined in <code>resource_pack/textures/item_texture.json</code>.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component can also be represented as a simple string shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>textures</code></td><td>Object</td><td><em>not set</em></td><td>A map of texture short names. The <code>default</code> key contains the main icon texture. Armor trim textures and palettes can also be specified.</td></tr>
+                        <tr><td><code>texture</code></td><td>String</td><td><em>not set</em></td><td>(Deprecated) A single texture short name for the item icon.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('My Gem', 'myaddon:my_gem');
+// Object form with textures map
+item.addComponent('minecraft:icon', { textures: { default: 'my_gem' } });
+
+// Simple string shorthand
+item.addComponent('minecraft:icon', 'my_gem');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-max-stack-size">
+                    <h3>minecraft:max_stack_size</h3>
+                    <p>Determines how many of an item can be stacked together.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple integer shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Integer</td><td>64</td><td>How many of an item can be stacked together.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Super Soup', 'myaddon:super_soup');
+// Object form
+item.addComponent('minecraft:max_stack_size', { value: 1 });
+
+// Simple integer shorthand
+item.addComponent('minecraft:max_stack_size', 16);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-rarity">
+                    <h3>minecraft:rarity</h3>
+                    <p>Specifies the base rarity and subsequently color of the item name when the player hovers the cursor over the item. The rarity of an item automatically increases when enchanted, either to Rare when the base rarity is Common or Uncommon, or Epic when the base rarity is Rare. Requires format_version 1.21.30+.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple string shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>String</td><td><em>not set</em></td><td>Sets the base rarity. One of: <code>"common"</code>, <code>"uncommon"</code>, <code>"rare"</code>, <code>"epic"</code>.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Legendary Blade', 'myaddon:legendary_blade');
+// Object form
+item.addComponent('minecraft:rarity', { value: 'epic' });
+
+// Simple string shorthand
+item.addComponent('minecraft:rarity', 'rare');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-glint">
+                    <h3>minecraft:glint</h3>
+                    <p>Determines whether the item has the enchanted glint render effect on it.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Whether the item has the enchanted glint render effect.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Shiny Shard', 'myaddon:shiny_shard');
+// Simple boolean shorthand
+item.addComponent('minecraft:glint', true);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-hover-text-color">
+                    <h3>minecraft:hover_text_color</h3>
+                    <p>Determines the color of the item name when hovering over it.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple string shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>String</td><td><em>not set</em></td><td>The color of the item hover text (e.g. <code>"red"</code>, <code>"gold"</code>, <code>"#FF5555"</code>).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Fire Orb', 'myaddon:fire_orb');
+item.addComponent('minecraft:hover_text_color', 'gold');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-tags">
+                    <h3>minecraft:tags</h3>
+                    <p>Determines which tags are included on a given item. Tags can be used to filter items in recipes, loot tables, and trade tables.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>tags</code></td><td>Array of strings</td><td>[]</td><td>An array of tag strings (e.g. <code>"minecraft:is_food"</code>, <code>"minecraft:is_tool"</code>).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Custom Apple', 'myaddon:custom_apple');
+item.addComponent('minecraft:tags', {
+    tags: ['minecraft:is_food', 'myaddon:custom_food']
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-stacked-by-data">
+                    <h3>minecraft:stacked_by_data</h3>
+                    <p>Determines whether the same items with different aux values can stack. Also defines whether the item entities can merge while floating in the world.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Determines whether the same item with different aux values can stack.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Dye Item', 'myaddon:dye_item');
+item.addComponent('minecraft:stacked_by_data', true);</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- DURABILITY & REPAIR -->
+                <!-- ============================================================ -->
+                <h2 id="cat-durability">Durability &amp; Repair</h2>
+
+                <section class="comp-entry" id="comp-durability">
+                    <h3>minecraft:durability</h3>
+                    <p>Sets how much damage the item can take before breaking, and allows the item to be combined at an anvil, grindstone, or crafting table.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>max_durability</code></td><td>Integer</td><td><em>required</em></td><td>Max durability is the amount of damage that this item can take before breaking. Minimum of 0.</td></tr>
+                        <tr><td><code>damage_chance</code></td><td>Object</td><td>{ min: 100, max: 100 }</td><td>Specifies the percentage chance of this item losing durability. Defined as an int range with <code>min</code> and <code>max</code>.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-repairable">minecraft:repairable</a>, <a href="#comp-durability-sensor">minecraft:durability_sensor</a></p>
+                    <pre><code class="language-typescript">const sword = new Item('Diamond Blade', 'myaddon:diamond_blade');
+sword.addComponent('minecraft:durability', {
+    max_durability: 500,
+    damage_chance: { min: 60, max: 100 }
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-durability-sensor">
+                    <h3>minecraft:durability_sensor</h3>
+                    <p>Enables an item to emit effects when it receives damage. The item also needs a <code>minecraft:durability</code> component. When multiple thresholds are met, only the threshold with the lowest durability after applying the damage is considered.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>durability_thresholds</code></td><td>Array of objects</td><td><em>required</em></td><td>List of durability thresholds and effects. Each entry has: <code>durability</code> (Integer), <code>particle_type</code> (String, e.g. <code>"crit"</code>, <code>"flame"</code>), and <code>sound_event</code> (String, e.g. <code>"break"</code>). Must have at least 1 entry.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>Requires:</strong> <a href="#comp-durability">minecraft:durability</a></p>
+                    <pre><code class="language-typescript">const pick = new Item('Fragile Pick', 'myaddon:fragile_pick');
+pick.addComponent('minecraft:durability', { max_durability: 100 });
+pick.addComponent('minecraft:durability_sensor', {
+    durability_thresholds: [
+        { durability: 20, particle_type: 'flame', sound_event: 'break' },
+        { durability: 5, particle_type: 'crit', sound_event: 'hurt' }
+    ]
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-repairable">
+                    <h3>minecraft:repairable</h3>
+                    <p>Defines the items that can be used to repair a defined item, and the amount of durability each item restores upon repair. Each entry needs to define a list of strings for <code>items</code> that can be used for the repair and an optional <code>repair_amount</code> for how much durability is repaired.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>repair_items</code></td><td>Array of objects</td><td>[]</td><td>Each entry has <code>items</code> (Array of item identifier strings) and <code>repair_amount</code> (Molang expression string or number for durability restored).</td></tr>
+                    </table>
+                    <p class="note-box"><strong>Requires:</strong> <a href="#comp-durability">minecraft:durability</a></p>
+                    <pre><code class="language-typescript">const armor = new Item('Custom Chestplate', 'myaddon:custom_chestplate');
+armor.addComponent('minecraft:durability', { max_durability: 200 });
+armor.addComponent('minecraft:repairable', {
+    repair_items: [
+        {
+            items: ['minecraft:diamond'],
+            repair_amount: 'query.max_durability * 0.25'
+        }
+    ]
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- COMBAT -->
+                <!-- ============================================================ -->
+                <h2 id="cat-combat">Combat</h2>
+
+                <section class="comp-entry" id="comp-damage">
+                    <h3>minecraft:damage</h3>
+                    <p>Determines how much extra damage the item does on attack. This value is added to the base attack damage.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple integer shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Integer</td><td><em>not set</em></td><td>The amount of extra damage this item deals when attacking. Must be a positive integer.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const sword = new Item('Iron Mace', 'myaddon:iron_mace');
+// Object form
+sword.addComponent('minecraft:damage', { value: 7 });
+
+// Simple integer shorthand
+sword.addComponent('minecraft:damage', 5);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-damage-absorption">
+                    <h3>minecraft:damage_absorption</h3>
+                    <p>Allows an item to absorb damage that would otherwise be dealt to its wearer. The item needs to be equipped in an armor slot. The absorbed damage reduces the item's durability, with any excess damage being ignored. Requires a <code>minecraft:durability</code> component.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>absorbable_causes</code></td><td>Array of strings</td><td><em>required</em></td><td>List of damage causes that can be absorbed by the item (e.g. <code>"attack"</code>, <code>"projectile"</code>, <code>"fall"</code>). Must have at least 1 item.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>Requires:</strong> <a href="#comp-durability">minecraft:durability</a> and <a href="#comp-wearable">minecraft:wearable</a></p>
+                    <pre><code class="language-typescript">const helm = new Item('Shield Helm', 'myaddon:shield_helm');
+helm.addComponent('minecraft:durability', { max_durability: 150 });
+helm.addComponent('minecraft:wearable', { slot: 'slot.armor.head' });
+helm.addComponent('minecraft:damage_absorption', {
+    absorbable_causes: ['attack', 'projectile']
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-enchantable">
+                    <h3>minecraft:enchantable</h3>
+                    <p>Determines what enchantments can be applied to the item. Not all enchantments will have an effect on all item components.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>slot</code></td><td>String</td><td><em>required</em></td><td>Specifies which types of enchantments can be applied. Valid values: <code>"none"</code>, <code>"all"</code>, <code>"g_armor"</code>, <code>"armor_head"</code>, <code>"armor_torso"</code>, <code>"armor_feet"</code>, <code>"armor_legs"</code>, <code>"sword"</code>, <code>"bow"</code>, <code>"spear"</code>, <code>"crossbow"</code>, <code>"melee_spear"</code>, <code>"g_tool"</code>, <code>"hoe"</code>, <code>"shears"</code>, <code>"flintsteel"</code>, <code>"shield"</code>, <code>"g_digging"</code>, <code>"axe"</code>, <code>"pickaxe"</code>, <code>"shovel"</code>, <code>"fishing_rod"</code>, <code>"carrot_stick"</code>, <code>"elytra"</code>, <code>"cosmetic_head"</code>.</td></tr>
+                        <tr><td><code>value</code></td><td>Integer</td><td><em>required</em></td><td>Specifies the value of the enchantment (minimum of 0). Higher values allow higher-level enchantments.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const pick = new Item('Custom Pickaxe', 'myaddon:custom_pickaxe');
+pick.addComponent('minecraft:enchantable', {
+    slot: 'pickaxe',
+    value: 14
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- FOOD & CONSUMABLES -->
+                <!-- ============================================================ -->
+                <h2 id="cat-food">Food &amp; Consumables</h2>
+
+                <section class="comp-entry" id="comp-food">
+                    <h3>minecraft:food</h3>
+                    <p>Sets the item as a food component, allowing it to be edible to the player. Requires <code>minecraft:use_modifiers</code> to function properly.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>nutrition</code></td><td>Integer</td><td>0</td><td>Value added to the entity's nutrition when the item is used.</td></tr>
+                        <tr><td><code>saturation_modifier</code></td><td>Number or String</td><td>0.6</td><td>Used in the formula: <code>nutrition * saturation_modifier * 2</code> when applying the saturation buff. Can be a decimal or a named preset: <code>"poor"</code>, <code>"low"</code>, <code>"normal"</code>, <code>"good"</code>, <code>"max"</code>, <code>"supernatural"</code>.</td></tr>
+                        <tr><td><code>can_always_eat</code></td><td>Boolean</td><td>false</td><td>If true, the player can eat this item even when not hungry.</td></tr>
+                        <tr><td><code>using_converts_to</code></td><td>String</td><td><em>not set</em></td><td>When used, converts to the item specified (e.g. <code>"bowl"</code>, <code>"glass_bottle"</code>).</td></tr>
+                        <tr><td><code>effects</code></td><td>Array of objects</td><td><em>not set</em></td><td>Status effects applied when eaten. Each entry: <code>name</code> (String), <code>chance</code> (Number 0-1), <code>duration</code> (seconds), <code>amplifier</code> (Integer).</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-use-modifiers">minecraft:use_modifiers</a>, <a href="#comp-use-animation">minecraft:use_animation</a></p>
+                    <pre><code class="language-typescript">const stew = new Item('Magic Stew', 'myaddon:magic_stew');
+stew.addComponent('minecraft:food', {
+    nutrition: 8,
+    saturation_modifier: 'good',
+    can_always_eat: true,
+    using_converts_to: 'bowl',
+    effects: [
+        { name: 'regeneration', chance: 1.0, duration: 10, amplifier: 1 }
+    ]
+});
+stew.addComponent('minecraft:use_modifiers', { use_duration: 1.6 });
+stew.addComponent('minecraft:use_animation', 'eat');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-use-animation">
+                    <h3>minecraft:use_animation</h3>
+                    <p>Specifies which animation is played when the player uses the item.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple string shorthand. Common values: <code>"eat"</code>, <code>"drink"</code>, <code>"bow"</code>, <code>"crossbow"</code>, <code>"spear"</code>, <code>"block"</code>, <code>"spyglass"</code>, <code>"brush"</code>.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>String</td><td><em>not set</em></td><td>Specifies which animation to play when the item is used.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Custom Potion', 'myaddon:custom_potion');
+// Simple string shorthand
+item.addComponent('minecraft:use_animation', 'drink');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-use-modifiers">
+                    <h3>minecraft:use_modifiers</h3>
+                    <p>Determines how long an item takes to use in combination with components such as Shooter, Throwable, or Food.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>use_duration</code></td><td>Number</td><td>0</td><td>Time, in seconds, that the item takes to use.</td></tr>
+                        <tr><td><code>movement_modifier</code></td><td>Number</td><td><em>not set</em></td><td>Multiplier applied to the player's movement speed while the item is in use. Must be &lt;= 1.</td></tr>
+                        <tr><td><code>emit_vibrations</code></td><td>Boolean</td><td>true</td><td>Whether vibrations are emitted when the item starts or stops being used.</td></tr>
+                        <tr><td><code>start_sound</code></td><td>String</td><td><em>not set</em></td><td>Sound played when the item starts being used (any valid sound event).</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-food">minecraft:food</a>, <a href="#comp-shooter">minecraft:shooter</a>, <a href="#comp-throwable">minecraft:throwable</a></p>
+                    <pre><code class="language-typescript">const item = new Item('Custom Apple', 'myaddon:custom_apple');
+item.addComponent('minecraft:use_modifiers', {
+    use_duration: 1.6,
+    movement_modifier: 0.35
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-cooldown">
+                    <h3>minecraft:cooldown</h3>
+                    <p>Adds a cooldown to an item, preventing it from being used again for a specified duration. Items sharing the same category will enter cooldown together when any one of them is used.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>category</code></td><td>String</td><td><em>required</em></td><td>A string identifier that groups items together. When an item with a cooldown is used, all items sharing the same category also enter cooldown.</td></tr>
+                        <tr><td><code>duration</code></td><td>Number</td><td><em>required</em></td><td>The duration of time in seconds that items with the matching category will spend cooling down.</td></tr>
+                        <tr><td><code>type</code></td><td>String</td><td>"use"</td><td>The type of action that triggers the cooldown. One of: <code>"use"</code> (items consumed on use) or <code>"attack"</code> (weapons).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const charge = new Item('Wind Charge', 'myaddon:wind_charge');
+charge.addComponent('minecraft:cooldown', {
+    category: 'wind_charge',
+    duration: 0.5
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-compostable">
+                    <h3>minecraft:compostable</h3>
+                    <p>Specifies that an item is compostable and provides the chance of creating a composting layer in the composter. Requires format_version 1.21.60+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>composting_chance</code></td><td>Integer</td><td><em>required</em></td><td>The chance of this item to create a layer upon composting. Valid range: 1&ndash;100.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const leaf = new Item('Custom Leaf', 'myaddon:custom_leaf');
+leaf.addComponent('minecraft:compostable', { composting_chance: 30 });</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- PROJECTILES & RANGED -->
+                <!-- ============================================================ -->
+                <h2 id="cat-projectiles">Projectiles &amp; Ranged</h2>
+
+                <section class="comp-entry" id="comp-projectile">
+                    <h3>minecraft:projectile</h3>
+                    <p>Defines an item as a projectile that can be shot from dispensers or used as ammunition with <code>minecraft:shooter</code>. When combined with <code>minecraft:throwable</code>, this component specifies which entity is spawned when the item is thrown.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>projectile_entity</code></td><td>String</td><td><em>required</em></td><td>Which entity is to be fired as a projectile (e.g. <code>"minecraft:snowball"</code>, <code>"minecraft:arrow"</code>).</td></tr>
+                        <tr><td><code>minimum_critical_power</code></td><td>Number</td><td>0</td><td>Specifies how long a player must charge a projectile for it to critically hit.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-throwable">minecraft:throwable</a>, <a href="#comp-shooter">minecraft:shooter</a></p>
+                    <pre><code class="language-typescript">const bomb = new Item('Snowball Launcher', 'myaddon:snowball_launcher');
+bomb.addComponent('minecraft:projectile', {
+    projectile_entity: 'minecraft:snowball',
+    minimum_critical_power: 1.25
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-shooter">
+                    <h3>minecraft:shooter</h3>
+                    <p>Compels an item to shoot projectiles, similarly to a bow or crossbow. Requires <code>minecraft:use_modifiers</code> to function properly. Ammunition used by this component must have the <code>minecraft:projectile</code> component.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>ammunition</code></td><td>Array of objects</td><td>[]</td><td>List of ammunition entries. Each entry: <code>item</code> (String, item identifier), <code>use_offhand</code> (Boolean), <code>search_inventory</code> (Boolean), <code>use_in_creative</code> (Boolean).</td></tr>
+                        <tr><td><code>max_draw_duration</code></td><td>Number</td><td>0</td><td>Maximum time in seconds the player can draw the shooter before it fires or reaches max power.</td></tr>
+                        <tr><td><code>scale_power_by_draw_duration</code></td><td>Boolean</td><td>false</td><td>When true, the projectile's launch power increases based on hold duration.</td></tr>
+                        <tr><td><code>charge_on_draw</code></td><td>Boolean</td><td>false</td><td>When true, the shooter begins charging when the player starts drawing (like a crossbow).</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-projectile">minecraft:projectile</a>, <a href="#comp-use-modifiers">minecraft:use_modifiers</a></p>
+                    <pre><code class="language-typescript">const bow = new Item('Snowball Bow', 'myaddon:snowball_bow');
+bow.addComponent('minecraft:shooter', {
+    ammunition: [{
+        item: 'minecraft:snowball',
+        use_offhand: true,
+        search_inventory: true,
+        use_in_creative: true
+    }],
+    max_draw_duration: 1,
+    scale_power_by_draw_duration: true
+});
+bow.addComponent('minecraft:use_modifiers', { use_duration: 3.0 });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-throwable">
+                    <h3>minecraft:throwable</h3>
+                    <p>Makes an item throwable by the player, similar to a snowball or ender pearl. Use with <code>minecraft:projectile</code> to specify which entity is spawned when thrown.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>do_swing_animation</code></td><td>Boolean</td><td>false</td><td>Determines whether the item should use the swing animation when thrown.</td></tr>
+                        <tr><td><code>launch_power_scale</code></td><td>Number</td><td>1.0</td><td>The scale at which the power of the throw increases.</td></tr>
+                        <tr><td><code>max_launch_power</code></td><td>Number</td><td>1.0</td><td>The maximum power to launch the throwable item.</td></tr>
+                        <tr><td><code>max_draw_duration</code></td><td>Number</td><td>0.0</td><td>The maximum duration to draw a throwable item.</td></tr>
+                        <tr><td><code>min_draw_duration</code></td><td>Number</td><td>0.0</td><td>The minimum duration to draw a throwable item.</td></tr>
+                        <tr><td><code>scale_power_by_draw_duration</code></td><td>Boolean</td><td>false</td><td>Whether or not the power of the throw increases with duration charged.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-projectile">minecraft:projectile</a></p>
+                    <pre><code class="language-typescript">const charge = new Item('Wind Charge', 'myaddon:wind_charge');
+charge.addComponent('minecraft:projectile', {
+    projectile_entity: 'wind_charge_projectile'
+});
+charge.addComponent('minecraft:throwable', {
+    do_swing_animation: true,
+    launch_power_scale: 1.5,
+    max_launch_power: 1.5
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- PLACEMENT & INTERACTION -->
+                <!-- ============================================================ -->
+                <h2 id="cat-placement">Placement &amp; Interaction</h2>
+
+                <section class="comp-entry" id="comp-block-placer">
+                    <h3>minecraft:block_placer</h3>
+                    <p>Sets the item as a placer item component for blocks. Items with this component will place a block when used. This component can also render the block as the item's icon. Requires format_version 1.21.50+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>block</code></td><td>String or Object</td><td><em>required</em></td><td>Defines the block that will be placed (e.g. <code>"minecraft:dirt"</code>).</td></tr>
+                        <tr><td><code>use_on</code></td><td>Array of strings</td><td>[]</td><td>List of block descriptors this item can be used on. If empty, all blocks are allowed. Max 256 items.</td></tr>
+                        <tr><td><code>replace_block_item</code></td><td>Boolean</td><td>false</td><td>If true, the item will be registered as the item for this block. The item identifier must match the block's identifier.</td></tr>
+                        <tr><td><code>aligned_placement</code></td><td>Boolean</td><td>false</td><td>If true, block placement is aligned while holding the interaction button down.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const placer = new Item('Dirt Placer', 'myaddon:dirt_placer');
+placer.addComponent('minecraft:block_placer', {
+    block: 'minecraft:dirt',
+    use_on: ['dirt', 'grass'],
+    replace_block_item: true
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-entity-placer">
+                    <h3>minecraft:entity_placer</h3>
+                    <p>Allows an item to place entities into the world. Additionally, in version 1.19.80 and above, the component allows the item to set the spawn type of a monster spawner.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>entity</code></td><td>String</td><td><em>required</em></td><td>The entity identifier to be placed in the world (e.g. <code>"minecraft:turtle"</code>).</td></tr>
+                        <tr><td><code>use_on</code></td><td>Array of strings</td><td>[]</td><td>List of block descriptors this item can be used on. If empty, all blocks are allowed.</td></tr>
+                        <tr><td><code>dispense_on</code></td><td>Array of strings</td><td>[]</td><td>List of block descriptors this item can be dispensed on. If empty, all blocks are allowed.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const egg = new Item('Turtle Egg', 'myaddon:turtle_egg');
+egg.addComponent('minecraft:entity_placer', {
+    entity: 'minecraft:turtle',
+    use_on: ['minecraft:sand']
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-seed">
+                    <h3>minecraft:seed</h3>
+                    <p>Sets the item as a seed that can be planted to grow crops. When used on valid ground, the seed will place the specified crop block. Requires format_version 1.10.0+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>crop_result</code></td><td>String</td><td><em>required</em></td><td>The block identifier placed when the seed is planted (e.g. <code>"wheat"</code>, <code>"beetroot"</code>, <code>"cave_vines"</code>).</td></tr>
+                        <tr><td><code>plant_at</code></td><td>Array of strings</td><td><em>not set</em></td><td>Array of block identifiers that this seed can be planted on or attached to. If not specified, standard farmland rules apply.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const seed = new Item('Magic Seeds', 'myaddon:magic_seeds');
+seed.addComponent('minecraft:seed', {
+    crop_result: 'myaddon:magic_crop',
+    plant_at: ['minecraft:farmland']
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-interact-button">
+                    <h3>minecraft:interact_button</h3>
+                    <p>A boolean or string that determines if the interact button is shown in touch controls, and what text is displayed on the button. When set to <code>true</code>, the default "Use Item" text will be used.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><em>(value)</em></td><td>Boolean or String</td><td>false</td><td>Set to <code>true</code> for default "Use Item" text, or provide a custom string for the button label.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Magic Wand', 'myaddon:magic_wand');
+// Show default "Use Item" button
+item.addComponent('minecraft:interact_button', true);
+
+// Show custom button text
+item.addComponent('minecraft:interact_button', 'Cast Spell');</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-record">
+                    <h3>minecraft:record</h3>
+                    <p>Used by record items to play music. When placed in a jukebox, the item will play the specified sound event.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>sound_event</code></td><td>String</td><td><em>required</em></td><td>Sound event type to play (e.g. <code>"record.13"</code>, <code>"record.cat"</code>, <code>"record.pigstep"</code>).</td></tr>
+                        <tr><td><code>duration</code></td><td>Number</td><td>0</td><td>Duration of the sound event in seconds.</td></tr>
+                        <tr><td><code>comparator_signal</code></td><td>Integer</td><td>1</td><td>Signal strength for comparator blocks to use (1&ndash;13).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const disc = new Item('Custom Disc', 'myaddon:custom_disc');
+disc.addComponent('minecraft:record', {
+    sound_event: 'record.pigstep',
+    duration: 149,
+    comparator_signal: 13
+});</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- EQUIPMENT -->
+                <!-- ============================================================ -->
+                <h2 id="cat-equipment">Equipment</h2>
+
+                <section class="comp-entry" id="comp-wearable">
+                    <h3>minecraft:wearable</h3>
+                    <p>Sets the wearable item component, which allows an item to be worn by a player in a specified equipment slot. When a non-hand armor slot is used, the max stack size is automatically set to 1.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>slot</code></td><td>String</td><td><em>required</em></td><td>Specifies where the item can be worn. Valid values: <code>"slot.armor.head"</code>, <code>"slot.armor.chest"</code>, <code>"slot.armor.legs"</code>, <code>"slot.armor.feet"</code>, <code>"slot.armor.body"</code>, <code>"slot.weapon.mainhand"</code>, <code>"slot.weapon.offhand"</code>.</td></tr>
+                        <tr><td><code>protection</code></td><td>Integer</td><td>0</td><td>How much protection the wearable item provides.</td></tr>
+                        <tr><td><code>dispensable</code></td><td>Boolean</td><td><em>not set</em></td><td>Whether the item can be equipped by dispensers.</td></tr>
+                        <tr><td><code>hides_player_location</code></td><td>Boolean</td><td>false</td><td>Determines whether the player's location is hidden on Locator Maps and the Locator Bar when the item is worn.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const chest = new Item('Custom Chestplate', 'myaddon:custom_chestplate');
+chest.addComponent('minecraft:wearable', {
+    slot: 'slot.armor.chest',
+    protection: 8,
+    dispensable: true
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-hand-equipped">
+                    <h3>minecraft:hand_equipped</h3>
+                    <p>Determines if an item is rendered like a tool while it is in a player's hand (tilted and raised, like a sword or pickaxe).</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Determines whether the item is rendered like a tool while in the player's hand.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const sword = new Item('Custom Sword', 'myaddon:custom_sword');
+// Simple boolean shorthand
+sword.addComponent('minecraft:hand_equipped', true);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-allow-off-hand">
+                    <h3>minecraft:allow_off_hand</h3>
+                    <p>Determines whether the item can be placed in the off hand slot of the inventory.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Determines whether the item can be placed in the off hand slot.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const shield = new Item('Custom Shield', 'myaddon:custom_shield');
+item.addComponent('minecraft:allow_off_hand', true);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-dyeable">
+                    <h3>minecraft:dyeable</h3>
+                    <p>Enables custom items to be dyed in cauldrons. Both the item and its attachable need format_version 1.21.30 or greater.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>default_color</code></td><td>String or Array of numbers</td><td>[255, 255, 255]</td><td>The default color of the item, as a hex string (e.g. <code>"#175882"</code>) or an RGB array (e.g. <code>[23, 88, 130]</code>).</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const tunic = new Item('Leather Tunic', 'myaddon:leather_tunic');
+tunic.addComponent('minecraft:dyeable', { default_color: '#175882' });</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- STORAGE & MISC -->
+                <!-- ============================================================ -->
+                <h2 id="cat-storage">Storage &amp; Misc</h2>
+
+                <section class="comp-entry" id="comp-storage-item">
+                    <h3>minecraft:storage_item</h3>
+                    <p>Enables an item to store data of a dynamic container associated with it. A dynamic container is a container for storing items that is linked to an item instead of a block or entity. To interact with the storage container, the item must also have <code>minecraft:bundle_interaction</code>. Requires format_version 1.21.40+.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>max_slots</code></td><td>Integer</td><td>64</td><td>The maximum number of slots. Maximum is 64.</td></tr>
+                        <tr><td><code>max_weight_limit</code></td><td>Number</td><td><em>not set</em></td><td>The maximum allowed weight of all contained items.</td></tr>
+                        <tr><td><code>weight_in_storage_item</code></td><td>Number</td><td><em>not set</em></td><td>The weight of this item when inside another Storage Item.</td></tr>
+                        <tr><td><code>allow_nested_storage_items</code></td><td>Boolean</td><td>true</td><td>Whether another Storage Item is allowed inside this one.</td></tr>
+                        <tr><td><code>allowed_items</code></td><td>Array of strings</td><td>[]</td><td>List of items exclusively allowed. If empty, all items are allowed.</td></tr>
+                        <tr><td><code>banned_items</code></td><td>Array of strings</td><td>[]</td><td>List of items not allowed in this Storage Item.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>See also:</strong> <a href="#comp-bundle-interaction">minecraft:bundle_interaction</a></p>
+                    <pre><code class="language-typescript">const bundle = new Item('Custom Bundle', 'myaddon:custom_bundle');
+bundle.addComponent('minecraft:max_stack_size', 1);
+bundle.addComponent('minecraft:storage_item', {
+    max_slots: 64,
+    max_weight_limit: 64,
+    weight_in_storage_item: 4,
+    allow_nested_storage_items: true,
+    banned_items: ['minecraft:shulker_box']
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-storage-weight-limit">
+                    <h3>minecraft:storage_weight_limit</h3>
+                    <p>Specifies the maximum weight limit that a storage item can hold.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>max_weight_limit</code></td><td>Integer</td><td>64</td><td>The maximum allowed weight of the sum of all contained items. Maximum is 64.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const bag = new Item('Small Bag', 'myaddon:small_bag');
+bag.addComponent('minecraft:storage_weight_limit', { max_weight_limit: 32 });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-storage-weight-modifier">
+                    <h3>minecraft:storage_weight_modifier</h3>
+                    <p>Specifies the weight of this item when inside another Storage Item.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>weight_in_storage_item</code></td><td>Integer</td><td>4</td><td>The weight of this item when inside another Storage Item. 0 means the item is not allowed in another Storage Item.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Light Item', 'myaddon:light_item');
+item.addComponent('minecraft:storage_weight_modifier', { weight_in_storage_item: 1 });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-bundle-interaction">
+                    <h3>minecraft:bundle_interaction</h3>
+                    <p>Enables the bundle-specific interaction scheme and tooltip for an item. Requires <code>minecraft:storage_item</code> to be defined. Requires format_version 1.21.40+.</p>
+                    <div class="note-box">
+                        <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+                        <div><strong>Note:</strong> Custom bundle items need three textures registered in <code>textures/textures_list.json</code>: the base icon, <code>_open_front</code>, and <code>_open_back</code> variants.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>num_viewable_slots</code></td><td>Integer</td><td>12</td><td>The maximum number of slots in the bundle viewable by the player. Range: 1&ndash;64.</td></tr>
+                    </table>
+                    <p class="note-box"><strong>Requires:</strong> <a href="#comp-storage-item">minecraft:storage_item</a></p>
+                    <pre><code class="language-typescript">const bundle = new Item('Custom Bundle', 'myaddon:custom_bundle');
+bundle.addComponent('minecraft:storage_item', { max_slots: 64 });
+bundle.addComponent('minecraft:bundle_interaction', {
+    num_viewable_slots: 8
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-fuel">
+                    <h3>minecraft:fuel</h3>
+                    <p>Allows this item to be used as fuel in a furnace to cook other items.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple number shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>duration</code></td><td>Number</td><td><em>required</em></td><td>How long in seconds this fuel will cook items for. Must be &gt;= 0.05.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const fuel = new Item('Compact Coal', 'myaddon:compact_coal');
+// Object form
+fuel.addComponent('minecraft:fuel', { duration: 80 });
+
+// Simple number shorthand
+fuel.addComponent('minecraft:fuel', 20);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-fire-resistant">
+                    <h3>minecraft:fire_resistant</h3>
+                    <p>Determines whether the item is immune to burning when dropped in fire or lava.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td>true</td><td>Whether the item is immune to burning when dropped in fire or lava.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const ingot = new Item('Netherite Scrap', 'myaddon:netherite_scrap');
+ingot.addComponent('minecraft:fire_resistant', { value: true });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-should-despawn">
+                    <h3>minecraft:should_despawn</h3>
+                    <p>Determines if the item should eventually despawn while floating in the world.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Whether the item should eventually despawn while floating in the world.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Persistent Gem', 'myaddon:persistent_gem');
+// Prevent the item from despawning
+item.addComponent('minecraft:should_despawn', false);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-can-destroy-in-creative">
+                    <h3>minecraft:can_destroy_in_creative</h3>
+                    <p>Determines if the item can be used by a player to break blocks when in creative mode.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Whether the item can be used to destroy blocks while in creative mode.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const sword = new Item('Creative Sword', 'myaddon:creative_sword');
+item.addComponent('minecraft:can_destroy_in_creative', true);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-liquid-clipped">
+                    <h3>minecraft:liquid_clipped</h3>
+                    <p>Determines whether the item interacts with liquid blocks on use.</p>
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> This component supports a simple boolean shorthand.</div>
+                    </div>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Boolean</td><td><em>not set</em></td><td>Whether the item interacts with liquid blocks on use.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const item = new Item('Water Wand', 'myaddon:water_wand');
+item.addComponent('minecraft:liquid_clipped', true);</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-swing-duration">
+                    <h3>minecraft:swing_duration</h3>
+                    <p>Duration, in seconds, of the item's swing animation played when mining or attacking. Affects visuals only and does not impact attack frequency or other gameplay mechanics.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>value</code></td><td>Number</td><td>0.3</td><td>Duration in seconds of the swing animation.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const hammer = new Item('Slow Hammer', 'myaddon:slow_hammer');
+hammer.addComponent('minecraft:swing_duration', { value: 0.6 });</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-swing-sounds">
+                    <h3>minecraft:swing_sounds</h3>
+                    <p>Overrides the swing sounds emitted by the user when attacking.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>attack_hit</code></td><td>String</td><td><em>not set</em></td><td>Sound played when an attack hits (any valid sound event name).</td></tr>
+                        <tr><td><code>attack_miss</code></td><td>String</td><td><em>not set</em></td><td>Sound played when an attack misses or deals no damage due to invulnerability.</td></tr>
+                        <tr><td><code>attack_critical_hit</code></td><td>String</td><td><em>not set</em></td><td>Sound played when an attack hits and deals critical damage.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const spear = new Item('Custom Spear', 'myaddon:custom_spear');
+spear.addComponent('minecraft:swing_sounds', {
+    attack_hit: 'item.spear.attack_hit',
+    attack_miss: 'item.spear.attack_miss',
+    attack_critical_hit: 'attack.critical'
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-digger">
+                    <h3>minecraft:digger</h3>
+                    <p>Configures an item as a digging tool, allowing it to break specific blocks faster than normal. Define which blocks are affected and the speed multiplier for each.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>destroy_speeds</code></td><td>Array of objects</td><td>[]</td><td>Each entry specifies a <code>block</code> (String identifier or object with <code>tags</code> query) and a <code>speed</code> (Integer multiplier).</td></tr>
+                        <tr><td><code>use_efficiency</code></td><td>Boolean</td><td>false</td><td>When true, the Efficiency enchantment will increase the dig speed of this item.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const axe = new Item('Custom Axe', 'myaddon:custom_axe');
+axe.addComponent('minecraft:digger', {
+    use_efficiency: true,
+    destroy_speeds: [
+        { block: { tags: "query.any_tag('wood')" }, speed: 6 },
+        { block: 'minecraft:coal_ore', speed: 2 }
+    ]
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-kinetic-weapon">
+                    <h3>minecraft:kinetic_weapon</h3>
+                    <p>Allows an item to deal kinetic damage and its effects. Damage is computed every tick while in use, based on both the user's and the target's velocity projected onto the view vector via a dot product. After <code>damage_multiplier</code> and <code>damage_modifier</code> are applied, the resulting damage is floored to the nearest lower integer.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>reach</code></td><td>Object</td><td>{ min: 0, max: 3 }</td><td>Range in blocks along the user's view vector where entities can be hit. Object with <code>min</code> and <code>max</code> float values.</td></tr>
+                        <tr><td><code>creative_reach</code></td><td>Object</td><td><em>defaults to reach</em></td><td>Reach used when the user is in Creative Mode.</td></tr>
+                        <tr><td><code>damage_multiplier</code></td><td>Number</td><td>1</td><td>Value multiplied to the sum of the dot products of the user and target's velocity vectors projected onto the view vector.</td></tr>
+                        <tr><td><code>damage_modifier</code></td><td>Number</td><td>0</td><td>Value added to the scaled dot product after applying <code>damage_multiplier</code>.</td></tr>
+                        <tr><td><code>delay</code></td><td>Integer</td><td>0</td><td>Time in ticks after which kinetic damage starts being applied.</td></tr>
+                        <tr><td><code>hitbox_margin</code></td><td>Number</td><td>0</td><td>Added tolerance to the view vector raycast for detecting entity collisions.</td></tr>
+                        <tr><td><code>damage_conditions</code></td><td>Object</td><td><em>not set</em></td><td>Conditions for damage to be applied. See <a href="#comp-kinetic-effect-conditions">kinetic_effect_conditions</a>.</td></tr>
+                        <tr><td><code>knockback_conditions</code></td><td>Object</td><td><em>not set</em></td><td>Conditions for knockback to be applied.</td></tr>
+                        <tr><td><code>dismount_conditions</code></td><td>Object</td><td><em>not set</em></td><td>Conditions for riders to be dismounted.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const lance = new Item('Jousting Lance', 'myaddon:jousting_lance');
+lance.addComponent('minecraft:kinetic_weapon', {
+    reach: { min: 0, max: 5 },
+    damage_multiplier: 2,
+    damage_modifier: 1,
+    delay: 5,
+    damage_conditions: {
+        min_speed: 0.5,
+        min_relative_speed: 0.2,
+        max_duration: -1
+    }
+});</code></pre>
+                </section>
+
+                <section class="comp-entry" id="comp-kinetic-effect-conditions">
+                    <h3>Kinetic Effect Conditions</h3>
+                    <p>Conditions that need to be satisfied for a specific effect of a kinetic weapon to be applied. Used as sub-objects in <code>damage_conditions</code>, <code>knockback_conditions</code>, and <code>dismount_conditions</code> within <a href="#comp-kinetic-weapon">minecraft:kinetic_weapon</a>.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>min_speed</code></td><td>Number</td><td>0</td><td>Minimum user's speed (projected onto the view vector) required for the effect to be applied.</td></tr>
+                        <tr><td><code>min_relative_speed</code></td><td>Number</td><td>0</td><td>Minimum relative speed of the user with respect to the target required for the effect to be applied.</td></tr>
+                        <tr><td><code>max_duration</code></td><td>Integer</td><td>-1</td><td>Time in ticks during which the effect can be applied after <code>delay</code> elapses. If negative, the effect is applied indefinitely.</td></tr>
+                    </table>
+                </section>
+
+                <section class="comp-entry" id="comp-piercing-weapon">
+                    <h3>minecraft:piercing_weapon</h3>
+                    <p>Allows an item to deal damage to all entities detected in a straight line along the user's view vector. Items with this component cannot destroy blocks, as the attack action always takes priority regardless of what the user is looking at.</p>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                        <tr><td><code>reach</code></td><td>Object</td><td>{ min: 0, max: 3 }</td><td>Range in blocks along the user's view vector where entities can be hit. Object with <code>min</code> and <code>max</code> float values.</td></tr>
+                        <tr><td><code>creative_reach</code></td><td>Object</td><td><em>defaults to reach</em></td><td>Reach used when the user is in Creative Mode.</td></tr>
+                        <tr><td><code>hitbox_margin</code></td><td>Number</td><td>0</td><td>Added tolerance to the view vector raycast for detecting entity collisions.</td></tr>
+                    </table>
+                    <pre><code class="language-typescript">const spear = new Item('Piercing Spear', 'myaddon:piercing_spear');
+spear.addComponent('minecraft:piercing_weapon', {
+    reach: { min: 0, max: 5 },
+    hitbox_margin: 0.3
+});</code></pre>
+                </section>
+
+            </main>
+        </div>
+        <footer>
+            <p>Jepia &mdash; a TypeScript framework for Minecraft Bedrock Add-On generation.</p>
+        </footer>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>

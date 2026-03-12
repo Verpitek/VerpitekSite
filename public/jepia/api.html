@@ -1,0 +1,1955 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Jepia API Documentation</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Jepia API Documentation</h1>
+        <div class="note-box">
+            <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+            <div><strong>Note:</strong> Jepia is under active development. The API may evolve; check the <a href="https://github.com/Verpitek/Jepia" target="_blank">GitHub repository</a> for the latest updates.</div>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle">Contents <span class="toggle-arrow">▼</span></button>
+        <div class="layout">
+            <nav class="sidebar" id="sidebar">
+                <h3>Contents</h3>
+                <ul>
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    <li><a href="#core-concepts">Core Concepts</a></li>
+                    <li><a href="#addon-api">Addon API</a></li>
+                    <li><a href="#resource-pack-api">ResourcePack API</a></li>
+                    <li><a href="#component-api">Component API</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#item">Item</a></li>
+                                <li><a href="#block">Block</a></li>
+                                <li><a href="#entity">Entity</a></li>
+                                <li><a href="#texture-model">Texture &amp; Model</a></li>
+                                <li><a href="#texture-layer">TextureLayer</a></li>
+                                <li><a href="#texture-set">TextureSet</a></li>
+                                <li><a href="#material">Material</a></li>
+                                <li><a href="#render-controller">RenderController</a></li>
+                                <li><a href="#texture-atlas">TextureAtlas</a></li>
+                                <li><a href="#recipe">Recipe</a></li>
+                                <li><a href="#loot-table">LootTable</a></li>
+                                <li><a href="#spawn-rule">SpawnRule</a></li>
+                                <li><a href="#trade-table">TradeTable</a></li>
+                                <li><a href="#biome">Biome</a></li>
+                                <li><a href="#feature">Feature</a></li>
+                                <li><a href="#feature-rule">FeatureRule</a></li>
+                                <li><a href="#dimension">Dimension</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#molang">Molang Utilities</a></li>
+                    <li><a href="#packager">Packager</a></li>
+                    <li><a href="#config">Configuration</a></li>
+                    <li><a href="#scripting">Scripting</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#script-inline">addon.script()</a></li>
+                                <li><a href="#script-file">addon.scriptFile()</a></li>
+                                <li><a href="#custom-components">Custom Components</a></li>
+                                <li><a href="#custom-commands">Custom Commands</a></li>
+                                <li><a href="#cross-ref">Cross-Reference Helpers</a></li>
+                                <li><a href="#script-types">Script Types</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#examples">Examples</a></li>
+                    <li><a href="#advanced">Advanced Usage</a></li>
+                    <li><a href="#validation">Validation</a></li>
+                </ul>
+            </nav>
+
+            <main class="content">
+                <section id="getting-started">
+                    <h2>Getting Started</h2>
+                    <h3>Installation</h3>
+                    <p>Jepia is built with Bun. Make sure you have Bun installed (version >=1.0.0).</p>
+                    <pre><code class="language-bash"># Clone the repository
+git clone #.git
+cd jepia
+
+# Install dependencies
+bun install</code></pre>
+
+                    <h3>Create Your First Add-On</h3>
+                    <p>Create a new TypeScript file (e.g., <code>my-addon.ts</code>) and import Jepia:</p>
+                    <pre><code class="language-typescript">import { Addon, Item } from 'jepia';
+
+const addon = new Addon('MyAddon', 'My first add-on');
+const sword = new Item('Dragon Sword', 'myaddon:dragon_sword');
+sword.addTexture('textures/items/dragon_sword.png');
+addon.addItem(sword);
+
+await addon.generate('./output');</code></pre>
+                    <p>Run the script with Bun:</p>
+                    <pre><code class="language-bash">bun run my-addon.ts</code></pre>
+                    <p>This will generate a complete add‑on structure in the <code>./output</code> folder, ready to be imported into Minecraft Bedrock Edition.</p>
+                </section>
+
+                <section id="core-concepts">
+                    <h2>Core Concepts</h2>
+                    <h3>Addon</h3>
+                    <p>The <code>Addon</code> class is the main entry point. It automatically creates both a behavior pack and a resource pack, and coordinates component registration across them.</p>
+
+                    <h3>Packs</h3>
+                    <ul>
+                        <li><strong>Behavior Pack</strong> – Contains game logic: items, blocks, entities, recipes, loot tables.</li>
+                        <li><strong>Resource Pack</strong> – Contains assets: textures, models, materials, render controllers, animations, sounds.</li>
+                    </ul>
+                    <p>Both packs are created automatically when you instantiate an <code>Addon</code>.</p>
+
+                    <h3>Components</h3>
+                    <p>Components are the building blocks of your add‑on. Each component corresponds to a Minecraft JSON definition (item, block, entity, texture, model, material, render controller, etc.). Jepia provides a fluent, object‑oriented API for creating and configuring components.</p>
+                    <p>All components are validated against official Minecraft JSON schemas using AJV before file generation.</p>
+
+                    <h3>Rendering Pipeline (Phase 3)</h3>
+                    <p>For custom entity visuals, Jepia now supports the full rendering pipeline:</p>
+                    <ol>
+                        <li><strong>TextureLayer</strong> – A single image with a PBR role (color, normal, MER, overlay, etc.).</li>
+                        <li><strong>TextureSet</strong> – Groups layers into a PBR texture set (<code>.texture_set.json</code>).</li>
+                        <li><strong>Material</strong> – Defines shader behavior (<code>.material</code> file with blend factors, defines, states).</li>
+                        <li><strong>RenderController</strong> – Wires geometry, textures, and materials together at runtime using Molang expressions.</li>
+                        <li><strong>Molang</strong> – Type-safe helpers for building Molang expression strings.</li>
+                    </ol>
+
+                    <h3>Automatic Render Controller Generation (Phase 4)</h3>
+                    <p>Jepia can automatically generate render controllers based on an entity's texture layers and UV atlas configuration via <code>addon.generateRenderControllerForEntity()</code>. It handles single‑texture, multi‑variant, and UV atlas entities, producing appropriate render controllers and materials.</p>
+
+                    <h3>ResourcePack File System Integration (Phase 4)</h3>
+                    <p>The <code>ResourcePack</code> class now provides file management APIs for materials, render controllers, and PBR texture sets. Use <code>addMaterialFile()</code>, <code>addRenderControllerFile()</code>, <code>addTextureSetFile()</code> and <code>writeFiles()</code> to register assets for automatic writing to disk.</p>
+                </section>
+
+                <section id="addon-api">
+                    <h2>Addon API</h2>
+                    <p>The <code>Addon</code> class provides the following methods:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Description</th>
+                                <th>Returns</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>constructor(name, description?, version?, minEngineVersion?)</code></td>
+                                <td>Creates a new add‑on instance with auto‑generated behavior and resource packs.</td>
+                                <td><code>Addon</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getName()</code></td>
+                                <td>Returns the add‑on name.</td>
+                                <td><code>string</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getDescription()</code></td>
+                                <td>Returns the add‑on description.</td>
+                                <td><code>string</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getVersion()</code></td>
+                                <td>Returns the version tuple.</td>
+                                <td><code>[number, number, number]</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getMinEngineVersion()</code></td>
+                                <td>Returns the minimum engine version tuple.</td>
+                                <td><code>[number, number, number]</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getBehaviorPack()</code></td>
+                                <td>Returns the underlying behavior pack instance.</td>
+                                <td><code>BehaviorPack</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getResourcePack()</code></td>
+                                <td>Returns the underlying resource pack instance.</td>
+                                <td><code>ResourcePack</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addItem(item)</code></td>
+                                <td>Adds an <code>Item</code> component to the add‑on.</td>
+                                <td><code>this</code> (fluent)</td>
+                            </tr>
+                            <tr>
+                                <td><code>addBlock(blockOrId, blockData?, resourceData?)</code></td>
+                                <td>Adds a block definition. Accepts either a Block component instance, or a block identifier string with behavior data. Optional resource data for the resource pack.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addEntity(entityOrId, entityData?, clientEntityData?)</code></td>
+                                <td>Adds an entity definition. Accepts either an Entity component instance, or an entity identifier string with behavior data. Optional client entity data for the resource pack.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addRecipe(recipe)</code></td>
+                                <td>Adds a <code>Recipe</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>recipes/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addLootTable(lootTable)</code></td>
+                                <td>Adds a <code>LootTable</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>loot_tables/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addSpawnRule(spawnRule)</code></td>
+                                <td>Adds a <code>SpawnRule</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>spawn_rules/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addTradeTable(tradeTable)</code></td>
+                                <td>Adds a <code>TradeTable</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>trading/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addBiome(biome)</code></td>
+                                <td>Adds a <code>Biome</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>biomes/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addFeature(feature)</code></td>
+                                <td>Adds a <code>Feature</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>features/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addFeatureRule(rule)</code></td>
+                                <td>Adds a <code>FeatureRule</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>feature_rules/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addDimension(dimension)</code></td>
+                                <td>Adds a <code>Dimension</code> component (or legacy <code>(id, data)</code> pair) to the behavior pack. Writes to <code>dimensions/</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>generate(outputPath)</code></td>
+                                <td>Generates the complete add‑on file structure at the given path.</td>
+                                <td><code>Promise&lt;void&gt;</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getComponentCount()</code></td>
+                                <td>Returns the total number of registered components.</td>
+                                <td><code>number</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getSummary()</code></td>
+                                <td>Returns an object with add‑on metadata and statistics.</td>
+                                <td><code>object</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>generateRenderControllerForEntity(entity, arrayName?)</code></td>
+                                <td>Automatically generates a RenderController from an entity's texture layers and UV atlas configuration. Returns an object with <code>rc</code> (RenderController) and optional <code>material</code> (for UV atlas).</td>
+                                <td><code>{ rc: RenderController; material?: Material }</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="resource-pack-api">
+                    <h2>ResourcePack API</h2>
+                    <p>The <code>ResourcePack</code> class (accessible via <code>addon.getResourcePack()</code>) manages asset files for the resource pack. New file management methods allow registering materials, render controllers, and PBR texture sets for automatic writing.</p>
+                    <table>
+                        <thead>
+                            <tr><th>Method</th><th>Description</th><th>Returns</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>addMaterialFile(localName, material)</code></td>
+                                <td>Registers a Material to be written as <code>resource_pack/materials/&lt;localName&gt;.material</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getMaterialFile(localName)</code></td>
+                                <td>Retrieves a registered material by local name.</td>
+                                <td><code>Material | undefined</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>hasMaterialFile(localName)</code></td>
+                                <td>Checks if a material file is registered.</td>
+                                <td><code>boolean</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getMaterialFiles()</code></td>
+                                <td>Returns all registered material file entries.</td>
+                                <td><code>Array&lt;{ localName: string, material: Material }&gt;</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addRenderControllerFile(localName, renderController)</code></td>
+                                <td>Registers a RenderController to be written as <code>resource_pack/render_controllers/&lt;localName&gt;.render_controllers.json</code>.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getRenderControllerFile(localName)</code></td>
+                                <td>Retrieves a registered render controller by local name.</td>
+                                <td><code>RenderController | undefined</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>hasRenderControllerFile(localName)</code></td>
+                                <td>Checks if a render controller file is registered.</td>
+                                <td><code>boolean</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getRenderControllerFiles()</code></td>
+                                <td>Returns all registered render controller file entries.</td>
+                                <td><code>Array&lt;{ localName: string, renderController: RenderController }&gt;</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>addTextureSetFile(textureDir, textureBaseName, textureSet)</code></td>
+                                <td>Registers a TextureSet to be written as <code>&lt;textureDir&gt;/&lt;textureBaseName&gt;.texture_set.json</code> next to the colour image.</td>
+                                <td><code>this</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getTextureSetFile(textureDir, textureBaseName)</code></td>
+                                <td>Retrieves a registered TextureSet by output location.</td>
+                                <td><code>TextureSet | undefined</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>hasTextureSetFile(textureDir, textureBaseName)</code></td>
+                                <td>Checks if a texture set file is registered.</td>
+                                <td><code>boolean</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>getTextureSetFiles()</code></td>
+                                <td>Returns all registered texture set file entries.</td>
+                                <td><code>Array&lt;{ dir: string, baseName: string, textureSet: TextureSet }&gt;</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>writeFiles(resourcePackPath)</code></td>
+                                <td>Writes all registered special resource files to disk. Returns counts of files written.</td>
+                                <td><code>Promise&lt;{ materialsWritten: number, renderControllersWritten: number, textureSetsWritten: number }&gt;</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="component-api">
+                    <h2>Component API</h2>
+
+                    <section id="item">
+                        <h3>Item</h3>
+                        <pre><code class="language-typescript">import { Item } from 'jepia';
+
+const ruby = new Item('Ruby', 'myaddon:ruby', 'A precious gemstone');
+ruby
+  .setMaxStackSize(64)
+  .setMenuCategory('items')
+  .addComponent('minecraft:durability', { max_durability: 100 })
+  .addTexture('textures/items/ruby.png');
+
+addon.addItem(ruby);</code></pre>
+                        <p><strong>Key methods:</strong> <code>setMaxStackSize</code>, <code>setMenuCategory</code>, <code>addComponent</code>, <code>addTexture</code>, <code>addModel</code>.</p>
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Component Reference:</strong> See the full list of <a href="item-components.html">Item Components</a> available for <code>addComponent()</code> &mdash; durability, food, combat, equipment, and more.</div>
+                        </div>
+                    </section>
+
+                    <section id="block">
+                        <h3>Block</h3>
+                        <p>Blocks can be added via the add‑on's <code>addBlock</code> method using either a <code>Block</code> component instance or a block identifier string with behavior data. The Block component API is under development; currently the string‑based API is recommended.</p>
+                        <pre><code class="language-typescript">addon.addBlock('myaddon:ruby_ore', {
+  display_name: 'Ruby Ore',
+  material: 'stone',
+  hardness: 3,
+  blast_resistance: 3,
+});</code></pre>
+                        <p>You can also provide optional resource data for the resource pack:</p>
+                        <pre><code class="language-typescript">addon.addBlock('myaddon:ruby_ore', behaviorData, resourceData);</code></pre>
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Component Reference:</strong> See the full list of <a href="block-components.html">Block Components</a> available for <code>addComponent()</code> &mdash; geometry, destruction, lighting, redstone, and more.</div>
+                        </div>
+                    </section>
+
+                    <section id="entity">
+                        <h3>Entity</h3>
+                        <p>Entities can be added using either an <code>Entity</code> component instance or a raw JSON definition. The component API provides better integration with the resource pack (client entity generation) and the rendering pipeline.</p>
+                        <pre><code class="language-typescript">// Using raw JSON (legacy API)
+addon.addEntity('myaddon:ruby_golem', {
+  format_version: '1.21.40',
+  'minecraft:entity': {
+    description: {
+      identifier: 'myaddon:ruby_golem',
+      is_summonable: true,
+      is_spawnable: true,
+    },
+    components: {
+      'minecraft:physics': {},
+      'minecraft:movement': { value: 0.25 },
+      'minecraft:health': { value: 20, max: 20 },
+    },
+  },
+});
+
+// Using Entity component (recommended)
+import { Entity } from 'jepia';
+const mob = new Entity('Ruby Golem', 'myaddon:ruby_golem');
+mob.addComponent('minecraft:health', { value: 20 });
+addon.addEntity(mob);</code></pre>
+
+                        <p>The <code>Entity</code> component also supports attaching a <code>Material</code> for full pipeline integration:</p>
+                        <pre><code class="language-typescript">import { Entity, Material, VanillaMaterials } from 'jepia';
+
+const mob = new Entity('Ruby Golem', 'myaddon:ruby_golem');
+const mat = Material.fromVanilla('myaddon:golem_mat', VanillaMaterials.ENTITY_ALPHATEST);
+mob.setMaterial(mat);
+addon.addEntity(mob);</code></pre>
+
+                        <p>You can also attach a <code>RenderController</code> to customize how the entity is rendered at runtime (geometry, textures, materials, part visibility, color tinting, UV animation). The controller is automatically written to <code>resource_pack/render_controllers/</code> when the add‑on is generated.</p>
+                        <pre><code class="language-typescript">import { Entity, RenderController, Molang } from 'jepia';
+
+const mob = new Entity('Robot', 'myaddon:robot');
+const rc = new RenderController('Robot Controller', 'myaddon:robot')
+  .setGeometry('Geometry.default')
+  .setMaterials([{ '*': 'Material.default' }])
+  .setTextures(['Texture.default']);
+
+mob.setRenderController(rc);
+addon.addEntity(mob);</code></pre>
+
+                        <h4>Texture Layer Management</h4>
+                        <p>Entities support multiple texture layers for variant skins, overlays, and PBR texture sets. Use <code>addTextureLayer()</code>, <code>removeTextureLayer()</code>, <code>getTextureLayers()</code>, and <code>clearTextureLayers()</code> to manage layers.</p>
+
+                        <h4>UV Atlas Variables</h4>
+                        <p>For texture atlasing, set UV atlas variables with <code>setUvAtlasVariables()</code>. This automatically injects Molang pre‑animation scripts into the client entity, enabling <code>uv_anim</code> render controllers.</p>
+
+                        <h4>Script Animation</h4>
+                        <p>Control animation playback via <code>setScriptAnimate()</code>, <code>getScriptAnimate()</code>, and <code>clearScriptAnimate()</code>. Entries can be unconditional animation short names or conditional Molang expressions.</p>
+
+                        <h4>Automatic Render Controller Generation</h4>
+                        <p>The add‑on's <code>generateRenderControllerForEntity()</code> method automatically creates an appropriate render controller based on the entity's texture layers and UV atlas configuration. See the <a href="#addon-api">Addon API</a> table for details.</p>
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Component Reference:</strong> See the full list of <a href="entity-components.html">Entity Components</a> available for <code>addComponent()</code> &mdash; health, movement, navigation, combat, AI goals, and more.</div>
+                        </div>
+                    </section>
+
+                    <section id="texture-model">
+                        <h3>Texture &amp; Model</h3>
+                        <p>Textures and models are automatically registered when you attach them to items, blocks, or entities. You can also create standalone texture and model components for advanced scenarios.</p>
+                        <pre><code class="language-typescript">import { Texture, Model } from 'jepia';
+
+const tex = new Texture('myaddon:special_texture', './assets/special.png');
+const model = new Model('myaddon:special_model', './models/special.geo.json');</code></pre>
+                        <p>For PBR and multi-layer textures, use <a href="#texture-layer">TextureLayer</a> and <a href="#texture-set">TextureSet</a> instead.</p>
+                    </section>
+
+                    <section id="texture-layer">
+                        <h3>TextureLayer</h3>
+                        <p>A <code>TextureLayer</code> represents a single image with a PBR role. Layers are the building blocks for <a href="#texture-set">TextureSet</a> and render controller texture arrays.</p>
+
+                        <table>
+                            <thead>
+                                <tr><th>Layer Type</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>"color"</code></td><td>RGB(A) albedo/diffuse — required by TextureSet. Default type.</td></tr>
+                                <tr><td><code>"normal"</code></td><td>3-channel normal map. Mutually exclusive with <code>"heightmap"</code>.</td></tr>
+                                <tr><td><code>"mer"</code></td><td>Metalness/Emissive/Roughness packed in R/G/B. Mutually exclusive with <code>"mers"</code>.</td></tr>
+                                <tr><td><code>"mers"</code></td><td>Metalness/Emissive/Roughness/Subsurface (Vibrant Visuals only). Mutually exclusive with <code>"mer"</code>.</td></tr>
+                                <tr><td><code>"heightmap"</code></td><td>Single-channel depth/parallax map. Mutually exclusive with <code>"normal"</code>.</td></tr>
+                                <tr><td><code>"overlay"</code></td><td>Extra composited layer (e.g. llama decor, glow effects).</td></tr>
+                            </tbody>
+                        </table>
+
+                        <table>
+                            <thead>
+                                <tr><th>Blending Mode</th><th>Description</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>"opaque"</code></td><td>No blending; pixels fully written (default for color/normal/mer layers).</td></tr>
+                                <tr><td><code>"alpha"</code></td><td>Standard alpha-transparency compositing.</td></tr>
+                                <tr><td><code>"additive"</code></td><td>Source added to destination — useful for glow/emissive overlays.</td></tr>
+                                <tr><td><code>"multiply"</code></td><td>Source × destination — darkening effect.</td></tr>
+                                <tr><td><code>"screen"</code></td><td>Inverse multiply — lightening effect.</td></tr>
+                            </tbody>
+                        </table>
+
+                        <pre><code class="language-typescript">import { TextureLayer } from 'jepia';
+
+// Basic color layer (default type)
+const color = new TextureLayer('Creamy', 'myaddon:llama_creamy',
+  'textures/entity/llama_creamy.png');
+
+// Normal map layer
+const normal = new TextureLayer('Stone Normal', 'myaddon:stone_normal',
+  'textures/blocks/stone_normal.png', 'normal');
+
+// Additive glow overlay
+const glow = new TextureLayer('Ghost Glow', 'myaddon:ghost_glow',
+  'textures/entity/ghost_glow.png')
+  .setBlending('additive');
+
+// Atlas sub-region (top-left quadrant of a 2x2 atlas)
+const atlasLayer = new TextureLayer('Mob 0', 'myaddon:mob_0',
+  'textures/entity/mob_atlas.png')
+  .setUvOffset([0, 0])
+  .setUvScale([0.5, 0.5]);</code></pre>
+
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Description</th><th>Returns</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>constructor(displayName, id, imagePath?, type?)</code></td><td>Creates a layer. <code>type</code> defaults to <code>"color"</code>.</td><td><code>TextureLayer</code></td></tr>
+                                <tr><td><code>setPath(path)</code></td><td>Sets the image file path.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getPath()</code></td><td>Gets the image file path.</td><td><code>string</code></td></tr>
+                                <tr><td><code>setType(type)</code></td><td>Sets the PBR layer type.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getType()</code></td><td>Gets the PBR layer type.</td><td><code>TextureLayerType</code></td></tr>
+                                <tr><td><code>setBlending(mode)</code></td><td>Sets the blending mode for compositing.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getBlending()</code></td><td>Gets the blending mode.</td><td><code>TextureLayerBlending</code></td></tr>
+                                <tr><td><code>setUvOffset([u, v])</code></td><td>Sets the UV offset for atlas sub-regions.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setUvScale([u, v])</code></td><td>Sets the UV scale for atlas sub-regions.</td><td><code>this</code></td></tr>
+                                <tr><td><code>validate()</code></td><td>Validates the layer configuration.</td><td><code>{ valid, errors }</code></td></tr>
+                                <tr><td><code>toJSON()</code></td><td>Serializes to JSON.</td><td><code>object</code></td></tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="texture-set">
+                        <h3>TextureSet</h3>
+                        <p>A <code>TextureSet</code> groups PBR texture layers into a <code>.texture_set.json</code> file (format_version 1.16.100 / 1.21.30). It enforces mutual exclusion rules (normal vs heightmap, mer vs mers). Each slot accepts either a <code>TextureLayer</code> instance or a raw value (texture name string, uniform numeric array, or hex string).</p>
+                        <pre><code class="language-typescript">import { TextureLayer, TextureSet } from 'jepia';
+
+// Create texture layers
+const color = new TextureLayer('Base', 'myaddon:base_color', 'textures/entity/base.png');
+const normal = new TextureLayer('Normal', 'myaddon:base_normal', 'textures/entity/base_normal.png', 'normal');
+const mer = new TextureLayer('MER', 'myaddon:base_mer', 'textures/entity/base_mer.png', 'mer');
+
+// Create texture set and assign layers
+const set = new TextureSet('Base PBR', 'myaddon:base_pbr');
+set.setColor(color)
+   .setNormal(normal)
+   .setMer(mer);
+
+// Alternative: assign raw values
+const set2 = new TextureSet('Uniform PBR', 'myaddon:uniform_pbr');
+set2.setColor([255, 0, 0, 255]) // RGBA array
+    .setHeightmap(128); // uniform height value</code></pre>
+
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Description</th><th>Returns</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>constructor(displayName, id, description?)</code></td><td>Creates an empty texture set.</td><td><code>TextureSet</code></td></tr>
+                                <tr><td><code>setColor(layerOrValue)</code></td><td>Sets the color (albedo) layer. Accepts <code>TextureLayer</code>, texture name string, RGBA array, or hex string.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getColor()</code></td><td>Gets the color layer.</td><td><code>TextureLayer | ColorValue | undefined</code></td></tr>
+                                <tr><td><code>clearColor()</code></td><td>Removes the color layer.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setNormal(layerOrString)</code></td><td>Sets the normal map layer. Accepts <code>TextureLayer</code> or texture name string.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getNormal()</code></td><td>Gets the normal layer.</td><td><code>TextureLayer | string | undefined</code></td></tr>
+                                <tr><td><code>clearNormal()</code></td><td>Removes the normal layer.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setMer(layerOrValue)</code></td><td>Sets the MER (metalness/emissive/roughness) layer. Accepts <code>TextureLayer</code>, texture name string, RGB array, or hex string.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getMer()</code></td><td>Gets the MER layer.</td><td><code>TextureLayer | MerValue | undefined</code></td></tr>
+                                <tr><td><code>clearMer()</code></td><td>Removes the MER layer.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setMers(layerOrString)</code></td><td>Sets the MERS (metalness/emissive/roughness/subsurface) layer (Vibrant Visuals). Accepts <code>TextureLayer</code> or texture name string only.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getMers()</code></td><td>Gets the MERS layer.</td><td><code>TextureLayer | string | undefined</code></td></tr>
+                                <tr><td><code>clearMers()</code></td><td>Removes the MERS layer.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setHeightmap(layerOrValue)</code></td><td>Sets the heightmap layer. Accepts <code>TextureLayer</code>, texture name string, or uniform numeric value (0–255).</td><td><code>this</code></td></tr>
+                                <tr><td><code>getHeightmap()</code></td><td>Gets the heightmap layer.</td><td><code>TextureLayer | HeightmapValue | undefined</code></td></tr>
+                                <tr><td><code>clearHeightmap()</code></td><td>Removes the heightmap layer.</td><td><code>this</code></td></tr>
+                                <tr><td><code>hasColor()</code></td><td>Returns whether a color layer is set.</td><td><code>boolean</code></td></tr>
+                                <tr><td><code>hasNormal()</code></td><td>Returns whether a normal layer is set.</td><td><code>boolean</code></td></tr>
+                                <tr><td><code>hasMer()</code></td><td>Returns whether a MER layer is set.</td><td><code>boolean</code></td></tr>
+                                <tr><td><code>hasMers()</code></td><td>Returns whether a MERS layer is set.</td><td><code>boolean</code></td></tr>
+                                <tr><td><code>hasHeightmap()</code></td><td>Returns whether a heightmap layer is set.</td><td><code>boolean</code></td></tr>
+                                <tr><td><code>isVibrantVisuals()</code></td><td>Returns <code>true</code> if MERS layer is set (indicates format_version 1.21.30).</td><td><code>boolean</code></td></tr>
+                                <tr><td><code>validate()</code></td><td>Validates mutual exclusion rules and layer consistency.</td><td><code>{ valid, errors }</code></td></tr>
+                                <tr><td><code>validateAgainstSchema()</code></td><td>Validates against Minecraft JSON schema.</td><td><code>{ valid, errors }</code></td></tr>
+                                <tr><td><code>toTextureSetJSON()</code></td><td>Serializes to <code>.texture_set.json</code> format.</td><td><code>object</code></td></tr>
+                                <tr><td><code>toJSON()</code></td><td>Serializes to Jepia internal format.</td><td><code>object</code></td></tr>
+                                <tr><td><code>getSummary()</code></td><td>Returns a human-readable summary.</td><td><code>string</code></td></tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="material">
+                        <h3>Material</h3>
+                        <p>The <code>Material</code> component generates a Minecraft <code>.material</code> file in <code>resource_pack/materials/</code>. Materials define how the shader renders an entity: transparency, blending, emissive glow, etc.</p>
+
+                        <p>Materials use inheritance: a custom material inherits from a vanilla or custom parent material. The key in the output JSON is <code>"&lt;name&gt;:&lt;parent&gt;"</code>.</p>
+
+                        <pre><code class="language-typescript">import { Material, MaterialDefine, MaterialState, BlendFactor, VanillaMaterials } from 'jepia';
+
+// Inherit from a vanilla material
+const mat = new Material('Glow Material', 'myaddon:glow')
+  .setParent(VanillaMaterials.ENTITY_ALPHABLEND)
+  .addDefine(MaterialDefine.USE_EMISSIVE)
+  .addState(MaterialState.Blending)
+  .setBlendSrc(BlendFactor.SourceAlpha)
+  .setBlendDst(BlendFactor.One);
+
+// Convenience: create from vanilla shorthand
+const mat2 = Material.fromVanilla('myaddon:cutout', VanillaMaterials.ENTITY_ALPHATEST);</code></pre>
+
+                        <h4>VanillaMaterials presets</h4>
+                        <p>The <code>VanillaMaterials</code> class provides 25+ named presets matching vanilla Minecraft materials:</p>
+                        <pre><code class="language-typescript">VanillaMaterials.ENTITY               // "entity"
+VanillaMaterials.ENTITY_ALPHATEST     // "entity_alphatest"
+VanillaMaterials.ENTITY_ALPHABLEND    // "entity_alphablend"
+VanillaMaterials.ENTITY_CHANGE_COLOR  // "entity_change_color"
+VanillaMaterials.ENTITY_EMISSIVE      // "entity_emissive"
+VanillaMaterials.PARTICLES            // "particles"
+// ... and many more — see VanillaMaterials.ALL for the full list</code></pre>
+
+                        <h4>Material methods</h4>
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Description</th><th>Returns</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>constructor(displayName, id, description?)</code></td><td>Creates a new material component.</td><td><code>Material</code></td></tr>
+                                <tr><td><code>Material.fromVanilla(id, vanillaName, displayName?)</code></td><td>Static factory: creates a material inheriting from a vanilla parent.</td><td><code>Material</code></td></tr>
+                                <tr><td><code>setParent(parent)</code></td><td>Sets the parent material (vanilla name or custom id).</td><td><code>this</code></td></tr>
+                                <tr><td><code>getParent()</code></td><td>Gets the parent material name.</td><td><code>string | undefined</code></td></tr>
+                                <tr><td><code>clearParent()</code></td><td>Removes the parent (makes this a root material).</td><td><code>this</code></td></tr>
+                                <tr><td><code>addDefine(define)</code></td><td>Adds a shader define to <code>+defines</code>.</td><td><code>this</code></td></tr>
+                                <tr><td><code>removeDefine(define)</code></td><td>Schedules a define for removal (<code>-defines</code>).</td><td><code>this</code></td></tr>
+                                <tr><td><code>addState(state)</code></td><td>Adds a renderer state to <code>+states</code>.</td><td><code>this</code></td></tr>
+                                <tr><td><code>removeState(state)</code></td><td>Schedules a state for removal (<code>-states</code>).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setBlendFactors(src, dst)</code></td><td>Sets color-channel blend src and dst in one call.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setBlendSrc(factor)</code></td><td>Sets the source blend factor (color channels).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setBlendDst(factor)</code></td><td>Sets the destination blend factor (color channels).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setAlphaSrc(factor)</code></td><td>Sets the source blend factor (alpha channel).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setAlphaDst(factor)</code></td><td>Sets the destination blend factor (alpha channel).</td><td><code>this</code></td></tr>
+                                <tr><td><code>getMaterialKey()</code></td><td>Returns the serialized key (<code>"name:parent"</code> or <code>"name"</code>).</td><td><code>string</code></td></tr>
+                                <tr><td><code>validate()</code></td><td>Validates defines/states/blend factors, including AJV schema check.</td><td><code>{ valid, errors }</code></td></tr>
+                                <tr><td><code>toJSON()</code></td><td>Serializes to complete <code>.material</code> file JSON.</td><td><code>MaterialFileJSON</code></td></tr>
+                                <tr><td><code>toDefinitionJSON()</code></td><td>Serializes just the definition block (for multi-material files).</td><td><code>MaterialDefinitionJSON</code></td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4>BlendFactor enum</h4>
+                        <p>Controls how source and destination colors are combined when <code>MaterialState.Blending</code> is active:</p>
+                        <pre><code class="language-typescript">BlendFactor.Zero             // multiplies by zero
+BlendFactor.One              // passes through unchanged
+BlendFactor.SourceColor      // uses source color value
+BlendFactor.DestColor        // uses destination color value
+BlendFactor.SourceAlpha      // uses source alpha
+BlendFactor.DestAlpha        // uses destination alpha
+BlendFactor.OneMinusSrcAlpha // 1 minus source alpha (common for standard transparency)</code></pre>
+
+                        <h4>MaterialDefine enum</h4>
+                        <pre><code class="language-typescript">MaterialDefine.ALPHA_TEST      // cutout transparency
+MaterialDefine.GLINT           // enchantment-glint effect
+MaterialDefine.USE_EMISSIVE    // emissive texture support
+MaterialDefine.USE_OVERLAY     // overlay tinting support
+MaterialDefine.TINTED_ALPHA_TEST // tinted alpha test</code></pre>
+
+                        <h4>MaterialState enum</h4>
+                        <pre><code class="language-typescript">MaterialState.Blending         // enable alpha blending
+MaterialState.DisableCulling   // render both faces (no backface culling)
+MaterialState.DisableDepthWrite // do not write to depth buffer</code></pre>
+                    </section>
+
+                    <section id="render-controller">
+                        <h3>RenderController</h3>
+                        <p>A <code>RenderController</code> defines how an entity is visually rendered at runtime: which geometry, textures, and materials to use; how to select them dynamically via Molang expressions; part visibility; UV animation; and color tinting.</p>
+                        <p>Files are written to <code>resource_pack/render_controllers/</code> with <code>format_version "1.8.0"</code>.</p>
+
+                        <pre><code class="language-typescript">import { RenderController } from 'jepia';
+
+// Simple single-texture entity
+const rc = new RenderController('Robot Controller', 'myaddon:robot')
+  .setGeometry('Geometry.default')
+  .setMaterials([{ '*': 'Material.default' }])
+  .setTextures(['Texture.default']);
+
+// Multi-variant entity (ocelot pattern — texture array + q.variant)
+const rc2 = new RenderController('Ocelot Controller', 'myaddon:ocelot')
+  .setGeometry('Geometry.default')
+  .setMaterials([{ '*': 'Material.default' }])
+  .addTextureArray('skins', ['Texture.wild', 'Texture.black', 'Texture.red'])
+  .setTextures(['Array.skins[q.variant]']);
+
+// Static factory from TextureLayer instances
+import { TextureLayer, RenderController } from 'jepia';
+const layers = [wildLayer, blackLayer, redLayer];
+const rc3 = RenderController.fromTextureLayers('Ocelot RC', 'myaddon:ocelot', layers, 'skins');</code></pre>
+
+                        <h4>RenderController methods</h4>
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Description</th><th>Returns</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>constructor(displayName, id, description?)</code></td><td>Creates a new render controller.</td><td><code>RenderController</code></td></tr>
+                                <tr><td><code>RenderController.fromTextureLayers(displayName, id, layers, arrayName?)</code></td><td>Static factory: builds a controller pre-configured for one or more TextureLayer variants. Uses a texture array when N&gt;1 layers, <code>Texture.default</code> for 1 layer.</td><td><code>RenderController</code></td></tr>
+                                <tr><td><code>getControllerKey()</code></td><td>Returns the controller key used in the JSON map (e.g. <code>"controller.render.myaddon_robot"</code>).</td><td><code>string</code></td></tr>
+                                <tr><td><code>setGeometry(expr)</code></td><td>Sets the geometry Molang expression (e.g. <code>"Geometry.default"</code> or <code>"Array.geos[q.is_sheared]"</code>).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setMaterials(mappings)</code></td><td>Sets the materials array — ordered list of <code>{ bonePattern: molangExpr }</code> objects. Use <code>"*"</code> to match all bones.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setTextures(exprs)</code></td><td>Sets the textures array — ordered list of Molang texture references. Index 0 is the base texture.</td><td><code>this</code></td></tr>
+                                <tr><td><code>addTextureArray(name, textures)</code></td><td>Adds a named texture array (<code>arrays.textures</code>). Name is auto-prefixed with <code>"Array."</code> if needed. Elements must follow <code>"Texture.&lt;name&gt;"</code> convention.</td><td><code>this</code></td></tr>
+                                <tr><td><code>addMaterialArray(name, materials)</code></td><td>Adds a named material array (<code>arrays.materials</code>).</td><td><code>this</code></td></tr>
+                                <tr><td><code>addGeometryArray(name, geometries)</code></td><td>Adds a named geometry array (<code>arrays.geometries</code>).</td><td><code>this</code></td></tr>
+                                <tr><td><code>removeTextureArray(name)</code></td><td>Removes a named texture array.</td><td><code>this</code></td></tr>
+                                <tr><td><code>removeMaterialArray(name)</code></td><td>Removes a named material array.</td><td><code>this</code></td></tr>
+                                <tr><td><code>removeGeometryArray(name)</code></td><td>Removes a named geometry array.</td><td><code>this</code></td></tr>
+                                <tr><td><code>addTextureArrayFromLayers(arrayName, layers)</code></td><td>Populates a texture array from TextureLayer instances, generating <code>"Texture.&lt;name&gt;"</code> references automatically.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setPartVisibility(entries)</code></td><td>Sets part visibility — ordered list of <code>{ partPattern: molangCondition }</code>. Supports <code>*</code> wildcards.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setColor(color)</code></td><td>Sets the base color tint (RGBA Molang expressions).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setOverlayColor(color)</code></td><td>Sets the overlay color (e.g. invulnerability tint).</td><td><code>this</code></td></tr>
+                                <tr><td><code>setOnFireColor(color)</code></td><td>Sets the color applied when the entity is on fire.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setIsHurtColor(color)</code></td><td>Sets the color applied when the entity takes damage.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setUvAnim(offset, scale)</code></td><td>Sets UV animation for atlas scrolling/scaling. Both <code>offset</code> and <code>scale</code> are <code>[U, V]</code> Molang expression pairs.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setFilterLighting(value)</code></td><td>When <code>true</code>, lighting is converted to grayscale before applying.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setIgnoreLighting(value)</code></td><td>When <code>true</code>, entity renders at full brightness regardless of ambient light.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setLightColorMultiplier(expr)</code></td><td>Sets a Molang expression controlling ambient light blending.</td><td><code>this</code></td></tr>
+                                <tr><td><code>setRebuildAnimationMatrices(value)</code></td><td>When <code>true</code>, animation matrices are rebuilt every frame.</td><td><code>this</code></td></tr>
+                                <tr><td><code>validate()</code></td><td>Validates geometry, array references, element naming conventions, and AJV schema.</td><td><code>{ valid, errors }</code></td></tr>
+                                <tr><td><code>toJSON()</code></td><td>Serializes to the full <code>.render_controllers.json</code> file format.</td><td><code>RenderControllerFileJSON</code></td></tr>
+                                <tr><td><code>toDefinitionJSON()</code></td><td>Serializes just the definition block (for bundling multiple controllers in one file).</td><td><code>RenderControllerDefinitionJSON</code></td></tr>
+                                <tr><td><code>getSummary()</code></td><td>Returns a human-readable summary string.</td><td><code>string</code></td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4>Part visibility</h4>
+                        <pre><code class="language-typescript">// Hide all bones by default, then show selectively
+rc.setPartVisibility([
+  { '*':     0 },                                    // hide everything
+  { 'body':  'query.has_armor_slot(1)' },            // show body when chest armor present
+  { 'leg*':  '!query.is_sleeping' },                 // show legs when not sleeping
+  { 'chest*': 'query.is_chested' },                  // show chest parts when carrying chest
+]);</code></pre>
+
+                        <h4>Color tinting</h4>
+                        <pre><code class="language-typescript">// Hurt flash (blue tint at 50% alpha)
+rc.setIsHurtColor({ r: '0.0', g: '0.0', b: '1.0', a: '0.5' });
+
+// Suppress fire overlay on fireballs
+rc.setOnFireColor({ r: '0.0', g: '0.0', b: '0.0', a: '0.0' });
+
+// Overlay driven by Molang
+rc.setOverlayColor({ r: '1.0', g: '1.0', b: '1.0', a: 'v.overlay_alpha' });</code></pre>
+
+                        <h4>UV animation (atlas textures)</h4>
+                        <pre><code class="language-typescript">import { Molang } from 'jepia';
+
+const uvAnim = Molang.uvAtlas();
+// → { offset: ["v.offset_x", "v.offset_y"], scale: ["v.scale_x", "v.scale_y"] }
+
+rc.setUvAnim(uvAnim.offset, uvAnim.scale);</code></pre>
+
+                        <h4>Static element validation</h4>
+                        <pre><code class="language-typescript">RenderController.isValidTextureElement('Texture.default')    // true
+RenderController.isValidMaterialElement('Material.default')  // true
+RenderController.isValidGeometryElement('Geometry.default')  // true</code></pre>
+                    </section>
+
+                    <section id="texture-atlas">
+                        <h3>TextureAtlas</h3>
+                        <p>The <code>TextureAtlas</code> component packs multiple textures into a single atlas image, reducing draw calls and memory usage. Supports both uniform grid layouts and automatic bin-packing via shelf or maxrects strategies.</p>
+
+                        <pre><code class="language-typescript">import { TextureAtlas, Texture, Entity } from 'jepia';
+
+// Create a 1024x1024 packed atlas with 8px padding
+const atlas = new TextureAtlas('Mob Atlas', 'mymod:mob_atlas', 1024, 1024, 'packed', 8);
+
+// Add texture entries with their pixel dimensions
+const skin1 = new Texture('Skin 1', 'mymod:skin1', 'textures/entity/skin1.png');
+const skin2 = new Texture('Skin 2', 'mymod:skin2', 'textures/entity/skin2.png');
+
+atlas.addEntry(skin1, 256, 256);
+atlas.addEntry(skin2, 256, 512);
+
+// Pack and get UV coordinates
+const uvMap = await atlas.pack('shelf');  // or 'maxrects'
+
+// Apply UV coordinates to an entity (sets up uv_anim render controller)
+const mob = new Entity('Multi-skin Mob', 'mymod:mob');
+await atlas.applyToEntity(mob);
+
+// Reports
+const opt = atlas.getOptimizationReport();
+// { originalArea, atlasArea, usedArea, wastedArea, efficiency, textureCount, atlasSize }
+
+const mem = atlas.getMemoryReport();
+// { originalMemory, atlasMemory, savedMemory, reductionPercentage }</code></pre>
+
+                        <h4>TextureAtlas methods</h4>
+                        <table>
+                            <thead>
+                                <tr><th>Method</th><th>Description</th><th>Returns</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>constructor(displayName, id, width, height, mode?, padding?)</code></td><td>Creates an atlas. <code>mode</code> is <code>"grid"</code> or <code>"packed"</code> (default). <code>padding</code> defaults to 8.</td><td><code>TextureAtlas</code></td></tr>
+                                <tr><td><code>setGridLayout(cols, rows)</code></td><td>Sets a uniform grid layout (for grid mode).</td><td><code>this</code></td></tr>
+                                <tr><td><code>getGridLayout()</code></td><td>Gets the grid layout dimensions.</td><td><code>{ cols, rows } | undefined</code></td></tr>
+                                <tr><td><code>addEntry(texture, width, height)</code></td><td>Adds a texture to be packed into the atlas.</td><td><code>this</code></td></tr>
+                                <tr><td><code>getEntries()</code></td><td>Returns all atlas entries.</td><td><code>AtlasEntry[]</code></td></tr>
+                                <tr><td><code>pack(strategy?)</code></td><td>Packs all entries using the given strategy (<code>"shelf"</code> or <code>"maxrects"</code>). Returns UV coordinate map.</td><td><code>Promise&lt;Map&lt;Texture, UvCoordinates&gt;&gt;</code></td></tr>
+                                <tr><td><code>applyToEntity(entity, uvArrayName?)</code></td><td>Packs the atlas and applies UV coordinates to an entity, setting up uv_anim render controller variables.</td><td><code>Promise&lt;void&gt;</code></td></tr>
+                                <tr><td><code>applyToEntityRaw(entity, uvMap)</code></td><td>Applies pre-computed UV coordinates to an entity without re-packing.</td><td><code>void</code></td></tr>
+                                <tr><td><code>getOptimizationReport()</code></td><td>Returns packing efficiency metrics.</td><td><code>AtlasOptimizationReport</code></td></tr>
+                                <tr><td><code>getMemoryReport()</code></td><td>Returns memory usage comparison (original vs atlas).</td><td><code>AtlasMemoryReport</code></td></tr>
+                                <tr><td><code>toJSON()</code></td><td>Serializes to JSON.</td><td><code>object</code></td></tr>
+                            </tbody>
+                        </table>
+
+                        <h4>AtlasPacker (standalone utility)</h4>
+                        <p>The <code>AtlasPacker</code> can be used independently for bin-packing rectangles into a fixed-size atlas.</p>
+                        <pre><code class="language-typescript">import { AtlasPacker } from 'jepia';
+
+const packer = new AtlasPacker(1024, 1024, 4); // width, height, padding
+const rects = [
+  { id: 'a', width: 256, height: 256 },
+  { id: 'b', width: 128, height: 512 },
+  { id: 'c', width: 64, height: 64 },
+];
+
+const result = packer.pack(rects, 'maxrects');
+// Map&lt;TextureData, { x, y, width, height }&gt;</code></pre>
+
+                        <table>
+                            <thead>
+                                <tr><th>Strategy</th><th>Description</th><th>Best for</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>"shelf"</code></td><td>Sorts by height, places textures in horizontal rows. Fast and predictable.</td><td>Uniform or similar-sized textures.</td></tr>
+                                <tr><td><code>"maxrects"</code></td><td>Best short-side fit into free rectangles. Better space utilization.</td><td>Mixed sizes, maximizing efficiency.</td></tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="recipe">
+                        <h3>Recipe</h3>
+                        <p>Generates crafting recipe JSON files in <code>behavior_pack/recipes/</code>. Supports shaped crafting, shapeless crafting, furnace smelting, and brewing. Use one of the <code>set*</code> methods to define the recipe type, then pass the instance to <code>addon.addRecipe()</code>.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>setShaped(config)</code></td><td>3×3 (or smaller) crafting table recipe. Config: <code>pattern</code>, <code>key</code>, <code>result</code>, optional <code>tags</code> and <code>assumeSymmetry</code>.</td></tr>
+                                <tr><td><code>setShapeless(config)</code></td><td>Order-independent crafting recipe. Config: <code>ingredients</code>, <code>result</code>, optional <code>tags</code>.</td></tr>
+                                <tr><td><code>setFurnace(config)</code></td><td>Furnace/smoker/campfire smelting. Config: <code>input</code>, <code>output</code>, optional <code>tags</code> (default: <code>["furnace"]</code>).</td></tr>
+                                <tr><td><code>setBrewing(config)</code></td><td>Brewing stand recipe. Config: <code>input</code>, <code>reagent</code>, <code>output</code>, optional <code>tags</code> (default: <code>["brewing_stand"]</code>).</td></tr>
+                                <tr><td><code>getRecipeType()</code></td><td>Returns the configured recipe type string, or <code>undefined</code> if not yet set.</td></tr>
+                            </tbody>
+                        </table>
+                        <pre><code class="language-typescript">import { Recipe } from 'jepia';
+
+// Shaped crafting
+const pickaxe = new Recipe('Iron Pickaxe', 'myaddon:iron_pickaxe');
+pickaxe.setShaped({
+  pattern: ['III', ' S ', ' S '],
+  key: {
+    I: { item: 'minecraft:iron_ingot' },
+    S: { item: 'minecraft:stick' }
+  },
+  result: { item: 'myaddon:iron_pickaxe', count: 1 }
+});
+addon.addRecipe(pickaxe);
+
+// Furnace smelting
+const smelt = new Recipe('Smelt Ore', 'myaddon:smelt_ore');
+smelt.setFurnace({
+  input: { item: 'myaddon:raw_ore' },
+  output: 'myaddon:ingot',
+  tags: ['furnace', 'smoker', 'blast_furnace']
+});
+addon.addRecipe(smelt);
+
+// Brewing
+const brew = new Recipe('Brew Speed Potion', 'myaddon:brew_speed');
+brew.setBrewing({
+  input: 'minecraft:potion',
+  reagent: 'myaddon:speed_herb',
+  output: 'myaddon:speed_potion'
+});
+addon.addRecipe(brew);</code></pre>
+                    </section>
+
+                    <section id="loot-table">
+                        <h3>LootTable</h3>
+                        <p>Generates loot table JSON files in <code>behavior_pack/loot_tables/</code>. Add one or more pools — each pool draws a number of items from its entry list. Attach to entities via the <code>minecraft:loot</code> component, or to blocks via <code>minecraft:loot</code>.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>addPool(pool)</code></td><td>Adds a loot pool. Pool has <code>rolls</code> (number or <code>{ min, max }</code>), <code>entries</code> array, optional <code>bonus_rolls</code>, <code>functions</code>, and <code>conditions</code>.</td></tr>
+                                <tr><td><code>getPools()</code></td><td>Returns a copy of all configured pools.</td></tr>
+                            </tbody>
+                        </table>
+                        <p>Entry types: <code>"item"</code> (requires <code>name</code>), <code>"loot_table"</code> (requires <code>name</code> path), <code>"empty"</code> (no drop). All entries accept <code>weight</code>, <code>functions</code>, and <code>conditions</code>.</p>
+                        <pre><code class="language-typescript">import { LootTable } from 'jepia';
+
+const golemLoot = new LootTable('Iron Golem Drops', 'myaddon:iron_golem');
+
+// Always drop some iron
+golemLoot.addPool({
+  rolls: { min: 3, max: 5 },
+  entries: [
+    { type: 'item', name: 'minecraft:iron_ingot', weight: 1 }
+  ]
+});
+
+// Chance at a rare drop
+golemLoot.addPool({
+  rolls: 1,
+  entries: [
+    { type: 'item', name: 'myaddon:golem_core', weight: 1 },
+    { type: 'empty', weight: 4 }
+  ]
+});
+
+addon.addLootTable(golemLoot);</code></pre>
+                    </section>
+
+                    <section id="spawn-rule">
+                        <h3>SpawnRule</h3>
+                        <p>Generates spawn rule JSON files in <code>behavior_pack/spawn_rules/</code>. Controls where and when an entity can naturally spawn. Each condition block groups multiple <code>minecraft:*</code> spawn conditions that must all pass.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>setPopulationControl(control)</code></td><td>Sets the spawn population category: <code>"animal"</code>, <code>"monster"</code>, <code>"water_animal"</code>, <code>"ambient"</code>, etc. Default: <code>"animal"</code>.</td></tr>
+                                <tr><td><code>addCondition(condition)</code></td><td>Adds a spawn condition block. Each object may contain any number of <code>minecraft:*</code> conditions (biome filter, brightness filter, weight, etc.).</td></tr>
+                            </tbody>
+                        </table>
+                        <pre><code class="language-typescript">import { SpawnRule } from 'jepia';
+
+const rule = new SpawnRule('Forest Critter Spawning', 'myaddon:forest_critter');
+rule
+  .setPopulationControl('animal')
+  .addCondition({
+    'minecraft:spawns_on_surface': {},
+    'minecraft:brightness_filter': { min: 7, max: 15, adjust_for_weather: true },
+    'minecraft:weight': { default: 80 },
+    'minecraft:biome_filter': { test: 'has_biome_tag', value: 'forest' }
+  });
+
+addon.addSpawnRule(rule);</code></pre>
+                        <p>Common condition keys: <code>minecraft:weight</code>, <code>minecraft:biome_filter</code>, <code>minecraft:brightness_filter</code>, <code>minecraft:difficulty_filter</code>, <code>minecraft:height_filter</code>, <code>minecraft:spawns_on_surface</code>, <code>minecraft:spawns_underground</code>, <code>minecraft:spawns_underwater</code>.</p>
+                    </section>
+
+                    <section id="trade-table">
+                        <h3>TradeTable</h3>
+                        <p>Generates trade table JSON files in <code>behavior_pack/trading/</code>. Tiers unlock as the merchant gains XP. Reference the file in an entity's <code>minecraft:economy_trade_table</code> component.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>addTier(tier)</code></td><td>Adds a merchant tier. Tier has optional <code>total_exp_required</code>, and either a <code>trades</code> array or a <code>groups</code> array (for random selection).</td></tr>
+                                <tr><td><code>getTiers()</code></td><td>Returns a copy of all configured tiers.</td></tr>
+                            </tbody>
+                        </table>
+                        <p>Each trade has <code>wants</code> and <code>gives</code> arrays of <code>TradeItem</code> (<code>item</code>, optional <code>quantity</code> or <code>{ min, max }</code>, optional <code>price_multiplier</code>). Optional: <code>max_uses</code> (default 12), <code>reward_exp</code> (default true), <code>trader_exp</code>.</p>
+                        <pre><code class="language-typescript">import { TradeTable } from 'jepia';
+
+const trades = new TradeTable('Scrap Merchant', 'myaddon:scrap_merchant');
+
+// Novice tier — always available
+trades.addTier({
+  total_exp_required: 0,
+  trades: [
+    {
+      wants: [{ item: 'minecraft:emerald', quantity: 1 }],
+      gives: [{ item: 'myaddon:composite_ingot', quantity: 2 }],
+      max_uses: 8,
+      reward_exp: true,
+      trader_exp: 1
+    }
+  ]
+});
+
+// Expert tier — unlocks after earning XP
+trades.addTier({
+  total_exp_required: 70,
+  groups: [
+    {
+      num_to_select: 1,
+      trades: [
+        {
+          wants: [{ item: 'minecraft:emerald', quantity: 5 }],
+          gives: [{ item: 'myaddon:powered_drill', quantity: 1 }]
+        },
+        {
+          wants: [{ item: 'minecraft:emerald', quantity: 4 }],
+          gives: [{ item: 'myaddon:electric_motor', quantity: 3 }]
+        }
+      ]
+    }
+  ]
+});
+
+addon.addTradeTable(trades);</code></pre>
+                    </section>
+
+                    <!-- ── World Generation ───────────────────────────────────── -->
+                    <section id="biome">
+                        <h3>Biome</h3>
+                        <p>Generates biome JSON files in <code>behavior_pack/biomes/</code> (format_version <code>1.21.110</code>). Biomes define climate, surface materials, and generation tags for a region of the world.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>setClimate(climate)</code></td><td>Sets temperature, downfall, and snow accumulation.</td></tr>
+                                <tr><td><code>setSurfaceBuilder(type, materials?)</code></td><td>Sets the surface builder type (e.g. <code>"minecraft:overworld"</code>) and optional material layers.</td></tr>
+                                <tr><td><code>addTag(tag)</code></td><td>Adds a biome tag (e.g. <code>"forest"</code>, <code>"cold"</code>). Duplicates are ignored.</td></tr>
+                                <tr><td><code>setCreatureSpawnProbability(p)</code></td><td>Sets mob spawn probability at chunk generation (0–0.75).</td></tr>
+                                <tr><td><code>setHumid(bool)</code></td><td>When true, fire cannot spread in this biome.</td></tr>
+                                <tr><td><code>setComponent(name, value)</code></td><td>Sets an arbitrary extra component (e.g. <code>minecraft:mountain_parameters</code>).</td></tr>
+                            </tbody>
+                        </table>
+                        <pre><code class="language-typescript">import { Biome } from 'jepia';
+
+const crystalForest = new Biome('Crystal Forest', 'myaddon:crystal_forest');
+crystalForest
+  .setClimate({ temperature: 0.4, downfall: 0.5 })
+  .setSurfaceBuilder('minecraft:overworld', {
+    top_material: 'myaddon:crystal_grass',
+    mid_material: 'minecraft:dirt',
+    sea_material: 'minecraft:water',
+  })
+  .addTag('forest')
+  .addTag('cold')
+  .setCreatureSpawnProbability(0.2)
+  .setHumid(true);
+
+addon.addBiome(crystalForest);</code></pre>
+                    </section>
+
+                    <section id="feature">
+                        <h3>Feature</h3>
+                        <p>Generates feature JSON files in <code>behavior_pack/features/</code> (format_version <code>1.13.0</code>). Features are world generation elements such as ore veins, trees, plants, and geodes. Feature rules control when and where they are placed.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>setType(featureType)</code></td><td>Sets the feature type root key (e.g. <code>"minecraft:ore_feature"</code>, <code>"minecraft:tree_feature"</code>).</td></tr>
+                                <tr><td><code>setData(data)</code></td><td>Sets feature-specific configuration fields. Fields depend on the feature type.</td></tr>
+                            </tbody>
+                        </table>
+                        <p>Supported types include: <code>minecraft:ore_feature</code>, <code>minecraft:tree_feature</code>, <code>minecraft:scatter_feature</code>, <code>minecraft:geode_feature</code>, <code>minecraft:single_block_feature</code>, <code>minecraft:aggregate_feature</code>, <code>minecraft:weighted_random_feature</code>, <code>minecraft:growing_plant_feature</code>, and more.</p>
+                        <pre><code class="language-typescript">import { Feature } from 'jepia';
+
+// Ore feature
+const crystalOre = new Feature('Crystal Ore', 'myaddon:crystal_ore_feature');
+crystalOre
+  .setType('minecraft:ore_feature')
+  .setData({
+    count: 6,
+    replace_rules: [
+      { places_block: 'myaddon:crystal_ore', may_replace: ['minecraft:stone', 'minecraft:deepslate'] },
+    ],
+  });
+
+addon.addFeature(crystalOre);</code></pre>
+                    </section>
+
+                    <section id="feature-rule">
+                        <h3>FeatureRule</h3>
+                        <p>Generates feature rule JSON files in <code>behavior_pack/feature_rules/</code> (format_version <code>1.13.0</code>). Feature rules attach features to biomes and control the placement pass and scatter distribution.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>setPlacesFeature(id)</code></td><td>Sets the feature identifier this rule places.</td></tr>
+                                <tr><td><code>addBiomeFilter(filter)</code></td><td>Adds a biome filter test (<code>{ test, operator, value }</code>). Most common: <code>has_biome_tag</code>.</td></tr>
+                                <tr><td><code>setPlacementPass(pass)</code></td><td>Sets the generation pass: <code>pregeneration_pass</code>, <code>feature_placement_pass</code>, <code>after_surface_pass</code>, or <code>final_pass</code>.</td></tr>
+                                <tr><td><code>setDistribution(dist)</code></td><td>Sets scatter distribution — iterations, scatter_chance, and x/y/z coordinate distributions.</td></tr>
+                            </tbody>
+                        </table>
+                        <pre><code class="language-typescript">import { FeatureRule } from 'jepia';
+
+const crystalOreRule = new FeatureRule('Crystal Ore Rule', 'myaddon:crystal_ore_overworld');
+crystalOreRule
+  .setPlacesFeature('myaddon:crystal_ore_feature')
+  .addBiomeFilter({ test: 'has_biome_tag', operator: '==', value: 'overworld' })
+  .setPlacementPass('feature_placement_pass')
+  .setDistribution({
+    iterations: 8,
+    scatter_chance: { numerator: 2, denominator: 3 },
+    x: { distribution: 'uniform', extent: [0, 16] },
+    y: { distribution: 'uniform', extent: [0, 64] },
+    z: { distribution: 'uniform', extent: [0, 16] },
+  });
+
+addon.addFeatureRule(crystalOreRule);</code></pre>
+                    </section>
+
+                    <section id="dimension">
+                        <h3>Dimension</h3>
+                        <p>Generates dimension JSON files in <code>behavior_pack/dimensions/</code> (format_version <code>1.20.0</code>). Dimensions define a custom dimension's vertical bounds and world generator type.</p>
+                        <table>
+                            <thead><tr><th>Method</th><th>Description</th></tr></thead>
+                            <tbody>
+                                <tr><td><code>setBounds(min, max)</code></td><td>Sets the accessible Y range (minecraft:dimension_bounds). Blocks outside this range become inaccessible voids.</td></tr>
+                                <tr><td><code>setGeneratorType(type)</code></td><td>Sets the generator: <code>"overworld"</code>, <code>"nether"</code>, <code>"the_end"</code>, or a custom string.</td></tr>
+                                <tr><td><code>setComponent(name, value)</code></td><td>Sets an arbitrary extra component.</td></tr>
+                            </tbody>
+                        </table>
+                        <pre><code class="language-typescript">import { Dimension } from 'jepia';
+
+const crystalVoid = new Dimension('Crystal Void', 'myaddon:crystal_void');
+crystalVoid
+  .setBounds(0, 256)
+  .setGeneratorType('overworld');
+
+addon.addDimension(crystalVoid);</code></pre>
+                    </section>
+                </section>
+
+                <section id="molang">
+                    <h2>Molang Utilities</h2>
+                    <p>The <code>Molang</code> class provides static helpers for building type-safe Molang expression strings used in render controllers, animations, and particle definitions. The <code>MolangQuery</code> constant object provides named constants for common query properties.</p>
+
+                    <pre><code class="language-typescript">import { Molang, MolangQuery } from 'jepia';
+
+// Query expressions
+Molang.query('variant')          // → "q.variant"
+Molang.query('is_invisible')     // → "q.is_invisible"
+
+// Query with arguments
+Molang.queryCall('has_armor_slot', 1)       // → "q.has_armor_slot(1)"
+Molang.queryCall('armor_color_slot', 1, 0)  // → "q.armor_color_slot(1, 0)"
+
+// Variables
+Molang.variable('decor_index')   // → "v.decor_index"
+Molang.variable('offset_x')      // → "v.offset_x"
+
+// Entity property query (shapeshifter pattern)
+Molang.property('minecraft:shape')    // → "q.property('minecraft:shape')"
+
+// Array access
+Molang.arrayIndex('Array.skins', Molang.query('variant'))
+// → "Array.skins[q.variant]"
+
+// Convenience: variant array selection
+Molang.variantArray('skins')   // → "Array.skins[q.variant]"
+
+// Ternary
+Molang.ternary(Molang.query('is_sheared'), 'Geometry.sheared', 'Geometry.woolly')
+// → "(q.is_sheared ? Geometry.sheared : Geometry.woolly)"
+
+// Logical NOT
+Molang.not(Molang.query('is_sleeping'))  // → "!q.is_sleeping"
+
+// Equality comparison
+Molang.equals(Molang.property('minecraft:shape'), "'chicken'")
+// → "q.property('minecraft:shape') == 'chicken'"
+
+// Property-to-index (shapeshifter nested ternary)
+Molang.propertyToIndex('minecraft:shape', ['shapeshifter', 'chicken', 'cat'])
+// → "(q.property('minecraft:shape') == 'shapeshifter' ? 0 : ...)"
+
+// Math helpers
+Molang.mathCos('q.anim_time * 12.3')   // → "math.cos(q.anim_time * 12.3)"
+Molang.mathFloor('q.variant * 0.5')    // → "math.floor(q.variant * 0.5)"
+
+// UV atlas helpers
+const uvAnim = Molang.uvAtlas();
+// → { offset: ["v.offset_x", "v.offset_y"], scale: ["v.scale_x", "v.scale_y"] }
+
+const [uOffset, uScale] = Molang.uvAtlasAxis();
+// uOffset → "v.offset_x", uScale → "v.scale_x"</code></pre>
+
+                    <h4>MolangQuery constants</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Constant</th><th>Query</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>MolangQuery.VARIANT</code></td><td><code>q.variant</code></td><td>Numeric variant index (ocelot skin, villager type, …)</td></tr>
+                            <tr><td><code>MolangQuery.MARK_VARIANT</code></td><td><code>q.mark_variant</code></td><td>Secondary variant index</td></tr>
+                            <tr><td><code>MolangQuery.COLOR</code></td><td><code>q.color</code></td><td>Color index (horse coat, etc.)</td></tr>
+                            <tr><td><code>MolangQuery.IS_SHEARED</code></td><td><code>q.is_sheared</code></td><td>Whether the entity is sheared (0/1)</td></tr>
+                            <tr><td><code>MolangQuery.IS_INVISIBLE</code></td><td><code>q.is_invisible</code></td><td>Whether the entity is invisible (0/1)</td></tr>
+                            <tr><td><code>MolangQuery.IS_SLEEPING</code></td><td><code>q.is_sleeping</code></td><td>Whether the entity is sleeping (0/1)</td></tr>
+                            <tr><td><code>MolangQuery.IS_CHESTED</code></td><td><code>q.is_chested</code></td><td>Whether the entity has a chest equipped (0/1)</td></tr>
+                            <tr><td><code>MolangQuery.ANIM_TIME</code></td><td><code>q.anim_time</code></td><td>Current animation time in seconds</td></tr>
+                            <tr><td><code>MolangQuery.OVERLAY_ALPHA</code></td><td><code>q.overlay_alpha</code></td><td>Alpha component for the hurt/overlay effect</td></tr>
+                            <tr><td><code>MolangQuery.HAS_ARMOR_SLOT</code></td><td><code>q.has_armor_slot</code></td><td>Whether a given armor slot is occupied</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="packager">
+                    <h2>Packager</h2>
+                    <p>The <code>Packager</code> class creates distributable <code>.mcaddon</code> and <code>.mcpack</code> archives from generated pack folders using ZIP compression.</p>
+
+                    <pre><code class="language-typescript">import { Packager, packageAddon } from 'jepia';
+
+// Using the Packager class
+const packager = new Packager({
+  outputPath: './dist',
+  addonName: 'MyAddon',
+  format: 'mcaddon',         // 'mcaddon' | 'mcpack' | 'both'
+  compressionLevel: 9,       // 0-9 (optional)
+});
+
+const result = await packager.package(
+  './output/behavior_pack',
+  './output/resource_pack'
+);
+
+console.log(result.success);       // true
+console.log(result.totalSize);     // bytes
+console.log(result.addonPackPath); // './dist/MyAddon.mcaddon'
+
+// Convenience function (one-liner)
+await packageAddon(
+  './output/behavior_pack',
+  './output/resource_pack',
+  './dist',
+  'MyAddon'
+);</code></pre>
+
+                    <table>
+                        <thead>
+                            <tr><th>Method / Function</th><th>Description</th><th>Returns</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>constructor(options)</code></td><td>Creates a packager with output path, addon name, format, and compression options.</td><td><code>Packager</code></td></tr>
+                            <tr><td><code>package(behaviorPackPath, resourcePackPath)</code></td><td>Creates the archive(s). Returns a result object with paths, sizes, and success status.</td><td><code>Promise&lt;PackageResult&gt;</code></td></tr>
+                            <tr><td><code>packageAddon(bp, rp, output, name)</code></td><td>Convenience function: creates a <code>.mcaddon</code> containing both packs.</td><td><code>Promise&lt;PackageResult&gt;</code></td></tr>
+                            <tr><td><code>packageAssets(bp?, rp?, output, name)</code></td><td>Creates individual <code>.mcpack</code> files for each pack provided.</td><td><code>Promise&lt;PackageResult&gt;</code></td></tr>
+                            <tr><td><code>packageAsBundle(bp, rp, output, name)</code></td><td>Creates both <code>.mcaddon</code> and individual <code>.mcpack</code> files.</td><td><code>Promise&lt;PackageResult&gt;</code></td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>PackageResult</h4>
+                    <pre><code class="language-typescript">interface PackageResult {
+  behaviorPackPath?: string;   // path to .mcpack (behavior)
+  resourcePackPath?: string;   // path to .mcpack (resource)
+  addonPackPath?: string;      // path to .mcaddon
+  totalSize: number;           // total bytes across all archives
+  packSizes: {
+    behaviorPack?: number;
+    resourcePack?: number;
+    addonPack?: number;
+  };
+  success: boolean;
+  error?: string;
+}</code></pre>
+                </section>
+
+                <section id="config">
+                    <h2>Configuration</h2>
+                    <p>Jepia supports configuration files for storing add-on metadata, build options, and persisted UUIDs. Configuration is validated using Zod schemas.</p>
+
+                    <h3>jepia.config.json</h3>
+                    <pre><code class="language-json">{
+  "name": "MyAddon",
+  "author": "YourName",
+  "version": "1.0.0",
+  "description": "A custom Minecraft add-on",
+  "namespace": "myaddon",
+  "baseGameVersion": "1.20.0",
+  "build": {
+    "output": "./dist",
+    "createPackage": true,
+    "packageFormat": "mcaddon",
+    "validate": true,
+    "minify": false
+  },
+  "uuids": {
+    "behaviorPackUUID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "behaviorModuleUUID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "resourcePackUUID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "resourceModuleUUID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  }
+}</code></pre>
+
+                    <h3>UUID Persistence</h3>
+                    <p>When <code>addon.generate()</code> is called, Jepia automatically writes the generated UUIDs to <code>jepia.config.json</code>. On subsequent builds, the same UUIDs are reused so that Minecraft treats the pack as the same installation. This prevents duplicate pack entries and preserves world-level settings.</p>
+
+                    <h3>Configuration API</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Function</th><th>Description</th><th>Returns</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>validateConfig(config)</code></td><td>Validates a config object against the Zod schema.</td><td><code>JepiaConfig</code></td></tr>
+                            <tr><td><code>loadConfigFile(path)</code></td><td>Loads config from a <code>.json</code> or <code>.ts</code> file.</td><td><code>Promise&lt;JepiaConfig&gt;</code></td></tr>
+                            <tr><td><code>loadConfigFromDirectory(dir)</code></td><td>Searches for <code>jepia.config.ts</code> or <code>jepia.config.json</code> in a directory.</td><td><code>Promise&lt;JepiaConfig | null&gt;</code></td></tr>
+                            <tr><td><code>upsertUuidsInConfigFile(path, uuids)</code></td><td>Merges UUID values into an existing config file without overwriting other fields.</td><td><code>Promise&lt;void&gt;</code></td></tr>
+                            <tr><td><code>parseVersionString(version)</code></td><td>Parses <code>"1.2.3"</code> into <code>[1, 2, 3]</code>.</td><td><code>[number, number, number]</code></td></tr>
+                            <tr><td><code>versionToString(tuple)</code></td><td>Converts <code>[1, 2, 3]</code> to <code>"1.2.3"</code>.</td><td><code>string</code></td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="examples">
+                    <h2>Examples</h2>
+                    <p>The repository includes several ready‑to‑run examples in the <code>examples/</code> directory:</p>
+                    <ul>
+                        <li><strong>simple‑addon.ts</strong> – Basic items, blocks, entities, recipes, and loot tables.</li>
+                        <li><strong>comprehensive‑addon.ts</strong> – A larger add‑on ("FantasyRealm") with 21 components across all categories.</li>
+                        <li><strong>texture‑layering‑migration.ts</strong> – Seven migration scenarios demonstrating the upgrade path from the legacy single-texture API to multi-layer, PBR TextureSet, and Vibrant Visuals systems.</li>
+                    </ul>
+                    <p>Run any example with:</p>
+                    <pre><code class="language-bash">bun run examples/simple-addon.ts</code></pre>
+
+                    <h3>Full Rendering Pipeline Example</h3>
+                    <pre><code class="language-typescript">import {
+  Addon, Entity,
+  TextureLayer, RenderController,
+  Material, VanillaMaterials,
+  Molang
+} from 'jepia';
+
+const addon = new Addon('MyMod', 'Custom entity with full rendering pipeline');
+
+// 1. Create texture variants
+const wildLayer  = new TextureLayer('Wild',  'mymod:ocelot_wild',  'textures/entity/ocelot_wild.png');
+const blackLayer = new TextureLayer('Black', 'mymod:ocelot_black', 'textures/entity/ocelot_black.png');
+const redLayer   = new TextureLayer('Red',   'mymod:ocelot_red',   'textures/entity/ocelot_red.png');
+
+// 2. Create material
+const mat = Material.fromVanilla('mymod:ocelot_mat', VanillaMaterials.ENTITY_ALPHATEST);
+
+// 3. Create render controller (auto-configures texture array + q.variant)
+const rc = RenderController.fromTextureLayers(
+  'Ocelot RC', 'mymod:ocelot',
+  [wildLayer, blackLayer, redLayer]
+);
+
+// 4. Add hurt color tint
+rc.setIsHurtColor({ r: '0.0', g: '0.0', b: '1.0', a: '0.5' });
+
+// 5. Create entity and wire everything together
+const ocelot = new Entity('Ocelot', 'mymod:ocelot');
+ocelot.addComponent('minecraft:health', { value: 10 });
+ocelot.setMaterial(mat);
+ocelot.setRenderController(rc);
+
+addon.addEntity(ocelot);
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <section id="advanced">
+                    <h2>Advanced Usage</h2>
+
+                    <h3>Texture Layering &amp; PBR</h3>
+                    <p>Jepia supports the full Minecraft PBR pipeline via <code>TextureLayer</code> and <code>TextureSet</code>. This allows building complex textures with normal maps, MER (metalness/emissive/roughness), and heightmaps for Vibrant Visuals rendering.</p>
+                    <pre><code class="language-typescript">import { TextureLayer, TextureSet } from 'jepia';
+
+const color     = new TextureLayer('Base', 'myaddon:base_color', 'textures/entity/base.png');
+const normalMap = new TextureLayer('Normal', 'myaddon:base_normal',
+  'textures/entity/base_normal.png', 'normal');
+const mer       = new TextureLayer('MER', 'myaddon:base_mer',
+  'textures/entity/base_mer.png', 'mer');
+
+const pbr = new TextureSet('Base PBR', 'myaddon:base_pbr');
+pbr.setColor(color)
+   .setNormal(normalMap)
+   .setMer(mer);
+// Generates a .texture_set.json file for Vibrant Visuals</code></pre>
+
+                    <h3>Dynamic Geometry Selection</h3>
+                    <pre><code class="language-typescript">import { RenderController, Molang } from 'jepia';
+
+// Sheep: woolly vs sheared geometry based on q.is_sheared
+const rc = new RenderController('Sheep RC', 'myaddon:sheep')
+  .addGeometryArray('geos', ['Geometry.default', 'Geometry.sheared'])
+  .setGeometry(Molang.arrayIndex('Array.geos', Molang.query('is_sheared')))
+  .setMaterials([{ '*': 'Material.default' }])
+  .setTextures(['Texture.default']);</code></pre>
+
+                    <h3>Shapeshifter Pattern (Property-Based Geometry)</h3>
+                    <pre><code class="language-typescript">import { RenderController, Molang } from 'jepia';
+
+const shapes = ['shapeshifter', 'chicken', 'cat', 'sheep'];
+const rc = new RenderController('Shapeshifter RC', 'myaddon:shapeshifter')
+  .addGeometryArray('geos', shapes.map(s => `Geometry.${s}`))
+  .setGeometry(Molang.arrayIndex(
+    'Array.geos',
+    Molang.propertyToIndex('minecraft:shape', shapes)
+  ))
+  .setMaterials([{ '*': 'Material.default' }])
+  .setTextures(['Texture.default']);</code></pre>
+
+                    <h3>Configuration File</h3>
+                    <p>You can store add‑on metadata (including generated UUIDs) in a <code>jepia.config.json</code> file. This ensures consistent UUIDs across multiple builds.</p>
+                    <pre><code class="language-json">{
+  "name": "MyAddon",
+  "author": "Your Name",
+  "uuids": {
+    "behaviorPackUUID": "...",
+    "resourcePackUUID": "..."
+  }
+}</code></pre>
+                </section>
+
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <!-- SCRIPTING                                                  -->
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <section id="scripting">
+                    <h2>Scripting</h2>
+                    <p>Jepia integrates Minecraft's Script API directly into the add‑on build pipeline. You write runtime game logic in the same TypeScript file as your JSON components. During <code>addon.generate()</code>, Jepia extracts the script callbacks, bundles them with <a href="https://bun.sh">Bun.build</a>, and writes <code>behavior_pack/scripts/main.js</code>. The behavior pack manifest automatically gains a <code>"type": "script"</code> module and the correct <code>@minecraft/*</code> dependencies.</p>
+
+                    <div style="background-color: #3a2f3d; border-left: 6px solid #ff9e6d; padding: 12px 18px; margin: 20px 0; border-radius: 4px;">
+                        <strong>Important:</strong> Code inside <code>addon.script()</code> callbacks runs <em>inside Minecraft Bedrock at runtime</em>. The <code>@minecraft/*</code> modules do not exist outside the game engine — they are provided by Minecraft when the pack is loaded. Jepia extracts the source text at build time via <code>Function.prototype.toString()</code> and rewrites <code>ctx.server</code> references into proper ES module imports.
+                    </div>
+
+                    <!-- ─── addon.script() ─── -->
+                    <h3 id="script-inline">addon.script()</h3>
+                    <p>Registers an inline runtime script block. The callback body is extracted and bundled into <code>scripts/main.js</code>.</p>
+
+                    <p><strong>Simple form</strong> — defaults to <code>@minecraft/server</code> at the latest stable version:</p>
+                    <pre><code class="language-typescript">addon.script((ctx) => {
+  const { world, system } = ctx.server;
+
+  world.afterEvents.entityHitEntity.subscribe((event) => {
+    const attacker = event.damagingEntity;
+    if (attacker.typeId === 'minecraft:player') {
+      system.run(() => attacker.sendMessage('You struck something!'));
+    }
+  });
+});</code></pre>
+
+                    <p><strong>Full form</strong> — specify module versions explicitly:</p>
+                    <pre><code class="language-typescript">addon.script({
+  modules: {
+    server: '2.5.0',     // @minecraft/server (Scripting V2 stable)
+    serverUi: '2.0.0',   // @minecraft/server-ui (Scripting V2 stable)
+  },
+}, (ctx) => {
+  const { world } = ctx.server;
+  const { ActionFormData } = ctx.serverUi;
+
+  world.afterEvents.itemUse.subscribe((event) => {
+    const form = new ActionFormData()
+      .title('Menu')
+      .button('Hello');
+    form.show(event.source);
+  });
+});</code></pre>
+
+                    <p>Multiple <code>addon.script()</code> calls are merged into a single <code>scripts/main.js</code> with deduplicated imports.</p>
+
+                    <h4>ScriptContext properties</h4>
+                    <table>
+                        <tr><th>Property</th><th>Module</th><th>Default version</th><th>Notes</th></tr>
+                        <tr><td><code>ctx.server</code></td><td><code>@minecraft/server</code></td><td><code>2.5.0</code></td><td>Scripting V2 stable</td></tr>
+                        <tr><td><code>ctx.serverUi</code></td><td><code>@minecraft/server-ui</code></td><td><code>2.0.0</code></td><td>Scripting V2 stable</td></tr>
+                        <tr><td><code>ctx.common</code></td><td><code>@minecraft/common</code></td><td><code>1.2.0</code></td><td>Error types, stable</td></tr>
+                        <tr><td><code>ctx.serverGametest</code></td><td><code>@minecraft/server-gametest</code></td><td><code>1.0.0-beta</code></td><td>Requires Beta APIs experiment</td></tr>
+                        <tr><td><code>ctx.serverAdmin</code></td><td><code>@minecraft/server-admin</code></td><td><code>1.0.0-beta</code></td><td>Dedicated server only, beta</td></tr>
+                        <tr><td><code>ctx.serverNet</code></td><td><code>@minecraft/server-net</code></td><td><code>1.0.0-beta</code></td><td>Dedicated server only, beta</td></tr>
+                        <tr><td><code>ctx.serverEditor</code></td><td><code>@minecraft/server-editor</code></td><td><code>0.1.0-beta</code></td><td>Editor extension only, beta</td></tr>
+                        <tr><td><code>ctx.serverGraphics</code></td><td><code>@minecraft/server-graphics</code></td><td><code>1.0.0-beta</code></td><td>Graphics/rendering, beta</td></tr>
+                        <tr><td><code>ctx.diagnostics</code></td><td><code>@minecraft/diagnostics</code></td><td><code>1.0.0-beta</code></td><td>Content diagnostics, beta</td></tr>
+                        <tr><td><code>ctx.debugUtilities</code></td><td><code>@minecraft/debug-utilities</code></td><td><code>1.0.0-beta</code></td><td>Debug helpers, beta</td></tr>
+                    </table>
+
+                    <h4>@minecraft/server version → Minecraft version</h4>
+                    <table>
+                        <tr><th>@minecraft/server</th><th>Minecraft</th></tr>
+                        <tr><td><code>2.5.0</code></td><td>~1.26.0</td></tr>
+                        <tr><td><code>2.4.0</code></td><td>~1.25.30</td></tr>
+                        <tr><td><code>2.3.0</code></td><td>~1.25.0</td></tr>
+                        <tr><td><code>2.2.0</code></td><td>~1.24.0</td></tr>
+                        <tr><td><code>2.1.0</code></td><td>~1.23.0</td></tr>
+                        <tr><td><code>2.0.0</code></td><td>~1.22.0</td></tr>
+                    </table>
+                    <p><small>Only Scripting V2 (2.x.x) is supported. V1 (1.x.x) has been removed.</small></p>
+
+                    <h4>addon.setScriptModuleVersion()</h4>
+                    <p>Override the version for a specific module globally:</p>
+                    <pre><code class="language-typescript">addon.setScriptModuleVersion('@minecraft/server', '2.5.0'); // Scripting V2 stable</code></pre>
+
+                    <!-- ─── addon.scriptFile() ─── -->
+                    <h3 id="script-file">addon.scriptFile()</h3>
+                    <p>Points to an existing TypeScript or JavaScript file. Jepia bundles it alongside any inline blocks. Useful for complex scripts or existing codebases.</p>
+                    <pre><code class="language-typescript">// Single file
+addon.scriptFile('./scripts/events.ts');
+
+// Multiple files (bundled into one output)
+addon.scriptFile('./scripts/events.ts');
+addon.scriptFile('./scripts/commands.ts');</code></pre>
+                    <p>File-based scripts can use normal top-level <code>import ... from '@minecraft/server'</code> statements — Jepia treats all <code>@minecraft/*</code> modules as externals automatically.</p>
+
+                    <h4>Generated output structure</h4>
+                    <pre><code>behavior_pack/
+├── manifest.json        ← script module + @minecraft/server dependency added
+└── scripts/
+    └── main.js          ← bundled runtime code (runs inside Minecraft only)</code></pre>
+
+                    <h4>Generated manifest (excerpt)</h4>
+                    <pre><code class="language-json">{
+  "modules": [
+    { "type": "data", "uuid": "...", "version": [1, 0, 0] },
+    { "type": "script", "language": "javascript",
+      "uuid": "...", "version": [1, 0, 0], "entry": "scripts/main.js" }
+  ],
+  "dependencies": [
+    { "module_name": "@minecraft/server", "version": "2.5.0" }
+  ]
+}</code></pre>
+
+                    <!-- ─── Custom Components ─── -->
+                    <h3 id="custom-components">Custom Components V2</h3>
+                    <p>Custom Components bridge JSON block/item definitions with runtime Script API handlers. Calling <code>addCustomComponent()</code> on a Block or Item does two things automatically during <code>addon.generate()</code>:</p>
+                    <ol>
+                        <li>Adds the component name to the block/item JSON <code>components</code> section.</li>
+                        <li>Generates <code>system.beforeEvents.startup.subscribe()</code> registration code in <code>scripts/main.js</code>.</li>
+                    </ol>
+
+                    <h4>Block.addCustomComponent()</h4>
+                    <pre><code class="language-typescript">import { Block } from 'jepia';
+
+const cloudBlock = new Block('Cloud Block', 'myaddon:cloud_block');
+
+cloudBlock.addCustomComponent(
+  'myaddon:crumble_on_step',   // namespaced component name
+  {
+    // Handler runs inside Minecraft — system is imported by generated startup code
+    onStepOn: (event) => {
+      const { block, dimension } = event;
+      system.run(() => {
+        dimension.runCommand(`setblock ${block.x} ${block.y} ${block.z} air`);
+      });
+    },
+    onEntityFallOn: (event) => {
+      event.entity.sendMessage('The cloud crumbles!');
+    },
+  },
+  { fragile: true }  // optional JSON params embedded in block component entry
+);</code></pre>
+
+                    <p><strong>Block event handlers</strong> (<code>BlockCustomComponentHandlers</code>):</p>
+                    <table>
+                        <tr><th>Handler</th><th>Trigger</th></tr>
+                        <tr><td><code>beforeOnPlayerPlace</code></td><td>Before a player places the block</td></tr>
+                        <tr><td><code>onBreak</code></td><td>Block is broken (any cause)</td></tr>
+                        <tr><td><code>onEntityFallOn</code></td><td>An entity lands on the block</td></tr>
+                        <tr><td><code>onPlace</code></td><td>Block is placed</td></tr>
+                        <tr><td><code>onPlayerBreak</code></td><td>A player breaks the block</td></tr>
+                        <tr><td><code>onPlayerInteract</code></td><td>A player right-clicks / interacts</td></tr>
+                        <tr><td><code>onRandomTick</code></td><td>Random tick fires</td></tr>
+                        <tr><td><code>onRedstoneUpdate</code></td><td>Redstone signal changes</td></tr>
+                        <tr><td><code>onStepOff</code></td><td>An entity steps off the block</td></tr>
+                        <tr><td><code>onStepOn</code></td><td>An entity steps onto the block</td></tr>
+                        <tr><td><code>onTick</code></td><td>Every game tick while active</td></tr>
+                    </table>
+
+                    <h4>Item.addCustomComponent()</h4>
+                    <pre><code class="language-typescript">import { Item } from 'jepia';
+
+const coin = new Item('Lucky Coin', 'myaddon:lucky_coin');
+
+coin.addCustomComponent('myaddon:flip_coin', {
+  onUse: (event) => {
+    const { source: player } = event;
+    system.run(() => {
+      if (Math.random() > 0.5) {
+        player.sendMessage('Heads! Good fortune.');
+        player.addEffect('minecraft:luck', 200, { amplifier: 0 });
+      } else {
+        player.sendMessage('Tails! Better luck next time.');
+      }
+    });
+  },
+  onHitEntity: (event) => {
+    event.attackingEntity?.sendMessage('Strike with the Lucky Coin!');
+  },
+});</code></pre>
+
+                    <p><strong>Item event handlers</strong> (<code>ItemCustomComponentHandlers</code>):</p>
+                    <table>
+                        <tr><th>Handler</th><th>Trigger</th></tr>
+                        <tr><td><code>onBeforeDurabilityDamage</code></td><td>Before durability is reduced</td></tr>
+                        <tr><td><code>onCompleteUse</code></td><td>After a use-duration completes (e.g., eating)</td></tr>
+                        <tr><td><code>onConsume</code></td><td>Item is consumed</td></tr>
+                        <tr><td><code>onHitEntity</code></td><td>Item used to hit an entity</td></tr>
+                        <tr><td><code>onMineBlock</code></td><td>Block mined with item</td></tr>
+                        <tr><td><code>onUse</code></td><td>Player uses (right-clicks) the item</td></tr>
+                        <tr><td><code>onUseOn</code></td><td>Player uses item on a block</td></tr>
+                    </table>
+
+                    <h4>Accessors</h4>
+                    <pre><code class="language-typescript">block.hasCustomComponents();           // boolean
+block.getCustomComponents();           // CustomComponentRegistration[]
+block.getCustomComponent('ns:name');   // single registration or undefined
+block.getSummary().customComponentCount; // number</code></pre>
+
+                    <!-- ─── Custom Commands ─── -->
+                    <h3 id="custom-commands">Custom Commands</h3>
+                    <p>Register a custom slash command. Jepia generates the startup registration code in <code>scripts/main.js</code> automatically, including enum registration and command handler wiring.</p>
+
+                    <pre><code class="language-typescript">import { CustomCommandPermissionLevel, CustomCommandParamType } from 'jepia';
+
+addon.addCustomCommand({
+  name: 'myaddon:heal',
+  description: 'Heal targeted players to full health',
+  permissionLevel: CustomCommandPermissionLevel.GameDirectors,
+  mandatoryParameters: [
+    { type: CustomCommandParamType.PlayerSelector, name: 'targets' },
+  ],
+  // system is imported in the generated startup code — use it directly.
+  // This callback runs inside Minecraft only.
+  callback: (origin, targets) => {
+    system.run(() => {
+      for (const player of targets) {
+        const health = player.getComponent('minecraft:health');
+        if (health) health.setCurrentValue(health.effectiveMax);
+        player.sendMessage('You have been healed!');
+      }
+    });
+  },
+});</code></pre>
+
+                    <h4>CustomCommandConfig</h4>
+                    <table>
+                        <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                        <tr><td><code>name</code></td><td><code>string</code></td><td>Yes</td><td>Namespaced command name (e.g. <code>"myaddon:heal"</code>)</td></tr>
+                        <tr><td><code>description</code></td><td><code>string</code></td><td>Yes</td><td>Human-readable command description</td></tr>
+                        <tr><td><code>permissionLevel</code></td><td><code>CustomCommandPermissionLevel</code></td><td>No</td><td>Who can run the command (default: <code>Any</code>)</td></tr>
+                        <tr><td><code>mandatoryParameters</code></td><td><code>CustomCommandParameter[]</code></td><td>No</td><td>Required parameters</td></tr>
+                        <tr><td><code>optionalParameters</code></td><td><code>CustomCommandParameter[]</code></td><td>No</td><td>Optional parameters</td></tr>
+                        <tr><td><code>callback</code></td><td><code>Function</code></td><td>Yes</td><td>Handler — runs in Minecraft's restricted context; use <code>system.run()</code> for writes</td></tr>
+                    </table>
+
+                    <h4>CustomCommandPermissionLevel</h4>
+                    <table>
+                        <tr><th>Value</th><th>Who can run</th></tr>
+                        <tr><td><code>Any</code></td><td>All players</td></tr>
+                        <tr><td><code>GameDirectors</code></td><td>Operators / cheats enabled</td></tr>
+                        <tr><td><code>Admin</code></td><td>Server admins</td></tr>
+                        <tr><td><code>Host</code></td><td>World host only</td></tr>
+                        <tr><td><code>Owner</code></td><td>Pack owner only</td></tr>
+                    </table>
+
+                    <h4>CustomCommandParamType</h4>
+                    <table>
+                        <tr><th>Value</th><th>Minecraft equivalent</th></tr>
+                        <tr><td><code>BlockType</code></td><td>Block identifier string</td></tr>
+                        <tr><td><code>Boolean</code></td><td>true / false</td></tr>
+                        <tr><td><code>EntitySelector</code></td><td>@e, @a, etc.</td></tr>
+                        <tr><td><code>Float</code></td><td>Decimal number</td></tr>
+                        <tr><td><code>Integer</code></td><td>Whole number</td></tr>
+                        <tr><td><code>ItemType</code></td><td>Item identifier string</td></tr>
+                        <tr><td><code>Position</code></td><td>XYZ coordinates</td></tr>
+                        <tr><td><code>PlayerSelector</code></td><td>@p, @a, specific name</td></tr>
+                        <tr><td><code>String</code></td><td>Quoted string</td></tr>
+                        <tr><td><code>Enum</code></td><td>Custom enum value (requires <code>CustomCommandEnum</code>)</td></tr>
+                    </table>
+
+                    <h4>Custom enums</h4>
+                    <pre><code class="language-typescript">addon.addCustomCommand(
+  {
+    name: 'myaddon:give_ore',
+    description: 'Give player an ore type',
+    mandatoryParameters: [
+      { type: CustomCommandParamType.PlayerSelector, name: 'target' },
+      { type: CustomCommandParamType.Enum, name: 'oreType' },
+    ],
+    callback: (origin, target, oreType) => {
+      system.run(() => {
+        target[0]?.runCommand(`give @s myaddon:${oreType}_ore`);
+      });
+    },
+  },
+  [
+    { name: 'OreType', values: ['iron', 'copper', 'gold'] },
+  ]
+);</code></pre>
+
+                    <!-- ─── Cross-Reference Helpers ─── -->
+                    <h3 id="cross-ref">Cross-Reference Helpers</h3>
+                    <p>These methods bridge component identifiers between JSON definitions and script code. They're especially useful when component IDs are dynamic or derived from user input.</p>
+
+                    <pre><code class="language-typescript">const fireSword = new Item('Fire Sword', 'myaddon:fire_sword');
+addon.addItem(fireSword);
+
+// Get the identifier for use in scripts
+const id = addon.getItemId(fireSword);  // "myaddon:fire_sword"
+
+// Or look up all registered IDs
+const itemIds = addon.getRegisteredItemIds();   // ["myaddon:fire_sword", ...]
+const blockIds = addon.getRegisteredBlockIds();  // ["myaddon:magic_ore", ...]
+const entityIds = addon.getRegisteredEntityIds(); // [...]</code></pre>
+
+                    <table>
+                        <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+                        <tr><td><code>getItemId(item)</code></td><td><code>string</code></td><td>Identifier string of the item component</td></tr>
+                        <tr><td><code>getBlockId(block)</code></td><td><code>string</code></td><td>Identifier string of the block component</td></tr>
+                        <tr><td><code>getEntityId(entity)</code></td><td><code>string</code></td><td>Identifier string of the entity component</td></tr>
+                        <tr><td><code>getRegisteredItemIds()</code></td><td><code>string[]</code></td><td>All registered item IDs</td></tr>
+                        <tr><td><code>getRegisteredBlockIds()</code></td><td><code>string[]</code></td><td>All registered block IDs</td></tr>
+                        <tr><td><code>getRegisteredEntityIds()</code></td><td><code>string[]</code></td><td>All registered entity IDs</td></tr>
+                        <tr><td><code>hasScripts()</code></td><td><code>boolean</code></td><td>Whether any scripts are registered</td></tr>
+                    </table>
+
+                    <h4>Constants injection</h4>
+                    <p>When scripts are enabled, Jepia automatically injects a constants object into <code>scripts/main.js</code> containing all registered component identifiers in SCREAMING_SNAKE_CASE:</p>
+                    <pre><code class="language-javascript">// Auto-generated in scripts/main.js
+export const ITEMS = {
+  FIRE_SWORD: "myaddon:fire_sword",
+  COOL_POTION: "myaddon:cool_potion",
+};
+export const BLOCKS = {
+  MAGIC_ORE: "myaddon:magic_ore",
+};
+export const ENTITIES = {
+  DRAGON: "myaddon:dragon",
+};</code></pre>
+                    <p>Use these constants inside your script callbacks to avoid string duplication between JSON and runtime code.</p>
+
+                    <!-- ─── Script Types ─── -->
+                    <h3 id="script-types">Script Types Reference</h3>
+
+                    <h4>ScriptModuleId</h4>
+                    <pre><code class="language-typescript">type ScriptModuleId =
+  | '@minecraft/server'           // stable 2.5.0 (V2)
+  | '@minecraft/server-ui'        // stable 2.0.0 (V2)
+  | '@minecraft/common'           // stable 1.2.0
+  | '@minecraft/server-gametest'  // 1.0.0-beta only
+  | '@minecraft/server-admin'     // 1.0.0-beta only
+  | '@minecraft/server-net'       // 1.0.0-beta only
+  | '@minecraft/server-editor'    // 0.1.0-beta only
+  | '@minecraft/server-graphics'  // 1.0.0-beta only
+  | '@minecraft/diagnostics'      // 1.0.0-beta only
+  | '@minecraft/debug-utilities'; // 1.0.0-beta only</code></pre>
+
+                    <h4>ScriptOptions</h4>
+                    <pre><code class="language-typescript">interface ScriptOptions {
+  modules?: {
+    server?: string;          // @minecraft/server version
+    serverUi?: string;        // @minecraft/server-ui version
+    common?: string;          // @minecraft/common version
+    serverGametest?: string;
+    serverAdmin?: string;
+    serverNet?: string;
+    serverEditor?: string;
+    serverGraphics?: string;
+    diagnostics?: string;
+    debugUtilities?: string;
+  };
+}</code></pre>
+
+                    <h4>UUID persistence</h4>
+                    <p>The script module UUID (required for stable pack identity) is stored in <code>jepia.config.json</code> alongside the behavior/resource pack UUIDs:</p>
+                    <pre><code class="language-json">{
+  "addonName": "MyAddon",
+  "uuids": {
+    "behaviorPackUUID": "...",
+    "behaviorModuleUUID": "...",
+    "resourcePackUUID": "...",
+    "resourceModuleUUID": "...",
+    "scriptModuleUUID": "..."
+  }
+}</code></pre>
+                </section>
+
+                <!-- Phase 10 API -->
+                <section id="dialogue">
+                    <h2>Dialogue</h2>
+                    <p>NPC dialogue definitions written to <code>behavior_pack/dialogue/&lt;id&gt;.json</code>. Format version <code>1.20.80</code>.</p>
+                    <pre><code class="language-typescript">import { Dialogue } from 'jepia';
+
+const dlg = new Dialogue('Trader Dialogue', 'myaddon:trader');
+dlg.addScene('intro', {
+  npc_name: 'Mysterious Trader',
+  text: 'What do you seek?',
+  on_open_commands: ['/effect @initiator speed 10 1'],
+  buttons: [
+    { name: 'Shop',   commands: ['/dialogue open @e[type=myaddon:trader,r=3] @initiator shop'] },
+    { name: 'Leave',  commands: [] },
+  ],
+});
+addon.addDialogue(dlg);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>addScene(tag, opts?)</code></td><td>Add a scene. <code>opts</code>: npc_name, text, on_open_commands, on_close_commands, buttons</td></tr>
+                        <tr><td><code>getScenes()</code></td><td>Returns all scenes as a copy</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: ≥1 scene, no duplicate tags, ≤6 buttons per scene</td></tr>
+                        <tr><td><code>toJSON()</code></td><td>Serialises to <code>minecraft:npc_dialogue</code> JSON</td></tr>
+                    </table>
+                </section>
+
+                <section id="camera">
+                    <h2>Camera</h2>
+                    <p>Custom camera presets written to <code>resource_pack/cameras/presets/&lt;id&gt;.json</code>. Format version <code>1.21.0</code>.</p>
+                    <pre><code class="language-typescript">import { Camera } from 'jepia';
+
+const cam = new Camera('Over-Shoulder', 'myaddon:over_shoulder');
+cam.setInheritFrom('minecraft:follow_orbit')
+   .setRadius(4)
+   .setViewOffset(2.0, 0.5)
+   .setEntityOffset(0, 1.5, 0)
+   .setStartingRotation(-10, 0);
+addon.addCamera(cam);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setInheritFrom(preset)</code></td><td>Vanilla preset to inherit (e.g. <code>"minecraft:follow_orbit"</code>)</td></tr>
+                        <tr><td><code>setRadius(r)</code></td><td>Distance from player in blocks (0.1–100)</td></tr>
+                        <tr><td><code>setViewOffset(x, y)</code></td><td>Screen-space anchor offset</td></tr>
+                        <tr><td><code>setEntityOffset(x, y, z)</code></td><td>Player-space anchor offset</td></tr>
+                        <tr><td><code>setStartingRotation(pitch, yaw)</code></td><td>Initial camera rotation (degrees)</td></tr>
+                        <tr><td><code>setAimAssist(opts)</code></td><td>Aim-assist preset, target_mode, angle, distance</td></tr>
+                        <tr><td><code>setField(key, value)</code></td><td>Escape hatch for any other camera preset field</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: radius 0.1–100, pitch ±90°, yaw ±180°</td></tr>
+                    </table>
+                </section>
+
+                <section id="fog">
+                    <h2>Fog</h2>
+                    <p>Fog definitions written to <code>resource_pack/fogs/&lt;id&gt;.json</code>. Format version <code>1.16.100</code>.</p>
+                    <pre><code class="language-typescript">import { Fog } from 'jepia';
+
+const fog = new Fog('Mystic Fog', 'myaddon:mystic');
+fog.setDistanceFog('air',   { fog_start: 0.8, fog_end: 1.0, fog_color: '#c0c0ff', render_distance_type: 'render' })
+   .setDistanceFog('water', { fog_start: 0,   fog_end: 30,  fog_color: '#1a3080', render_distance_type: 'fixed' })
+   .setVolumetricDensity('air', { max_density: 0.3, uniform: false })
+   .setVolumetricMediaCoefficients('air', { scattering: [0.02, 0.02, 0.02] });
+addon.addFog(fog);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setDistanceFog(medium, opts)</code></td><td>Distance fog for air / water / lava / lava_resistance / powder_snow / weather</td></tr>
+                        <tr><td><code>setVolumetricDensity(medium, opts)</code></td><td>Volumetric density for air / water / lava / weather</td></tr>
+                        <tr><td><code>setVolumetricMediaCoefficients(medium, opts)</code></td><td>Scattering + absorption coefficients for air / water / cloud</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: fog_start ≤ fog_end, max_density 0–1, render_distance_type valid</td></tr>
+                    </table>
+                </section>
+
+                <section id="sound-definition">
+                    <h2>SoundDefinition</h2>
+                    <p>Sound event definitions aggregated into a single <code>resource_pack/sounds/sound_definitions.json</code>. Format version <code>1.20.20</code>. Event names use Bedrock's dot-notation (e.g. <code>"random.chestopen"</code>).</p>
+                    <pre><code class="language-typescript">import { SoundDefinition } from 'jepia';
+
+const snd = new SoundDefinition('Drill Use', 'myaddon.drill.use');
+snd.setCategory('block')
+   .addSoundFile('sounds/myaddon/drill_use1')
+   .addSoundEntry({ name: 'sounds/myaddon/drill_use2', volume: 0.9, pitch: [0.9, 1.1] })
+   .setDistance(4, 16);
+addon.addSoundDefinition(snd); // merged into sound_definitions.json</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setCategory(cat)</code></td><td>ambient, block, bottle, bucket, hostile, music, neutral, player, record, ui, weather</td></tr>
+                        <tr><td><code>addSoundFile(path)</code></td><td>Add a simple file reference (path relative to <code>sounds/</code>, no extension)</td></tr>
+                        <tr><td><code>addSoundEntry(entry)</code></td><td>Add a detailed entry with name, volume, pitch, weight, stream, is3D</td></tr>
+                        <tr><td><code>setDistance(min, max)</code></td><td>3D attenuation distance range (blocks)</td></tr>
+                        <tr><td><code>toDefinitionJSON()</code></td><td>Returns per-event definition object (without the top-level wrapper)</td></tr>
+                    </table>
+                </section>
+
+                <section id="block-culling">
+                    <h2>BlockCullingRule</h2>
+                    <p>Block face culling rules written to <code>resource_pack/block_culling/&lt;id&gt;.json</code>. Format version <code>1.21.80</code>.</p>
+                    <pre><code class="language-typescript">import { BlockCullingRule } from 'jepia';
+
+const cull = new BlockCullingRule('Glass Pane Culling', 'myaddon:glass_pane');
+cull.addFaceRule('block', 0, 'north', 'same_block')
+    .addFaceRule('block', 0, 'south', 'same_block')
+    .addFaceRule('block', 0, 'east',  'same_block')
+    .addFaceRule('block', 0, 'west',  'same_block');
+addon.addBlockCullingRule(cull);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>addRule(rule)</code></td><td>Add a full rule object: direction, condition, geometry_part, cull_against_full_and_opaque?</td></tr>
+                        <tr><td><code>addFaceRule(bone, cube, dir, cond?)</code></td><td>Convenience shorthand — bone + cube index + direction + condition (default: same_block)</td></tr>
+                        <tr><td><code>getRules()</code></td><td>Returns all rules as a copy</td></tr>
+                    </table>
+                    <p>Conditions: <code>"default"</code>, <code>"same_block"</code>, <code>"same_block_permutation"</code>, <code>"same_culling_layer"</code>.</p>
+                </section>
+
+                <section id="plugins">
+                    <h2>Plugin System</h2>
+                    <p>The plugin system lets you hook into the add-on generation lifecycle. Implement <code>JepiaPlugin</code> and register it with <code>addon.use(plugin)</code>.</p>
+                    <pre><code class="language-typescript">import type { JepiaPlugin } from 'jepia';
+
+const myPlugin: JepiaPlugin = {
+  name: 'my-plugin',
+
+  onBeforeGenerate({ addonName, outputPath, metadata }) {
+    console.log(`Building "${addonName}" → ${outputPath}`);
+    metadata.startTime = Date.now();
+  },
+
+  onAfterGenerate({ metadata }) {
+    const ms = Date.now() - (metadata.startTime as number);
+    console.log(`Done in ${ms}ms`);
+  },
+};
+
+addon.use(myPlugin);
+await addon.generate('./output');</code></pre>
+                    <table>
+                        <tr><th>Interface / Class</th><th>Description</th></tr>
+                        <tr><td><code>JepiaPlugin</code></td><td>Interface: <code>name</code> (required), <code>onBeforeGenerate?</code>, <code>onAfterGenerate?</code></td></tr>
+                        <tr><td><code>PluginContext</code></td><td>Passed to hooks: <code>addonName</code>, <code>outputPath</code>, <code>metadata</code></td></tr>
+                        <tr><td><code>PluginRegistry</code></td><td>Internal registry; use <code>addon.use(plugin)</code> to register</td></tr>
+                        <tr><td><code>addon.use(plugin)</code></td><td>Register a plugin; returns <code>this</code> for chaining</td></tr>
+                    </table>
+                    <p>Both hooks are called in registration order and support <code>async</code> functions.</p>
+                </section>
+
+                <section id="validation">
+                    <h2>Validation</h2>
+                    <p>Every component is validated against the official Minecraft JSON schemas using AJV. Validation happens automatically when you add components and before file generation.</p>
+
+                    <p>If a component fails validation, Jepia throws a detailed error with schema‑path and error messages. You can also trigger validation manually:</p>
+                    <pre><code class="language-typescript">import { validator } from 'jepia';
+
+const isValid = validator.validateItem(item.toJSON());
+if (!isValid) {
+  console.error(validator.errors);
+}</code></pre>
+
+                    <p>All render-pipeline components expose a <code>validate()</code> method that returns <code>{ valid: boolean, errors: string[] }</code>:</p>
+                    <pre><code class="language-typescript">const rc = new RenderController('My RC', 'myaddon:entity')
+  .setGeometry('Geometry.default')
+  .setMaterials([{ '*': 'Material.default' }])
+  .setTextures(['Array.skins[q.variant]']); // references array not yet defined
+
+const result = rc.validate();
+// result.valid → false
+// result.errors → ['Texture reference "Array.skins[q.variant]" uses array "Array.skins"
+//                   which is not defined in textureArrays...']</code></pre>
+
+                    <p>The following schemas are bundled for validation:</p>
+                    <ul>
+                        <li><code>item.schema.json</code> – Items (format_version 1.21.40+)</li>
+                        <li><code>block.schema.json</code> – Blocks (format_version 1.21.40+)</li>
+                        <li><code>entity.schema.json</code> – Entities (format_version 1.21.40+)</li>
+                        <li><code>material.schema.json</code> – Material files</li>
+                        <li><code>render_controller.schema.json</code> – Render controllers (format_version 1.8.0)</li>
+                        <li><code>texture_set.schema.json</code> – Texture sets (format_version 1.16.100 / 1.21.30)</li>
+                    </ul>
+                </section>
+
+                <footer>
+                    <p>Jepia – a TypeScript framework for Minecraft Bedrock Add‑On generation.</p>
+                    <p>See the <a href="https://github.com/Verpitek/Jepia" target="_blank">GitHub repository</a> for source code, issues, and contributions.</p>
+                </footer>
+            </main>
+        </div><!-- /.layout -->
+        </div><!-- /.page-wrapper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>

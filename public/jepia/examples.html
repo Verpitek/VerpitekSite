@@ -1,0 +1,1946 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Jepia Examples</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <style>
+            /* texture label (examples-page specific) */
+            .texture-label {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                font-size: 0.8rem;
+                color: #ccc;
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Jepia Examples</h1>
+        <div class="note-box">
+            <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+            <div><strong>Note:</strong> All examples assume you have Jepia installed (<code>bun add jepia</code>) and are running with Bun. See the <a href="api.html#getting-started">API docs</a> for setup instructions.</div>
+        </div>
+        <button class="sidebar-toggle" id="sidebar-toggle">Examples <span class="toggle-arrow">▼</span></button>
+        <div class="layout">
+            <nav class="sidebar" id="sidebar">
+                <h3>Examples</h3>
+                <ul>
+                    <li><a href="#hello-world">1. Hello World</a></li>
+                    <li><a href="#tech-mod">2. Tech Mod</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#tech-items">Items</a></li>
+                                <li><a href="#tech-blocks">Blocks</a></li>
+                                <li><a href="#tech-recipes">Recipes</a></li>
+                                <li><a href="#tech-loot">Loot Tables</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#custom-entity">3. Custom Entity</a></li>
+                    <li><a href="#materials-rendering">4. Materials &amp; Rendering</a></li>
+                    <li><a href="#pbr-textures">5. PBR Textures</a></li>
+                    <li><a href="#texture-atlas">6. Texture Atlas</a></li>
+                    <li><a href="#packaging">7. Packaging</a></li>
+                    <li><a href="#config-file">8. Configuration</a></li>
+                    <li><a href="#dynamic-render-controllers">9. Dynamic Render Controllers</a></li>
+                    <li><a href="#scripted-addon">10. Scripted Add-on</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#script-inline-ex">Inline Script</a></li>
+                                <li><a href="#script-file-ex">File-Based Script</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#custom-components-ex">11. Custom Components V2</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#cc-block">Block Component</a></li>
+                                <li><a href="#cc-item">Item Component</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#custom-commands-ex">12. Custom Commands</a></li>
+                    <li><a href="#spawn-rules-ex">13. Spawn Rules</a></li>
+                    <li><a href="#trade-tables-ex">14. Trade Tables</a></li>
+                    <li><a href="#world-gen-ex">15. World Generation</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#biome-ex">Biome</a></li>
+                                <li><a href="#feature-ex">Feature</a></li>
+                                <li><a href="#feature-rule-ex">Feature Rule</a></li>
+                                <li><a href="#dimension-ex">Dimension</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#visual-ex">16. Visual &amp; Client Systems</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#particle-ex">Particle</a></li>
+                                <li><a href="#animation-ex">Animation</a></li>
+                                <li><a href="#anim-controller-ex">Animation Controller</a></li>
+                                <li><a href="#attachable-ex">Attachable</a></li>
+                                <li><a href="#client-biome-ex">Client Biome</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#example-phase10">17. Phase 10 — Polish</a></li>
+                    <li><a href="#jigsaw-ex">18. Jigsaw Structures</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#jigsaw-structure-ex">Jigsaw Structure</a></li>
+                                <li><a href="#template-pool-ex">Template Pool</a></li>
+                                <li><a href="#structure-set-ex">Structure Set</a></li>
+                                <li><a href="#processor-list-ex">Processor List</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="content">
+
+                <!-- ============================================================ -->
+                <!-- 1. HELLO WORLD -->
+                <!-- ============================================================ -->
+                <section id="hello-world">
+                    <h2>1. Getting Started &mdash; Hello World</h2>
+                    <p>The simplest possible Jepia add-on: a single custom item with a texture.</p>
+
+<pre><code class="language-typescript">import { Addon, Item } from 'jepia';
+
+const addon = new Addon('HelloWorld', 'My first Jepia add-on', [1, 0, 0]);
+
+const diamond = new Item('Custom Diamond', 'hello:diamond');
+diamond.setMaxStackSize(64).addTexture('textures/items/custom_diamond.png');
+
+addon.addItem(diamond);
+await addon.generate('./output');</code></pre>
+
+                    <p>Running this script produces a complete behavior pack and resource pack under <code>./output/</code>, ready to load in Minecraft Bedrock.</p>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> Use <code>bun run my_addon.ts</code> to run your script directly.</div>
+                    </div>
+
+                    <h3>Generated File Structure</h3>
+<pre><code class="language-text">output/
+  behavior_pack/
+    manifest.json
+    items/
+      custom_diamond.json
+  resource_pack/
+    manifest.json
+    textures/
+      items/
+        custom_diamond.png</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 2. TECH MOD -->
+                <!-- ============================================================ -->
+                <section id="tech-mod">
+                    <h2>2. Tech Mod &mdash; Items, Blocks &amp; Recipes</h2>
+                    <p>A realistic tech-mod example demonstrating items with components, machine blocks, recipes, and loot tables.</p>
+
+                    <h3>Sample Textures</h3>
+                    <div class="texture-row">
+                        <div class="texture-label">
+                            <img src="assets/textures/wrench.png" alt="Wrench" class="texture-preview">
+                            wrench
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/powered_drill.png" alt="Powered Drill" class="texture-preview">
+                            powered_drill
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/electric_motor.png" alt="Electric Motor" class="texture-preview">
+                            electric_motor
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/composite_ingot.png" alt="Composite Ingot" class="texture-preview">
+                            composite_ingot
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/electric_furnace.png" alt="Electric Furnace" class="texture-preview">
+                            electric_furnace
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/solar_panel.png" alt="Solar Panel" class="texture-preview">
+                            solar_panel
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/machine_block.png" alt="Machine Block" class="texture-preview">
+                            machine_block
+                        </div>
+                    </div>
+
+                    <h3 id="tech-items">Items with Components</h3>
+<pre><code class="language-typescript">import { Addon, Item, Block, Recipe, LootTable } from 'jepia';
+
+const addon = new Addon('TechMod', 'Industrial technology add-on', [1, 0, 0]);
+
+// --- Tools ---
+const wrench = new Item('Wrench', 'techmod:wrench');
+wrench
+  .addTexture('textures/items/tools/wrench.png')
+  .setMaxStackSize(1)
+  .addComponent('minecraft:durability', { max_durability: 250 })
+  .addComponent('minecraft:hand_equipped', { value: true })
+  .addComponent('minecraft:can_destroy_in_creative', { value: true });
+
+const drill = new Item('Powered Drill', 'techmod:powered_drill');
+drill
+  .addTexture('textures/items/tools/powered_drill.png')
+  .setMaxStackSize(1)
+  .addComponent('minecraft:durability', { max_durability: 1000 })
+  .addComponent('minecraft:hand_equipped', { value: true })
+  .addComponent('minecraft:mining_speed', {
+    default_speed: 1.0,
+    destroy_speeds: [
+      { block: 'minecraft:stone', speed: 12.0 },
+      { block: 'minecraft:iron_ore', speed: 15.0 },
+      { block: 'minecraft:gold_ore', speed: 15.0 }
+    ]
+  });
+
+// --- Components / Materials ---
+const motor = new Item('Electric Motor', 'techmod:electric_motor');
+motor
+  .addTexture('textures/items/components/electric_motor.png')
+  .setMaxStackSize(16);
+
+const ingot = new Item('Composite Ingot', 'techmod:composite_ingot');
+ingot
+  .addTexture('textures/items/components/composite_ingot.png')
+  .setMaxStackSize(64);
+
+addon.addItem(wrench);
+addon.addItem(drill);
+addon.addItem(motor);
+addon.addItem(ingot);</code></pre>
+
+                    <h3 id="tech-blocks">Machine Blocks</h3>
+<pre><code class="language-typescript">// --- Blocks ---
+const electricFurnace = new Block('Electric Furnace', 'techmod:electric_furnace');
+electricFurnace
+  .addTexture('textures/blocks/electric_furnace.png')
+  .addComponent('minecraft:destructible_by_mining', { seconds_to_destroy: 4.0 })
+  .addComponent('minecraft:destructible_by_explosion', { explosion_resistance: 10 })
+  .addComponent('minecraft:map_color', '#8B8B8B')
+  .addComponent('minecraft:light_emission', 8);
+
+const solarPanel = new Block('Solar Panel', 'techmod:solar_panel');
+solarPanel
+  .addTexture('textures/blocks/solar_panel.png')
+  .addComponent('minecraft:destructible_by_mining', { seconds_to_destroy: 2.0 })
+  .addComponent('minecraft:geometry', 'geometry.solar_panel')
+  .addComponent('minecraft:light_dampening', 0);
+
+const machineBlock = new Block('Machine Block', 'techmod:machine_block');
+machineBlock
+  .addTexture('textures/blocks/machine_block.png')
+  .addComponent('minecraft:destructible_by_mining', { seconds_to_destroy: 3.5 })
+  .addComponent('minecraft:destructible_by_explosion', { explosion_resistance: 15 });
+
+addon.addBlock(electricFurnace);
+addon.addBlock(solarPanel);
+addon.addBlock(machineBlock);</code></pre>
+
+                    <h3 id="tech-recipes">Recipes</h3>
+<pre><code class="language-typescript">// --- Recipes ---
+// Composite Ingot: alloyed from iron + gold in a crafting table
+const craftComposite = new Recipe('Craft Composite Ingot', 'techmod:craft_composite');
+craftComposite.setShaped({
+  pattern: ['IGI', 'GIG', 'IGI'],
+  key: {
+    I: { item: 'minecraft:iron_ingot' },
+    G: { item: 'minecraft:gold_ingot' }
+  },
+  result: { item: 'techmod:composite_ingot', count: 4 }
+});
+
+// Electric Motor: composite ingots + redstone
+const craftMotor = new Recipe('Craft Electric Motor', 'techmod:craft_motor');
+craftMotor.setShaped({
+  pattern: [' R ', 'CIC', ' R '],
+  key: {
+    R: { item: 'minecraft:redstone' },
+    C: { item: 'techmod:composite_ingot' },
+    I: { item: 'minecraft:iron_ingot' }
+  },
+  result: { item: 'techmod:electric_motor', count: 1 }
+});
+
+// Machine Block: composite ingots shell
+const craftMachine = new Recipe('Craft Machine Block', 'techmod:craft_machine');
+craftMachine.setShaped({
+  pattern: ['CCC', 'C C', 'CCC'],
+  key: {
+    C: { item: 'techmod:composite_ingot' }
+  },
+  result: { item: 'techmod:machine_block', count: 1 }
+});
+
+// Electric Furnace: machine block + motor + furnace
+const craftFurnace = new Recipe('Craft Electric Furnace', 'techmod:craft_furnace');
+craftFurnace.setShaped({
+  pattern: ['CCC', 'MFM', 'CRC'],
+  key: {
+    C: { item: 'techmod:composite_ingot' },
+    M: { item: 'techmod:electric_motor' },
+    F: { item: 'minecraft:furnace' },
+    R: { item: 'minecraft:redstone_block' }
+  },
+  result: { item: 'techmod:electric_furnace', count: 1 }
+});
+
+addon.addRecipe(craftComposite);
+addon.addRecipe(craftMotor);
+addon.addRecipe(craftMachine);
+addon.addRecipe(craftFurnace);</code></pre>
+
+                    <h3 id="tech-loot">Loot Tables for Block Drops</h3>
+<pre><code class="language-typescript">// --- Loot Tables ---
+const furnaceLoot = new LootTable('Electric Furnace Drop', 'techmod:electric_furnace');
+furnaceLoot.addPool({
+  rolls: 1,
+  entries: [
+    { type: 'item', name: 'techmod:electric_furnace', weight: 1 }
+  ]
+});
+
+const solarLoot = new LootTable('Solar Panel Drop', 'techmod:solar_panel');
+solarLoot.addPool({
+  rolls: 1,
+  entries: [
+    { type: 'item', name: 'techmod:solar_panel', weight: 1 }
+  ]
+});
+
+// Machine block drops itself + sometimes a bonus motor
+const machineLoot = new LootTable('Machine Block Drop', 'techmod:machine_block');
+machineLoot.addPool({
+  rolls: 1,
+  entries: [
+    { type: 'item', name: 'techmod:machine_block', weight: 1 }
+  ]
+});
+machineLoot.addPool({
+  rolls: 1,
+  entries: [
+    { type: 'item', name: 'techmod:electric_motor', weight: 1 },
+    { type: 'empty', weight: 3 }
+  ]
+});
+
+addon.addLootTable(furnaceLoot);
+addon.addLootTable(solarLoot);
+addon.addLootTable(machineLoot);
+
+// Generate the full add-on
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 3. CUSTOM ENTITY -->
+                <!-- ============================================================ -->
+                <section id="custom-entity">
+                    <h2>3. Custom Entity with Components</h2>
+                    <p>Create a custom mob with health, movement, attack behavior, component groups, and events.</p>
+
+<pre><code class="language-typescript">import { Addon, Entity } from 'jepia';
+
+const addon = new Addon('CreaturePack', 'Custom creatures');
+
+const golem = new Entity('Steel Golem', 'techmod:steel_golem');
+golem
+  .setSpawnable(true)
+  .setSummonable(true)
+  .addComponent('minecraft:physics', {})
+  .addComponent('minecraft:health', { value: 50, max: 50 })
+  .addComponent('minecraft:movement', { value: 0.2 })
+  .addComponent('minecraft:attack', { damage: 8 })
+  .addComponentGroup('combat_mode', {
+    'minecraft:behavior.melee_attack': { speed_multiplier: 1.5 }
+  })
+  .addEvent('minecraft:on_target_acquired', {
+    add: { component_groups: ['combat_mode'] }
+  });
+
+addon.addEntity(golem);
+await addon.generate('./output');</code></pre>
+
+                    <h3>What Gets Generated</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Location</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>steel_golem.json</code></td>
+                                <td><code>behavior_pack/entities/</code></td>
+                                <td>Server-side entity definition with components, events, and component groups</td>
+                            </tr>
+                            <tr>
+                                <td><code>steel_golem.entity.json</code></td>
+                                <td><code>resource_pack/entity/</code></td>
+                                <td>Client-side entity definition linking textures, geometry, and render controllers</td>
+                            </tr>
+                            <tr>
+                                <td><code>en_US.lang</code></td>
+                                <td><code>resource_pack/texts/</code></td>
+                                <td>Localized display name: <code>entity.techmod:steel_golem.name=Steel Golem</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 4. MATERIALS & RENDERING -->
+                <!-- ============================================================ -->
+                <section id="materials-rendering">
+                    <h2>4. Materials and Rendering Pipeline</h2>
+                    <p>Jepia gives you full control over the Bedrock rendering pipeline: materials, texture layers, and render controllers. Here is a complete example wiring all three together on an entity.</p>
+
+                    <h3>Overview</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concept</th>
+                                <th>Class</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Material</td>
+                                <td><code>Material</code></td>
+                                <td>GPU shader configuration (blend modes, defines, states)</td>
+                            </tr>
+                            <tr>
+                                <td>Texture Layer</td>
+                                <td><code>TextureLayer</code></td>
+                                <td>Typed texture reference (color, normal, emissive, MER)</td>
+                            </tr>
+                            <tr>
+                                <td>Render Controller</td>
+                                <td><code>RenderController</code></td>
+                                <td>Selects textures, geometry, and materials at render time</td>
+                            </tr>
+                            <tr>
+                                <td>Vanilla Materials</td>
+                                <td><code>VanillaMaterials</code></td>
+                                <td>Enum of all built-in Bedrock material identifiers</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Full Example</h3>
+<pre><code class="language-typescript">import {
+  Addon, Entity, Material, MaterialDefine, MaterialState,
+  BlendFactor, VanillaMaterials, TextureLayer,
+  RenderController, Molang
+} from 'jepia';
+
+// --- Material ---
+// Create a glowing material that inherits from entity_alphablend
+const glowMat = new Material('Glow Effect', 'techmod:glow')
+  .setParent(VanillaMaterials.ENTITY_ALPHABLEND)
+  .addDefine(MaterialDefine.USE_EMISSIVE)
+  .addState(MaterialState.Blending)
+  .setBlendSrc(BlendFactor.SourceAlpha)
+  .setBlendDst(BlendFactor.One);
+
+// --- Texture Layers ---
+// Create two skin variants as color layers
+const skinA = TextureLayer.colorLayer(
+  'Skin A', 'techmod:skin_a', 'textures/entity/robot_a.png'
+);
+const skinB = TextureLayer.colorLayer(
+  'Skin B', 'techmod:skin_b', 'textures/entity/robot_b.png'
+);
+
+// --- Render Controller ---
+// Build a render controller that selects between skins using q.variant
+const rc = RenderController.fromTextureLayers(
+  'Robot RC', 'techmod:robot', [skinA, skinB], 'skins'
+);
+rc.setIsHurtColor({ r: '1.0', g: '0.0', b: '0.0', a: '0.5' });
+
+// --- Entity ---
+const robot = new Entity('Robot', 'techmod:robot');
+robot.setMaterial(glowMat).setRenderController(rc);
+robot.addComponent('minecraft:health', { value: 30 });
+
+// --- Addon ---
+const addon = new Addon('TechMod');
+addon.addEntity(robot);
+await addon.generate('./output');</code></pre>
+
+                    <h3>VanillaMaterials Reference</h3>
+                    <p>Use <code>VanillaMaterials</code> to reference any built-in Bedrock material as a parent:</p>
+<pre><code class="language-typescript">import { Material, VanillaMaterials } from 'jepia';
+
+// Opaque entity material (standard mobs)
+const opaque = new Material('Solid', 'mymod:solid')
+  .setParent(VanillaMaterials.ENTITY);
+
+// Alpha-tested material (leaves, glass panes)
+const cutout = new Material('Cutout', 'mymod:cutout')
+  .setParent(VanillaMaterials.ENTITY_ALPHATEST);
+
+// Translucent material (water, slime)
+const translucent = new Material('Glass', 'mymod:glass')
+  .setParent(VanillaMaterials.ENTITY_ALPHABLEND);
+
+// Emissive material (eyes, glowing parts)
+const emissive = new Material('Eyes', 'mymod:eyes')
+  .setParent(VanillaMaterials.ENTITY_EMISSIVE_ALPHA);</code></pre>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> Materials are written to the <code>resource_pack/materials/</code> directory. If you only need vanilla materials, you do not need to create custom ones &mdash; just reference the built-in identifier on your entity.</div>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 5. PBR TEXTURES -->
+                <!-- ============================================================ -->
+                <section id="pbr-textures">
+                    <h2>5. PBR Textures (Texture Sets)</h2>
+                    <p>Texture sets let you add physically-based rendering to your add-on for Vibrant Visuals (deferred rendering). Each texture set links a color map, normal map, and MER (Metalness / Emissive / Roughness) map.</p>
+
+                    <h3>Classic-to-PBR Migration</h3>
+<pre><code class="language-typescript">import { Addon, TextureSet } from 'jepia';
+
+const addon = new Addon('PBRDemo', 'PBR texture demo');
+
+// Standard texture set with color + normal + MER
+const brickSet = new TextureSet('Brick PBR', 'mymod:brick_pbr');
+brickSet
+  .setColor('textures/blocks/brick')
+  .setNormal('textures/blocks/brick_normal')
+  .setMER('textures/blocks/brick_mer');
+
+addon.addTextureSet(brickSet);</code></pre>
+
+                    <h3>Vibrant Visuals MERS Texture Set</h3>
+                    <p>For full Vibrant Visuals support, use the MERS format (Metalness, Emissive, Roughness, Subsurface Scattering):</p>
+<pre><code class="language-typescript">// MERS texture set for Vibrant Visuals
+const glowStone = new TextureSet('Glowstone PBR', 'mymod:glowstone_pbr');
+glowStone
+  .setColor('textures/blocks/glowstone')
+  .setNormal('textures/blocks/glowstone_normal')
+  .setMERS('textures/blocks/glowstone_mers');
+
+addon.addTextureSet(glowStone);
+await addon.generate('./output');</code></pre>
+
+                    <h3>Generated Output</h3>
+                    <p>Each <code>TextureSet</code> produces a <code>.texture_set.json</code> file alongside the texture:</p>
+<pre class="output-block"><code class="language-json">// resource_pack/textures/blocks/brick.texture_set.json
+{
+  "format_version": "1.16.100",
+  "minecraft:texture_set": {
+    "color": "brick",
+    "normal": "brick_normal",
+    "metalness_emissive_roughness": "brick_mer"
+  }
+}</code></pre>
+
+<pre class="output-block"><code class="language-json">// resource_pack/textures/blocks/glowstone.texture_set.json
+{
+  "format_version": "1.16.100",
+  "minecraft:texture_set": {
+    "color": "glowstone",
+    "normal": "glowstone_normal",
+    "metalness_emissive_roughness_subsurface": "glowstone_mers"
+  }
+}</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 6. TEXTURE ATLAS -->
+                <!-- ============================================================ -->
+                <section id="texture-atlas">
+                    <h2>6. Texture Atlas</h2>
+                    <p>The <code>TextureAtlas</code> class packs multiple textures into a single atlas image for optimal GPU memory usage. It supports shelf and maxrects packing strategies.</p>
+
+<pre><code class="language-typescript">import { Addon, Entity, Texture, TextureAtlas } from 'jepia';
+
+// Create a 1024x1024 atlas with 8px padding between entries
+const atlas = new TextureAtlas(
+  'Mob Atlas', 'techmod:mob_atlas', 1024, 1024, 'packed', 8
+);
+
+// Add texture entries with their source dimensions
+const tex1 = new Texture('Skin 1', 'techmod:skin1', 'textures/entity/skin1.png');
+const tex2 = new Texture('Skin 2', 'techmod:skin2', 'textures/entity/skin2.png');
+
+atlas.addEntry(tex1, 256, 256);
+atlas.addEntry(tex2, 256, 512);
+
+// Pack using the shelf strategy
+const uvMap = await atlas.pack('shelf');
+
+// Inspect optimization and memory reports
+console.log(atlas.getOptimizationReport());
+console.log(atlas.getMemoryReport());</code></pre>
+
+                    <h3>Optimization Report</h3>
+                    <p>The optimization report shows packing efficiency and wasted space:</p>
+<pre class="output-block"><code class="language-text">TextureAtlas Optimization Report: Mob Atlas
+  Strategy:   shelf
+  Atlas Size: 1024 x 1024 (1,048,576 px)
+  Entries:    2
+  Used Area:  196,608 px (18.75%)
+  Wasted:     851,968 px (81.25%)
+  Suggestion: Consider a smaller atlas (512x1024) for better utilization.</code></pre>
+
+                    <h3>Memory Report</h3>
+<pre class="output-block"><code class="language-text">TextureAtlas Memory Report: Mob Atlas
+  Format:     RGBA8 (4 bytes/pixel)
+  Resolution: 1024 x 1024
+  Memory:     4.00 MB
+  Budget:     Within default 16 MB entity atlas budget.</code></pre>
+
+                    <h3>Applying Atlas UVs to an Entity</h3>
+<pre><code class="language-typescript">// Use the UV map returned from pack() to set entity UVs
+const mob = new Entity('Custom Mob', 'techmod:custom_mob');
+mob.addComponent('minecraft:health', { value: 20 });
+
+// The UV map contains normalized coordinates for each entry
+for (const [texId, uv] of uvMap.entries()) {
+  console.log(`${texId}: u=${uv.u}, v=${uv.v}, w=${uv.width}, h=${uv.height}`);
+}
+
+const addon = new Addon('TechMod');
+addon.addEntity(mob);
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 7. PACKAGING -->
+                <!-- ============================================================ -->
+                <section id="packaging">
+                    <h2>7. Packaging (.mcaddon)</h2>
+                    <p>Use the <code>Packager</code> to bundle your behavior pack and resource pack into a distributable <code>.mcaddon</code> file.</p>
+
+<pre><code class="language-typescript">import { Packager } from 'jepia';
+
+const packager = new Packager({
+  outputPath: './dist',
+  addonName: 'TechMod',
+  format: 'mcaddon',
+});
+
+await packager.package('./output/behavior_pack', './output/resource_pack');</code></pre>
+
+                    <h3>Packager Options</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Option</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>outputPath</code></td>
+                                <td><code>string</code></td>
+                                <td>Directory where the packaged file will be written</td>
+                            </tr>
+                            <tr>
+                                <td><code>addonName</code></td>
+                                <td><code>string</code></td>
+                                <td>Name used for the output file (e.g., <code>TechMod.mcaddon</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>format</code></td>
+                                <td><code>'mcaddon' | 'mcpack' | 'zip'</code></td>
+                                <td>Output archive format</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Output</h3>
+<pre class="output-block"><code class="language-text">dist/
+  TechMod.mcaddon        &larr; Double-click to install in Minecraft</code></pre>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> The <code>.mcaddon</code> format is a ZIP file containing both <code>.mcpack</code> files. Players can double-click it to import directly into Minecraft Bedrock Edition.</div>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 8. CONFIGURATION FILE -->
+                <!-- ============================================================ -->
+                <section id="config-file">
+                    <h2>8. Configuration File</h2>
+                    <p>Place a <code>jepia.config.json</code> in your project root to persist settings across builds. Jepia reads this file automatically.</p>
+
+<pre><code class="language-json">{
+  "name": "TechMod",
+  "description": "Industrial technology for Minecraft Bedrock",
+  "version": [1, 2, 0],
+  "authors": ["YourName"],
+  "license": "MIT",
+  "target_version": "1.21.0",
+  "uuid": {
+    "behavior_pack": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "resource_pack": "f9e8d7c6-b5a4-3210-fedc-ba0987654321"
+  },
+  "output": {
+    "path": "./output",
+    "clean_before_build": true
+  },
+  "packaging": {
+    "format": "mcaddon",
+    "output_path": "./dist"
+  }
+}</code></pre>
+
+                    <h3>Configuration Options</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>name</code></td>
+                                <td><code>string</code></td>
+                                <td>&mdash;</td>
+                                <td>Add-on display name</td>
+                            </tr>
+                            <tr>
+                                <td><code>description</code></td>
+                                <td><code>string</code></td>
+                                <td><code>""</code></td>
+                                <td>Add-on description in manifest</td>
+                            </tr>
+                            <tr>
+                                <td><code>version</code></td>
+                                <td><code>[number, number, number]</code></td>
+                                <td><code>[1, 0, 0]</code></td>
+                                <td>Semantic version array</td>
+                            </tr>
+                            <tr>
+                                <td><code>target_version</code></td>
+                                <td><code>string</code></td>
+                                <td><code>"1.21.0"</code></td>
+                                <td>Minimum Minecraft engine version</td>
+                            </tr>
+                            <tr>
+                                <td><code>uuid.behavior_pack</code></td>
+                                <td><code>string</code></td>
+                                <td>auto-generated</td>
+                                <td>Persistent UUID for the behavior pack</td>
+                            </tr>
+                            <tr>
+                                <td><code>uuid.resource_pack</code></td>
+                                <td><code>string</code></td>
+                                <td>auto-generated</td>
+                                <td>Persistent UUID for the resource pack</td>
+                            </tr>
+                            <tr>
+                                <td><code>output.path</code></td>
+                                <td><code>string</code></td>
+                                <td><code>"./output"</code></td>
+                                <td>Directory for generated packs</td>
+                            </tr>
+                            <tr>
+                                <td><code>output.clean_before_build</code></td>
+                                <td><code>boolean</code></td>
+                                <td><code>false</code></td>
+                                <td>Delete output directory before generating</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>UUID Persistence</h3>
+                    <div class="note-box">
+                        <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+                        <div><strong>Important:</strong> UUIDs uniquely identify your add-on to Minecraft. If a UUID changes, the game treats it as a <em>different</em> add-on, which can break worlds that depend on it.</div>
+                    </div>
+                    <p>Jepia handles UUIDs in two ways:</p>
+                    <ol>
+                        <li><strong>Auto-generated:</strong> If no <code>uuid</code> section exists in <code>jepia.config.json</code>, Jepia generates random UUIDs on the first build and writes them back to the config file. Subsequent builds reuse the same UUIDs.</li>
+                        <li><strong>Manual:</strong> You can set UUIDs explicitly in the config. This is useful when migrating an existing add-on to Jepia &mdash; use the UUIDs from your existing <code>manifest.json</code> files.</li>
+                    </ol>
+                    <p>Always commit <code>jepia.config.json</code> to version control so that UUIDs are shared across your team.</p>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 9. DYNAMIC RENDER CONTROLLERS -->
+                <!-- ============================================================ -->
+                <section id="dynamic-render-controllers">
+                    <h2>9. Dynamic Render Controllers</h2>
+                    <p>Advanced render controller patterns for entities that change appearance at runtime.</p>
+
+                    <h3>Shapeshifter Pattern (propertyToIndex)</h3>
+                    <p>Use a block property or entity property to select a texture from an array at runtime:</p>
+<pre><code class="language-typescript">import { RenderController, TextureLayer, Molang } from 'jepia';
+
+// Create texture variants
+const formA = TextureLayer.colorLayer('Form A', 'mymod:form_a', 'textures/entity/shifter_a.png');
+const formB = TextureLayer.colorLayer('Form B', 'mymod:form_b', 'textures/entity/shifter_b.png');
+const formC = TextureLayer.colorLayer('Form C', 'mymod:form_c', 'textures/entity/shifter_c.png');
+
+// Build render controller with property-driven index
+const rc = RenderController.fromTextureLayers(
+  'Shapeshifter RC', 'mymod:shapeshifter', [formA, formB, formC], 'forms'
+);
+
+// Select texture based on an entity property
+// q.property('mymod:form_index') returns 0, 1, or 2
+rc.setTextureIndex('forms', Molang.query('property', "'mymod:form_index'"));</code></pre>
+
+                    <h3>Sheep Wool / Sheared Geometry Switching</h3>
+                    <p>Switch geometry based on a component group (like vanilla sheep):</p>
+<pre><code class="language-typescript">import { RenderController, Entity, Molang } from 'jepia';
+
+const sheep = new Entity('Custom Sheep', 'mymod:custom_sheep');
+
+// Add component groups for wool states
+sheep.addComponentGroup('woolly', {
+  'minecraft:geometry': { value: 'geometry.sheep.woolly' }
+});
+sheep.addComponentGroup('sheared', {
+  'minecraft:geometry': { value: 'geometry.sheep.sheared' }
+});
+
+// Events to toggle between states
+sheep.addEvent('mymod:shear', {
+  remove: { component_groups: ['woolly'] },
+  add: { component_groups: ['sheared'] }
+});
+sheep.addEvent('mymod:regrow', {
+  remove: { component_groups: ['sheared'] },
+  add: { component_groups: ['woolly'] }
+});
+
+// Render controller selects geometry based on entity flag
+const sheepRC = new RenderController('Sheep RC', 'mymod:sheep');
+sheepRC.setGeometry(
+  Molang.conditional('q.is_sheared', "'geometry.sheep.sheared'", "'geometry.sheep.woolly'")
+);
+sheep.setRenderController(sheepRC);</code></pre>
+
+                    <h3>Part Visibility for Armor</h3>
+                    <p>Show or hide geometry bones based on equipped armor:</p>
+<pre><code class="language-typescript">import { RenderController, Molang } from 'jepia';
+
+const armorRC = new RenderController('Armor RC', 'mymod:armor_display');
+
+// Show helmet bone only when helmet is equipped
+armorRC.addPartVisibility('helmet', Molang.query('is_item_equipped', "'slot.armor.head'"));
+
+// Show chestplate bone only when chestplate is equipped
+armorRC.addPartVisibility('chestplate', Molang.query('is_item_equipped', "'slot.armor.chest'"));
+
+// Show boots bone only when boots are equipped
+armorRC.addPartVisibility('boots', Molang.query('is_item_equipped', "'slot.armor.feet'"));
+
+// Leggings always visible as base mesh
+armorRC.addPartVisibility('leggings', '1.0');</code></pre>
+
+                    <h3>UV Animation for Atlas Scrolling</h3>
+                    <p>Animate texture UVs to create scrolling effects (conveyor belts, energy beams, water flow):</p>
+<pre><code class="language-typescript">import { RenderController, Molang } from 'jepia';
+
+const scrollRC = new RenderController('Scroll RC', 'mymod:conveyor');
+
+// Scroll the V coordinate over time for an animated conveyor belt
+// math.mod wraps the value so it loops continuously
+scrollRC.setUVAnimation({
+  offset: [
+    '0.0',                                         // U stays fixed
+    Molang.expr('math.mod(q.life_time * 0.5, 1.0)') // V scrolls
+  ],
+  scale: ['1.0', '1.0']
+});
+
+// Energy beam with faster horizontal scroll
+const beamRC = new RenderController('Beam RC', 'mymod:energy_beam');
+beamRC.setUVAnimation({
+  offset: [
+    Molang.expr('math.mod(q.life_time * 2.0, 1.0)'), // U scrolls fast
+    '0.0'
+  ],
+  scale: ['0.5', '1.0'] // Tile the texture 2x horizontally
+});</code></pre>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> Combine UV animation with a texture atlas to create sprite-sheet animations. Set the scale to match your atlas grid (e.g., <code>['0.25', '0.25']</code> for a 4x4 grid) and step the offset in increments.</div>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 10. SCRIPTED ADD-ON -->
+                <!-- ============================================================ -->
+                <section id="scripted-addon">
+                    <h2>10. Scripted Add-on</h2>
+                    <p>Jepia can include Minecraft Script API code alongside your JSON components in a single TypeScript file. Script callbacks are extracted at build time and bundled into <code>behavior_pack/scripts/main.js</code>.</p>
+
+                    <div class="note-box">
+                        <img src="assets/jepia_exclamation.svg" alt="" class="box-icon">
+                        <div><strong>Note:</strong> Code inside <code>addon.script()</code> runs <em>inside Minecraft Bedrock at runtime</em>. The <code>@minecraft/*</code> modules are provided by the game engine. Jepia extracts the callback source at build time via <code>Function.prototype.toString()</code> and rewrites <code>ctx.server</code> references into proper ES module imports.</div>
+                    </div>
+
+                    <h3 id="script-inline-ex">Inline Script — Entity Hit Event</h3>
+                    <p>A fire sword that applies a burn effect when it hits an enemy:</p>
+
+                    <div class="texture-row">
+                        <div class="texture-label">
+                            <img src="assets/textures/electric_furnace.png" class="texture-preview" alt="fire sword proxy" />
+                            <span>fire_sword</span>
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/macerator.png" class="texture-preview" alt="magic ore proxy" />
+                            <span>magic_ore</span>
+                        </div>
+                    </div>
+
+                    <pre><code class="language-typescript">import { Addon, Item, Block } from 'jepia';
+
+const addon = new Addon('ScriptedAddon', 'Scripting demo', [1, 0, 0], [1, 21, 60]);
+
+// --- JSON components (build-time) ---
+const fireSword = new Item('Fire Sword', 'scriptedaddon:fire_sword');
+fireSword.setMaxStackSize(1)
+  .addComponent('minecraft:durability', { max_durability: 250 })
+  .addTexture('textures/items/fire_sword.png');
+
+const magicOre = new Block('Magic Ore', 'scriptedaddon:magic_ore');
+magicOre.setLightEmission(8).addTexture('textures/blocks/magic_ore.png');
+
+addon.addItem(fireSword).addBlock(magicOre);
+
+// --- Runtime script (runs inside Minecraft) ---
+addon.script((ctx) => {
+  const { world, system } = ctx.server;
+
+  world.afterEvents.entityHitEntity.subscribe((event) => {
+    const attacker = event.damagingEntity;
+    const victim = event.hitEntity;
+    if (attacker.typeId !== 'minecraft:player') return;
+
+    const equip = attacker.getComponent('minecraft:equippable');
+    if (!equip) return;
+    const held = equip.getEquipment('Mainhand');
+
+    if (held && held.typeId === 'scriptedaddon:fire_sword') {
+      victim.addEffect('minecraft:fire_resistance', 60, { amplifier: 0 });
+      system.run(() => attacker.sendMessage('Your sword blazes!'));
+    }
+  });
+});
+
+await addon.generate('./output');</code></pre>
+
+                    <div class="output-block">
+                        output/
+                        behavior_pack/
+                          manifest.json    ← has script module + @minecraft/server dep
+                          scripts/
+                            main.js        ← bundled runtime code
+                          items/fire_sword.json
+                          blocks/magic_ore.json
+                        resource_pack/
+                          manifest.json
+                    </div>
+
+                    <h3 id="script-file-ex">File-Based Script</h3>
+                    <p>Point to an existing TypeScript file for complex scripts or shared code:</p>
+                    <pre><code class="language-typescript">// Bundle one or more external files alongside inline blocks
+addon.scriptFile('./scripts/events.ts');
+addon.scriptFile('./scripts/commands.ts');
+
+// File-based scripts can use normal imports:
+// import { world } from '@minecraft/server'; ← Jepia marks as external automatically
+
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 11. CUSTOM COMPONENTS V2 -->
+                <!-- ============================================================ -->
+                <section id="custom-components-ex">
+                    <h2>11. Custom Components V2</h2>
+                    <p>Custom Components V2 bridges JSON block/item definitions with Script API handlers. Jepia auto-generates the startup registration code — you just define handlers inline.</p>
+
+                    <h3 id="cc-block">Block — Crumble on Step</h3>
+                    <p>A "cloud block" that turns to air when stepped on:</p>
+
+                    <div class="texture-row">
+                        <div class="texture-label">
+                            <img src="assets/textures/accumulator.png" class="texture-preview" alt="accumulator" />
+                            <span>cloud_block</span>
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/compressor.png" class="texture-preview" alt="compressor" />
+                            <span>pulse_block</span>
+                        </div>
+                    </div>
+
+                    <pre><code class="language-typescript">import { Addon, Block, Item } from 'jepia';
+
+const addon = new Addon('CustomComponentsAddon', 'Custom Components V2 demo', [1, 0, 0], [1, 21, 60]);
+
+// --- Block: turns to air when stepped on ---
+const cloudBlock = new Block('Cloud Block', 'myaddon:cloud_block');
+cloudBlock.setFriction(0.1).setLightEmission(4);
+
+cloudBlock.addCustomComponent(
+  'myaddon:crumble_on_step',
+  {
+    // `system` is imported by the generated startup code — available at runtime.
+    onStepOn: (event) => {
+      const { block, dimension } = event;
+      system.run(() => {
+        dimension.runCommand(`setblock ${block.x} ${block.y} ${block.z} air`);
+      });
+    },
+    onEntityFallOn: (event) => {
+      const { entity } = event;
+      if (entity.typeId === 'minecraft:player') {
+        entity.sendMessage('The cloud crumbles beneath you!');
+      }
+    },
+  },
+  { fragile: true }  // optional JSON params in block component entry
+);
+
+// --- Block: random-tick particle effect ---
+const pulseBlock = new Block('Pulse Block', 'myaddon:pulse_block');
+pulseBlock.setLightEmission(12);
+
+pulseBlock.addCustomComponent('myaddon:pulse_effect', {
+  onRandomTick: (event) => {
+    const { block, dimension } = event;
+    system.run(() => {
+      dimension.spawnParticle('minecraft:endrod', {
+        x: block.x + 0.5, y: block.y + 1, z: block.z + 0.5,
+      });
+    });
+  },
+});
+
+addon.addBlock(cloudBlock).addBlock(pulseBlock);</code></pre>
+
+                    <h3 id="cc-item">Item — Custom Use Handler</h3>
+
+                    <div class="texture-row">
+                        <div class="texture-label">
+                            <img src="assets/textures/composite_ingot.png" class="texture-preview" alt="composite ingot" />
+                            <span>lucky_coin</span>
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/soldering_iron.png" class="texture-preview" alt="soldering iron" />
+                            <span>magic_wand</span>
+                        </div>
+                    </div>
+
+                    <pre><code class="language-typescript">// --- Item: coin flip on use ---
+const luckyCoin = new Item('Lucky Coin', 'myaddon:lucky_coin');
+luckyCoin.setMaxStackSize(64);
+
+luckyCoin.addCustomComponent('myaddon:flip_coin', {
+  onUse: (event) => {
+    const { source: player } = event;
+    system.run(() => {
+      if (Math.random() > 0.5) {
+        player.sendMessage('Heads! Fortune smiles upon you.');
+        player.addEffect('minecraft:luck', 200, { amplifier: 0 });
+      } else {
+        player.sendMessage('Tails! Better luck next time.');
+      }
+    });
+  },
+});
+
+// --- Item: durability warning ---
+const magicWand = new Item('Magic Wand', 'myaddon:magic_wand');
+magicWand.setMaxStackSize(1)
+  .addComponent('minecraft:durability', { max_durability: 50 });
+
+magicWand.addCustomComponent('myaddon:wand_charges', {
+  onBeforeDurabilityDamage: (event) => {
+    const { itemStack, attackingEntity } = event;
+    if (attackingEntity?.typeId === 'minecraft:player') {
+      const remaining = itemStack.maxDurability - itemStack.durabilityDamage;
+      if (remaining <= 5) {
+        attackingEntity.sendMessage(`Warning: ${remaining} charges left!`);
+      }
+    }
+  },
+  onUse: (event) => {
+    const { source: player } = event;
+    system.run(() => {
+      player.sendMessage('The wand crackles with magic!');
+      player.addEffect('minecraft:night_vision', 60, { amplifier: 0 });
+    });
+  },
+});
+
+addon.addItem(luckyCoin).addItem(magicWand);
+
+// Mix with an inline script block — merged into the same scripts/main.js
+addon.script((ctx) => {
+  const { world } = ctx.server;
+  world.afterEvents.playerJoin.subscribe((event) => {
+    const players = world.getAllPlayers();
+    for (const p of players) p.sendMessage(event.playerName + ' joined!');
+  });
+});
+
+await addon.generate('./output');</code></pre>
+
+                    <div class="output-block">
+                        behavior_pack/manifest.json
+                          └── script module + @minecraft/server dependency
+                        behavior_pack/scripts/main.js
+                          └── startup registration for crumble_on_step, pulse_effect,
+                              flip_coin, wand_charges + playerJoin inline block
+                        behavior_pack/blocks/
+                          └── myaddon_cloud_block.json   (components: "myaddon:crumble_on_step")
+                          └── myaddon_pulse_block.json   (components: "myaddon:pulse_effect")
+                        behavior_pack/items/
+                          └── myaddon_lucky_coin.json    (components: "myaddon:flip_coin")
+                          └── myaddon_magic_wand.json    (components: "myaddon:wand_charges")
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 12. CUSTOM COMMANDS -->
+                <!-- ============================================================ -->
+                <section id="custom-commands-ex">
+                    <h2>12. Custom Commands</h2>
+                    <p>Register custom slash commands using the Minecraft Script API's command registry. Jepia generates the full startup registration in <code>scripts/main.js</code> automatically.</p>
+
+                    <div class="texture-row">
+                        <div class="texture-label">
+                            <img src="assets/textures/screwdriver.png" class="texture-preview" alt="screwdriver" />
+                            <span>tool item</span>
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/hammer.png" class="texture-preview" alt="hammer" />
+                            <span>tool item</span>
+                        </div>
+                        <div class="texture-label">
+                            <img src="assets/textures/pliers.png" class="texture-preview" alt="pliers" />
+                            <span>tool item</span>
+                        </div>
+                    </div>
+
+                    <pre><code class="language-typescript">import {
+  Addon, Item,
+  CustomCommandPermissionLevel,
+  CustomCommandParamType,
+} from 'jepia';
+
+const addon = new Addon('CommandsAddon', 'Custom slash commands demo', [1, 0, 0], [1, 21, 60]);
+
+const tool = new Item('Repair Wrench', 'myaddon:repair_wrench');
+tool.setMaxStackSize(1).addComponent('minecraft:durability', { max_durability: 100 });
+addon.addItem(tool);
+
+// --- /myaddon:heal <targets> ---
+addon.addCustomCommand({
+  name: 'myaddon:heal',
+  description: 'Heal targeted players to full health',
+  permissionLevel: CustomCommandPermissionLevel.GameDirectors,
+  mandatoryParameters: [
+    { type: CustomCommandParamType.PlayerSelector, name: 'targets' },
+  ],
+  // `system` is in scope from the generated startup import — runs in Minecraft only.
+  callback: (origin, targets) => {
+    system.run(() => {
+      for (const player of targets) {
+        const health = player.getComponent('minecraft:health');
+        if (health) health.setCurrentValue(health.effectiveMax);
+        player.sendMessage('You have been healed!');
+      }
+    });
+  },
+});
+
+// --- /myaddon:give_ore <target> <oreType> ---
+// With a custom enum for the ore type selection
+addon.addCustomCommand(
+  {
+    name: 'myaddon:give_ore',
+    description: 'Give a player a specific ore type',
+    permissionLevel: CustomCommandPermissionLevel.GameDirectors,
+    mandatoryParameters: [
+      { type: CustomCommandParamType.PlayerSelector, name: 'target' },
+      { type: CustomCommandParamType.Enum, name: 'oreType' },
+    ],
+    callback: (origin, target, oreType) => {
+      system.run(() => {
+        for (const p of target) {
+          p.runCommand(`give @s myaddon:${oreType}_ore`);
+          p.sendMessage(`Received ${oreType} ore!`);
+        }
+      });
+    },
+  },
+  [
+    { name: 'OreType', values: ['iron', 'copper', 'gold', 'magic'] },
+  ]
+);
+
+await addon.generate('./output');</code></pre>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Execution model:</strong> Custom command callbacks run in Minecraft's <em>restricted</em> context (like before-events). Always wrap world-modifying calls in <code>system.run()</code>. The <code>system</code> reference is imported automatically by the generated startup code — you don't need to import it yourself inside the callback.</div>
+                    </div>
+
+                    <div class="output-block">
+                        behavior_pack/scripts/main.js
+                          system.beforeEvents.startup.subscribe((event) => {
+                            const { customCommandRegistry } = event;
+                            customCommandRegistry.registerCommand(
+                              { name: 'myaddon:heal', description: '...', ... },
+                              (origin, targets) => { ... }
+                            );
+                            customCommandRegistry.registerEnum('OreType', ['iron', 'copper', 'gold', 'magic']);
+                            customCommandRegistry.registerCommand(
+                              { name: 'myaddon:give_ore', ... },
+                              (origin, target, oreType) => { ... }
+                            );
+                          });
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 13. SPAWN RULES -->
+                <!-- ============================================================ -->
+                <section id="spawn-rules-ex">
+                    <h2>13. Spawn Rules</h2>
+                    <p>Control where and when your custom entities naturally appear in the world. Spawn rules live in <code>behavior_pack/spawn_rules/</code> and are evaluated every spawn cycle.</p>
+
+<pre><code class="language-typescript">import { Addon, Entity, SpawnRule } from 'jepia';
+
+const addon = new Addon('CreaturePack', 'Custom creature spawning');
+
+// A surface animal that spawns in forests during daytime
+const forestCritter = new Entity('Forest Critter', 'myaddon:forest_critter');
+forestCritter
+  .setSpawnable(true)
+  .setSummonable(true)
+  .addComponent('minecraft:health', { value: 10, max: 10 })
+  .addComponent('minecraft:movement', { value: 0.3 });
+
+const critterRule = new SpawnRule('Forest Critter Spawning', 'myaddon:forest_critter');
+critterRule
+  .setPopulationControl('animal')
+  .addCondition({
+    'minecraft:spawns_on_surface': {},
+    'minecraft:brightness_filter': {
+      min: 7,
+      max: 15,
+      adjust_for_weather: true
+    },
+    'minecraft:weight': { default: 100 },
+    'minecraft:biome_filter': {
+      test: 'has_biome_tag',
+      value: 'forest'
+    }
+  });
+
+addon.addEntity(forestCritter);
+addon.addSpawnRule(critterRule);
+await addon.generate('./output');</code></pre>
+
+                    <h3>Underground Monster</h3>
+                    <p>A monster that only spawns underground in darkness — classic dungeon mob setup.</p>
+
+<pre><code class="language-typescript">import { SpawnRule } from 'jepia';
+
+const caveMonster = new SpawnRule('Cave Monster Spawning', 'myaddon:cave_monster');
+caveMonster
+  .setPopulationControl('monster')
+  .addCondition({
+    'minecraft:spawns_underground': {},
+    'minecraft:brightness_filter': {
+      min: 0,
+      max: 7,
+      adjust_for_weather: false
+    },
+    'minecraft:weight': { default: 50 },
+    'minecraft:difficulty_filter': {
+      min: 'easy',
+      max: 'hard'
+    },
+    'minecraft:height_filter': {
+      min: -64,
+      max: 16
+    }
+  });
+
+addon.addSpawnRule(caveMonster);</code></pre>
+
+                    <h3>Generated Output</h3>
+<pre><code class="language-json">{
+  "format_version": "1.8.0",
+  "minecraft:spawn_rules": {
+    "description": {
+      "identifier": "myaddon:forest_critter",
+      "population_control": "animal"
+    },
+    "conditions": [
+      {
+        "minecraft:spawns_on_surface": {},
+        "minecraft:brightness_filter": { "min": 7, "max": 15, "adjust_for_weather": true },
+        "minecraft:weight": { "default": 100 },
+        "minecraft:biome_filter": { "test": "has_biome_tag", "value": "forest" }
+      }
+    ]
+  }
+}</code></pre>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> Population control categories — <code>"animal"</code>, <code>"monster"</code>, <code>"water_animal"</code>, <code>"ambient"</code> — each have their own global cap. Monsters share a cap with vanilla hostile mobs, so use a low <code>minecraft:weight</code> if your mob shouldn't dominate spawning.</div>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 14. TRADE TABLES -->
+                <!-- ============================================================ -->
+                <section id="trade-tables-ex">
+                    <h2>14. Trade Tables</h2>
+                    <p>Define what your custom merchant entities buy and sell. Trade tables live in <code>behavior_pack/trading/</code>. Reference the file in an entity's <code>minecraft:economy_trade_table</code> component.</p>
+
+<pre><code class="language-typescript">import { Addon, Entity, TradeTable } from 'jepia';
+
+const addon = new Addon('TechMod', 'Industrial tech add-on');
+
+// --- Trade table ---
+const merchantTrades = new TradeTable('Scrap Merchant Trades', 'techmod:scrap_merchant');
+
+// Novice tier — always available from the start
+merchantTrades.addTier({
+  total_exp_required: 0,
+  trades: [
+    {
+      wants: [{ item: 'minecraft:emerald', quantity: 1 }],
+      gives: [{ item: 'techmod:composite_ingot', quantity: 2 }],
+      max_uses: 8,
+      reward_exp: true,
+      trader_exp: 1
+    },
+    {
+      wants: [{ item: 'techmod:composite_ingot', quantity: 4 }],
+      gives: [{ item: 'minecraft:emerald', quantity: 1 }],
+      max_uses: 16,
+      reward_exp: true,
+      trader_exp: 1
+    }
+  ]
+});
+
+// Apprentice tier — unlocks after earning some XP
+merchantTrades.addTier({
+  total_exp_required: 10,
+  trades: [
+    {
+      wants: [{ item: 'minecraft:emerald', quantity: 3 }],
+      gives: [{ item: 'techmod:electric_motor', quantity: 1 }],
+      max_uses: 5,
+      reward_exp: true,
+      trader_exp: 2
+    }
+  ]
+});
+
+// Expert tier — random selection from a group
+merchantTrades.addTier({
+  total_exp_required: 70,
+  groups: [
+    {
+      num_to_select: 1,
+      trades: [
+        {
+          wants: [{ item: 'minecraft:emerald', quantity: 8 }],
+          gives: [{ item: 'techmod:powered_drill', quantity: 1 }]
+        },
+        {
+          wants: [{ item: 'minecraft:emerald', quantity: 6 }],
+          gives: [{ item: 'techmod:electric_furnace', quantity: 1 }]
+        }
+      ]
+    }
+  ]
+});
+
+addon.addTradeTable(merchantTrades);
+
+// --- Entity that uses the trade table ---
+const merchant = new Entity('Scrap Merchant', 'techmod:scrap_merchant');
+merchant
+  .setSummonable(true)
+  .setSpawnable(false)
+  .addComponent('minecraft:health', { value: 20, max: 20 })
+  .addComponent('minecraft:movement', { value: 0.2 })
+  .addComponent('minecraft:economy_trade_table', {
+    display_name: 'Scrap Merchant',
+    table: 'trading/techmod/scrap_merchant.json',
+    new_screen: true
+  });
+
+addon.addEntity(merchant);
+await addon.generate('./output');</code></pre>
+
+                    <h3>Generated Output</h3>
+<pre><code class="language-json">{
+  "tiers": [
+    {
+      "total_exp_required": 0,
+      "trades": [
+        {
+          "wants": [{ "item": "minecraft:emerald", "quantity": 1 }],
+          "gives": [{ "item": "techmod:composite_ingot", "quantity": 2 }],
+          "max_uses": 8,
+          "reward_exp": true,
+          "trader_exp": 1
+        }
+      ]
+    }
+  ]
+}</code></pre>
+
+                    <div class="tip-box">
+                        <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                        <div><strong>Tip:</strong> Use <code>groups</code> with <code>num_to_select</code> to randomize which trades a merchant offers — great for giving each merchant instance a unique feel without defining multiple trade tables.</div>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 15. WORLD GENERATION -->
+                <!-- ============================================================ -->
+                <section id="world-gen-ex">
+                    <h2>15. World Generation</h2>
+                    <p>Phase 8 adds four new component types for customizing world generation: <strong>Biome</strong>, <strong>Feature</strong>, <strong>FeatureRule</strong>, and <strong>Dimension</strong>. All four write to the behavior pack.</p>
+
+                    <!-- Biome -->
+                    <section id="biome-ex">
+                        <h3>Biome</h3>
+                        <p>Biomes live in <code>behavior_pack/biomes/</code>. They define climate, surface materials, and generation tags. Feature rules target biomes by tag.</p>
+                        <pre><code class="language-typescript">import { Addon, Biome } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal biome example');
+
+const crystalForest = new Biome('Crystal Forest', 'crystalmod:crystal_forest');
+crystalForest
+  .setClimate({ temperature: 0.4, downfall: 0.5 })
+  .setSurfaceBuilder('minecraft:overworld', {
+    top_material: 'crystalmod:crystal_grass',
+    mid_material: 'minecraft:dirt',
+    sea_material: 'minecraft:water',
+  })
+  .addTag('forest')
+  .addTag('cold')
+  .setCreatureSpawnProbability(0.2)
+  .setHumid(true);
+
+addon.addBiome(crystalForest);</code></pre>
+                    </section>
+
+                    <!-- Feature -->
+                    <section id="feature-ex">
+                        <h3>Feature</h3>
+                        <p>Features live in <code>behavior_pack/features/</code>. The feature type determines the root JSON key. Use feature rules to control where they spawn.</p>
+                        <pre><code class="language-typescript">import { Addon, Feature } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal ore example');
+
+const crystalOre = new Feature('Crystal Ore', 'crystalmod:crystal_ore_feature');
+crystalOre
+  .setType('minecraft:ore_feature')
+  .setData({
+    count: 6,
+    replace_rules: [
+      {
+        places_block: 'crystalmod:crystal_ore',
+        may_replace: ['minecraft:stone', 'minecraft:deepslate'],
+      },
+    ],
+  });
+
+addon.addFeature(crystalOre);</code></pre>
+                    </section>
+
+                    <!-- Feature Rule -->
+                    <section id="feature-rule-ex">
+                        <h3>Feature Rule</h3>
+                        <p>Feature rules live in <code>behavior_pack/feature_rules/</code>. They attach a feature to one or more biomes via tag filters and configure the placement pass and scatter distribution.</p>
+                        <pre><code class="language-typescript">import { Addon, FeatureRule } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal ore rule example');
+
+const crystalOreRule = new FeatureRule('Crystal Ore Rule', 'crystalmod:crystal_ore_overworld');
+crystalOreRule
+  .setPlacesFeature('crystalmod:crystal_ore_feature')
+  .addBiomeFilter({ test: 'has_biome_tag', operator: '==', value: 'overworld' })
+  .setPlacementPass('feature_placement_pass')
+  .setDistribution({
+    iterations: 8,
+    scatter_chance: { numerator: 2, denominator: 3 },
+    x: { distribution: 'uniform', extent: [0, 16] },
+    y: { distribution: 'uniform', extent: [0, 64] },
+    z: { distribution: 'uniform', extent: [0, 16] },
+  });
+
+addon.addFeatureRule(crystalOreRule);</code></pre>
+                    </section>
+
+                    <!-- Dimension -->
+                    <section id="dimension-ex">
+                        <h3>Dimension</h3>
+                        <p>Dimensions live in <code>behavior_pack/dimensions/</code>. They define Y bounds and generator type. Note: current Bedrock behavior pack dimensions "slice" existing terrain — areas outside bounds become inaccessible voids.</p>
+                        <pre><code class="language-typescript">import { Addon, Dimension } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal dimension example');
+
+const crystalDim = new Dimension('Crystal Void', 'crystalmod:crystal_void');
+crystalDim
+  .setBounds(0, 256)
+  .setGeneratorType('overworld');
+
+addon.addDimension(crystalDim);</code></pre>
+
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Tip:</strong> Combine all four world generation components in a single add-on: define your biome, create ore and tree features, attach them via feature rules that filter by your biome's tags, and optionally define a custom dimension with appropriate bounds.</div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- 16. VISUAL & CLIENT SYSTEMS -->
+                <!-- ============================================================ -->
+                <section id="visual-ex">
+                    <h2>16. Visual &amp; Client Systems</h2>
+                    <p>Phase 9 adds five new component types for resource-pack visual and audio systems: <strong>Particle</strong>, <strong>Animation</strong>, <strong>AnimationController</strong>, <strong>Attachable</strong>, and <strong>ClientBiome</strong>. All five write to the resource pack.</p>
+
+                    <!-- Particle -->
+                    <section id="particle-ex">
+                        <h3>Particle</h3>
+                        <p>Particle effects live in <code>resource_pack/particles/</code>. The fluent API covers emitter rate, lifetime, shape, and appearance, with Molang curves and lifecycle events supported via helpers.</p>
+                        <pre><code class="language-typescript">import { Addon, Particle } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal particle example');
+
+const sparkle = new Particle('Crystal Sparkle', 'crystalmod:sparkle');
+sparkle
+  .setRenderParameters('particles_add', 'textures/particle/particles')
+  .setEmitterRate('steady', { spawn_rate: 6, max_particles: 150 })
+  .setEmitterLifetime('looping', { active_time: 1 })
+  .setEmitterShape('sphere', { radius: 0.5, direction: 'outwards' })
+  .setParticleLifetime(1.5)
+  .setAppearanceBillboard({
+    size: [0.1, 0.1],
+    facing_camera_mode: 'lookat_xyz',
+  })
+  .setAppearanceTinting(['0.6', '0.9', '1.0', '1.0']);
+
+addon.addParticle(sparkle);</code></pre>
+                    </section>
+
+                    <!-- Animation -->
+                    <section id="animation-ex">
+                        <h3>Animation</h3>
+                        <p>Animations live in <code>resource_pack/animations/</code>. Each <code>Animation</code> instance maps to one named entry in the <code>animations</code> dict. The identifier is auto-derived from the component id (<code>"crystalmod:walk"</code> → <code>"animation.crystalmod.walk"</code>) and can be overridden.</p>
+                        <pre><code class="language-typescript">import { Addon, Animation } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal animation example');
+
+const walkAnim = new Animation('Walk', 'crystalmod:golem_walk');
+walkAnim
+  .setLoop(true)
+  .setAnimationLength(1.0)
+  .addBoneKeyframes('right_leg', 'rotation', {
+    '0.0': [0, 0, 0],
+    '0.5': [45, 0, 0],
+    '1.0': [0, 0, 0],
+  })
+  .addBoneKeyframes('left_leg', 'rotation', {
+    '0.0': [0, 0, 0],
+    '0.5': [-45, 0, 0],
+    '1.0': [0, 0, 0],
+  });
+
+addon.addAnimation(walkAnim);</code></pre>
+                    </section>
+
+                    <!-- Animation Controller -->
+                    <section id="anim-controller-ex">
+                        <h3>Animation Controller</h3>
+                        <p>Animation controllers live in <code>resource_pack/animation_controllers/</code>. They define state machines that blend and transition animations based on Molang conditions. The controller identifier is derived from the component id (<code>"crystalmod:golem"</code> → <code>"controller.animation.crystalmod.golem"</code>).</p>
+                        <pre><code class="language-typescript">import { Addon, AnimationController } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal animation controller example');
+
+const golemCtrl = new AnimationController('Golem Move', 'crystalmod:golem');
+golemCtrl
+  .setInitialState('idle')
+  .addState('idle', {
+    animations: ['idle_anim'],
+    transitions: [{ walk: 'query.modified_move_speed > 0.01' }],
+    blend_transition: 0.2,
+  })
+  .addState('walk', {
+    animations: ['walk_anim'],
+    transitions: [{ idle: 'query.modified_move_speed <= 0.01' }],
+    blend_transition: 0.2,
+  });
+
+addon.addAnimationController(golemCtrl);</code></pre>
+                    </section>
+
+                    <!-- Attachable -->
+                    <section id="attachable-ex">
+                        <h3>Attachable</h3>
+                        <p>Attachables live in <code>resource_pack/attachables/</code>. They define how items appear when held or worn by entities, referencing materials, textures, geometry, and render controllers.</p>
+                        <pre><code class="language-typescript">import { Addon, Attachable } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal attachable example');
+
+const drill = new Attachable('Powered Drill', 'crystalmod:powered_drill');
+drill
+  .setMaterials({ default: 'entity_alphatest' })
+  .setTextures({ default: 'textures/items/powered_drill' })
+  .setGeometry({ default: 'geometry.powered_drill' })
+  .setRenderControllers(['controller.render.item_default'])
+  .setScripts({
+    parent_setup: "variable.main_hand = c.is_item_name_any('slot.weapon.mainhand', 0, 'crystalmod:powered_drill');",
+    animate: [{ hold_first_person: 'variable.is_first_person' }],
+  });
+
+addon.addAttachable(drill);</code></pre>
+                    </section>
+
+                    <!-- Client Biome -->
+                    <section id="client-biome-ex">
+                        <h3>Client Biome</h3>
+                        <p>Client biomes live in <code>resource_pack/biomes_client/</code>. They define the visual and audio properties of a biome (water color, sky color, fog, grass and foliage tinting). Pair with a server-side <code>Biome</code> for a complete biome.</p>
+                        <pre><code class="language-typescript">import { Addon, Biome, ClientBiome } from 'jepia';
+
+const addon = new Addon('CrystalMod', 'Crystal biome example');
+
+// Server-side biome (behavior pack)
+const crystalForest = new Biome('Crystal Forest', 'crystalmod:crystal_forest');
+crystalForest
+  .setClimate({ temperature: 0.3, downfall: 0.6 })
+  .setSurfaceBuilder('minecraft:overworld', { top_material: 'minecraft:snow', mid_material: 'minecraft:stone' })
+  .addTag('forest')
+  .addTag('cold');
+addon.addBiome(crystalForest);
+
+// Client-side biome (resource pack)
+const crystalForestClient = new ClientBiome('Crystal Forest Client', 'crystalmod:crystal_forest');
+crystalForestClient
+  .setWaterColor('#a0d8ef')
+  .setSkyColor('#c8e8ff')
+  .setFogAppearance('#ddeeff', 0.85, 1.0)
+  .setGrassColor('#cce8ff')
+  .setFoliageColor('#aad4ff');
+addon.addClientBiome(crystalForestClient);</code></pre>
+
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Tip:</strong> Combine all five Phase 9 components for a fully animated entity: define a <code>Particle</code> for its trail effect, an <code>Animation</code> for its walk cycle, an <code>AnimationController</code> to blend idle/walk/attack states, an <code>Attachable</code> for a held weapon, and a <code>ClientBiome</code> to give its home biome a distinctive visual feel.</div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- EXAMPLE 17: Phase 10 — Polish & Edge Cases -->
+                <!-- ============================================================ -->
+                <section id="example-phase10">
+                    <h2>Example 17: Phase 10 — Dialogue, Fog, Camera, Sounds &amp; Plugins</h2>
+                    <p>This example showcases all six Phase 10 additions: NPC dialogue with buttons, a custom camera preset, a fog definition, a sound event, a block culling rule, and a plugin for build logging.</p>
+
+                    <section id="example-dialogue">
+                        <h3>NPC Dialogue</h3>
+                        <pre><code class="language-typescript">import { Addon, Dialogue } from 'jepia';
+
+const addon = new Addon('PhasetenAddon', 'Phase 10 demo add-on');
+
+// --- Dialogue ---
+const dlg = new Dialogue('Blacksmith Dialogue', 'phaseten:blacksmith');
+dlg.addScene('greeting', {
+  npc_name: 'Old Blacksmith',
+  text: 'Back again? I have fresh stock.',
+  on_open_commands: ['/effect @initiator saturation 5 1'],
+  buttons: [
+    { name: 'Buy tools',  commands: ['/give @initiator iron_pickaxe 1'] },
+    { name: 'Sell items', commands: ['/dialogue open @e[type=phaseten:blacksmith,r=3] @initiator sell'] },
+    { name: 'Goodbye',    commands: [] },
+  ],
+});
+dlg.addScene('sell', {
+  npc_name: 'Old Blacksmith',
+  text: "Drop your items in the chest, I'll evaluate them.",
+});
+addon.addDialogue(dlg);</code></pre>
+                    </section>
+
+                    <section id="example-camera-fog">
+                        <h3>Camera Preset &amp; Fog</h3>
+                        <pre><code class="language-typescript">import { Camera, Fog } from 'jepia';
+
+// Cinematic over-shoulder camera
+const cam = new Camera('Cinematic Cam', 'phaseten:cinematic');
+cam.setInheritFrom('minecraft:follow_orbit')
+   .setRadius(5)
+   .setViewOffset(1.5, 0.3)
+   .setEntityOffset(0, 1.6, 0)
+   .setStartingRotation(-8, 0);
+addon.addCamera(cam);
+
+// Eerie underground fog
+const fog = new Fog('Underground Fog', 'phaseten:underground');
+fog.setDistanceFog('air', {
+     fog_start: 0.6,
+     fog_end: 0.9,
+     fog_color: '#1a1a2e',
+     render_distance_type: 'render',
+   })
+   .setDistanceFog('lava', {
+     fog_start: 0,
+     fog_end: 3,
+     fog_color: '#ff4000',
+     render_distance_type: 'fixed',
+   })
+   .setVolumetricDensity('air', { max_density: 0.4, uniform: false,
+                                  zero_density_height: 60, max_density_height: 30 });
+addon.addFog(fog);</code></pre>
+                    </section>
+
+                    <section id="example-sounds">
+                        <h3>Sound Definitions</h3>
+                        <pre><code class="language-typescript">import { SoundDefinition } from 'jepia';
+
+const sndForge = new SoundDefinition('Forge Clank', 'phaseten.forge.clank');
+sndForge.setCategory('block')
+        .addSoundFile('sounds/phaseten/forge_clank1')
+        .addSoundEntry({ name: 'sounds/phaseten/forge_clank2', volume: 0.8, pitch: [0.9, 1.1] })
+        .setDistance(4, 24);
+addon.addSoundDefinition(sndForge);
+
+const sndAmbient = new SoundDefinition('Dungeon Ambient', 'phaseten.ambient.dungeon');
+sndAmbient.setCategory('ambient')
+          .addSoundFile('sounds/phaseten/dungeon_loop');
+addon.addSoundDefinition(sndAmbient);</code></pre>
+                    </section>
+
+                    <section id="example-block-culling">
+                        <h3>Block Culling Rule</h3>
+                        <pre><code class="language-typescript">import { BlockCullingRule } from 'jepia';
+
+// Custom stained glass — cull same-block faces
+const glassCull = new BlockCullingRule('Stained Glass Culling', 'phaseten:stained_glass');
+(['north', 'south', 'east', 'west', 'up', 'down'] as const).forEach(dir => {
+  glassCull.addFaceRule('block', 0, dir, 'same_culling_layer');
+});
+addon.addBlockCullingRule(glassCull);</code></pre>
+                    </section>
+
+                    <section id="example-plugin">
+                        <h3>Plugin System</h3>
+                        <pre><code class="language-typescript">import type { JepiaPlugin } from 'jepia';
+
+const buildLogger: JepiaPlugin = {
+  name: 'build-logger',
+  onBeforeGenerate({ addonName, outputPath, metadata }) {
+    metadata.startTime = Date.now();
+    console.log(`[build-logger] Starting "${addonName}" → ${outputPath}`);
+  },
+  onAfterGenerate({ addonName, metadata }) {
+    const elapsed = Date.now() - (metadata.startTime as number);
+    console.log(`[build-logger] "${addonName}" built in ${elapsed}ms`);
+  },
+};
+
+addon.use(buildLogger);
+await addon.generate('./output');</code></pre>
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Tip:</strong> Use <code>metadata</code> to pass data between <code>onBeforeGenerate</code> and <code>onAfterGenerate</code>, or to store references that multiple plugins share. Plugins are called in registration order and support <code>async</code> functions.</div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- EXAMPLE 18: Phase 12 — Jigsaw Structures -->
+                <!-- ============================================================ -->
+                <section id="jigsaw-ex">
+                    <h2>Example 18: Phase 12 — Jigsaw Structures</h2>
+                    <p>This example demonstrates the jigsaw structure system: procedurally assembled structures using template pools, structure sets for placement control, and processor lists for block transformations.</p>
+
+                    <section id="jigsaw-structure-ex">
+                        <h3>Jigsaw Structure</h3>
+                        <pre><code class="language-typescript">import { Addon, JigsawStructure } from 'jepia';
+
+const addon = new Addon('JigsawDemo', 'Jigsaw structures demo');
+
+// Define a trail-ruins-style underground structure
+const ruins = new JigsawStructure('Trail Ruins', 'demo:trail_ruins');
+ruins
+  .setStep('underground_structures')
+  .setTerrainAdaptation('bury')
+  .setStartPool('demo:trail_ruins/tower')
+  .setMaxDepth(7)
+  .setStartHeight({ type: 'constant', value: { absolute: -15 } })
+  .setHeightmapProjection('world_surface')
+  .setMaxDistanceFromCenter({ horizontal: 80, vertical: 80 })
+  .addBiomeFilter({ test: 'has_biome_tag', value: 'has_structure_trail_ruins' });
+
+addon.addJigsawStructure(ruins);</code></pre>
+                    </section>
+
+                    <section id="template-pool-ex">
+                        <h3>Template Pool</h3>
+                        <pre><code class="language-typescript">import { TemplatePool } from 'jepia';
+
+// Pool of tower-top variations with weighted selection
+const towerPool = new TemplatePool('Tower Top Pool', 'demo:trail_ruins/tower_top');
+towerPool
+  .addElement(
+    { location: 'demo:trail_ruins/tower_top_1',
+      processors: 'demo:archaeology' },
+    2  // weight — twice as likely as variant 2
+  )
+  .addElement(
+    { location: 'demo:trail_ruins/tower_top_2',
+      projection: 'minecraft:terrain_matching' },
+    1
+  )
+  .addEmptyElement(1)  // 25 % chance of nothing
+  .setFallback('minecraft:empty');
+
+addon.addTemplatePool(towerPool);</code></pre>
+                    </section>
+
+                    <section id="structure-set-ex">
+                        <h3>Structure Set</h3>
+                        <pre><code class="language-typescript">import { StructureSet } from 'jepia';
+
+// Controls how far apart trail ruins spawn
+const ruinsSet = new StructureSet('Trail Ruins Set', 'demo:trail_ruins');
+ruinsSet
+  .setPlacement({
+    type: 'minecraft:random_spread',
+    salt: 83469867,
+    separation: 8,   // min 8 chunks apart within a grid cell
+    spacing: 34,     // grid cell = 34 chunks
+    spread_type: 'linear',
+  })
+  .addStructure('demo:trail_ruins', 1);
+
+addon.addStructureSet(ruinsSet);</code></pre>
+                    </section>
+
+                    <section id="processor-list-ex">
+                        <h3>Processor List</h3>
+                        <pre><code class="language-typescript">import { ProcessorList } from 'jepia';
+
+// Block transformations applied during structure placement
+const proc = new ProcessorList('Archaeology Processor', 'demo:archaeology');
+proc
+  .addBlockIgnore(['minecraft:structure_void'])
+  .addProtectedBlocks('minecraft:features_cannot_replace')
+  .addRule({
+    input_predicate: {
+      predicate_type: 'minecraft:random_block_match',
+      block: 'minecraft:gravel',
+      probability: 0.2,
+    },
+    output_state: { name: 'minecraft:suspicious_gravel' },
+  })
+  .addRule({
+    input_predicate: {
+      predicate_type: 'minecraft:block_match',
+      block: 'minecraft:sand',
+    },
+    output_state: { name: 'minecraft:suspicious_sand' },
+  });
+
+addon.addProcessorList(proc);
+
+// Generate the complete add-on
+await addon.generate('./output');</code></pre>
+                        <div class="tip-box">
+                            <img src="assets/jepia_question.svg" alt="" class="box-icon">
+                            <div><strong>Tip:</strong> Jigsaw structures are stored under <code>behavior_pack/worldgen/</code> in four subdirectories: <code>structures/</code>, <code>template_pools/</code>, <code>structure_sets/</code>, and <code>processors/</code>. All use <code>format_version: "1.21.20"</code>.</div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- FOOTER -->
+                <!-- ============================================================ -->
+                <footer>
+                    <p>Jepia &ndash; a TypeScript framework for Minecraft Bedrock Add&#8209;On generation.</p>
+                    <p>See the <a href="https://github.com/Verpitek/Jepia" target="_blank">GitHub repository</a> for source code, issues, and contributions.</p>
+                </footer>
+            </main>
+        </div><!-- /.layout -->
+        </div><!-- /.page-wrapper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>

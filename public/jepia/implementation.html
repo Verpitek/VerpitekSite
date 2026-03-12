@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <title>Jepia Implementation</title>
+        <link rel="icon" type="image/svg+xml" href="assets/jepia.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+        <link rel="shortcut icon" href="assets/favicon.ico">
+        <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+        <link rel="stylesheet" href="assets/styles.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+    </head>
+    <body>
+        <nav class="topnav" aria-label="Site navigation">
+            <div class="topnav-inner">
+                <a href="index.html" class="topnav-brand">
+                    <img src="assets/jepia.svg" alt="Jepia Logo">
+                    <span>Jepia</span>
+                </a>
+                <button class="topnav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topnav-links" id="topnav-links">
+                    <a href="index.html">Home</a>
+                    <a href="api.html">API</a>
+                    <a href="components.html">Components</a>
+                    <a href="architecture.html">Architecture</a>
+                    <a href="examples.html">Examples</a>
+                    <a href="implementation.html">Implementation</a>
+                </div>
+            </div>
+        </nav>
+        <div class="page-wrapper">
+        <h1>Jepia Implementation</h1>
+        <p>Development phases and implementation history of the Jepia framework.</p>
+        <button class="sidebar-toggle" id="sidebar-toggle">Contents <span class="toggle-arrow">▼</span></button>
+        <div class="layout">
+            <nav class="sidebar" id="sidebar">
+                <h3>Contents</h3>
+                <ul>
+                    <li><a href="#phase-1">Phase 1: Core Foundation</a></li>
+                    <li><a href="#phase-2">Phase 2: Enhanced Texture System</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#material-component">Material Component</a></li>
+                                <li><a href="#texture-layer">TextureLayer</a></li>
+                                <li><a href="#texture-set">TextureSet</a></li>
+                                <li><a href="#texture-rewrite">Texture Rewrite</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#phase-3">Phase 3: Render Controllers</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#render-controller-class">RenderController Class</a></li>
+                                <li><a href="#entity-integration">Entity Integration</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#phase-4">Phase 4: File System</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#auto-render-gen">Auto Render Generation</a></li>
+                                <li><a href="#resource-pack-files">ResourcePack Files</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#phase-5">Phase 5: Texture Atlas</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#texture-atlas-class">TextureAtlas Class</a></li>
+                                <li><a href="#atlas-packer">AtlasPacker</a></li>
+                                <li><a href="#memory-optimization">Memory Optimization</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#cli-packaging">CLI &amp; Packaging</a></li>
+                    <li><a href="#phase11">Phase 11: Hardening</a></li>
+                    <li><a href="#phase-polish">Phase 10: Polish &amp; Edge Cases</a></li>
+                    <li><a href="#phase-visual">Phase 9: Visual &amp; Client Systems</a></li>
+                    <li><a href="#phase-worldgen">Phase 8: World Generation</a></li>
+                    <li><a href="#phase-gameplay">Phase 7: Gameplay Systems</a></li>
+                    <li><a href="#phase-scripting">Phase 6: Scripting</a>
+                        <div class="section-group">
+                            <ul>
+                                <li><a href="#script-schema">Schema &amp; Manifest Fixes</a></li>
+                                <li><a href="#script-extract-bundle">Extraction &amp; Bundling</a></li>
+                                <li><a href="#script-addon-integration">Addon Integration</a></li>
+                                <li><a href="#script-custom-features">Custom Components &amp; Commands</a></li>
+                                <li><a href="#script-cross-ref">Cross-Reference &amp; Constants</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li><a href="#test-coverage">Test Coverage</a></li>
+                </ul>
+            </nav>
+
+            <main class="content">
+
+                <!-- Phase 1 -->
+                <section id="phase-1">
+                    <h2>Phase 1: Core Foundation</h2>
+                    <p>The initial commit (<code>4dc759c</code>) established the foundational architecture of Jepia.</p>
+                    <ul>
+                        <li><strong>Addon, Pack, and base Component classes</strong> &mdash; the core object model for describing Minecraft Bedrock add-ons programmatically</li>
+                        <li><strong>Manifest builder with UUID generation</strong> &mdash; automatic <code>manifest.json</code> creation with persistent UUIDs</li>
+                        <li><strong>File system template generation</strong> &mdash; produces the full <code>behavior_pack/</code> + <code>resource_pack/</code> directory structure</li>
+                        <li><strong>Item, Block, Entity components with AJV validation</strong> &mdash; schema-driven validation at build time</li>
+                        <li><strong>Cross-component references</strong> &mdash; dependency resolution between components across packs</li>
+                    </ul>
+                    <pre><code class="language-typescript">// Phase 1: core API shape
+const addon = new Addon('MyAddon', 'A Bedrock add-on');
+addon.addItem(sword);
+addon.addBlock(ore);
+addon.addEntity(zombie);
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <!-- Phase 2 -->
+                <section id="phase-2">
+                    <h2>Phase 2: Enhanced Texture System (Rendering Phase 1-2)</h2>
+                    <p>Days 1 through 10 built out the rendering pipeline's texture and material foundations.</p>
+
+                    <h3 id="material-component">Material Component (Days 1-5)</h3>
+                    <p>Full implementation of Bedrock's <code>.material</code> file format with inheritance support.</p>
+                    <ul>
+                        <li><strong>Core Material class</strong> with inheritance via <code>parent:child</code> key format</li>
+                        <li><strong>BlendFactor, MaterialDefine, MaterialState enums</strong> for type-safe shader configuration</li>
+                        <li><strong>VanillaMaterials class</strong> with 25 presets and <code>getMaterialDefinition()</code> for quick access to Bedrock's built-in materials</li>
+                        <li><code>.material</code> file generation in <code>resource_pack/materials/</code></li>
+                        <li>Integration with Entity (<code>setMaterial</code>) and Addon (auto-collection)</li>
+                    </ul>
+                    <pre><code class="language-typescript">const mat = new Material('custom:glowing_ore');
+mat
+  .setParent('entity_alphatest')
+  .addDefine('FANCY')
+  .setBlendSrc('SourceAlpha')
+  .setBlendDst('OneMinusSrcAlpha')
+  .setState('DisableCulling', true);</code></pre>
+                    <p><strong>Test coverage:</strong> 115 material tests + 39 file generation tests.</p>
+
+                    <h3 id="texture-layer">TextureLayer (Day 6)</h3>
+                    <p>Individual image layers with PBR roles and blending support.</p>
+                    <ul>
+                        <li><strong>PBR layer types:</strong> <code>color</code>, <code>normal</code>, <code>mer</code>, <code>mers</code>, <code>heightmap</code>, <code>overlay</code></li>
+                        <li><strong>Blending modes:</strong> <code>opaque</code>, <code>alpha</code>, <code>additive</code>, <code>multiply</code>, <code>screen</code></li>
+                        <li><strong>UV offset/scale</strong> for atlas sub-regions</li>
+                        <li>Static factories: <code>colorLayer()</code>, <code>normalLayer()</code>, <code>merLayer()</code>, etc.</li>
+                    </ul>
+                    <pre><code class="language-typescript">const color = TextureLayer.colorLayer('iron_color', {
+  path: 'textures/blocks/iron_block',
+  resolution: { width: 16, height: 16 }
+});
+const normal = TextureLayer.normalLayer('iron_normal', {
+  path: 'textures/blocks/iron_block_normal'
+});</code></pre>
+                    <p><strong>Test coverage:</strong> 94 tests.</p>
+
+                    <h3 id="texture-set">TextureSet (Day 7)</h3>
+                    <p>PBR texture sets targeting Bedrock format versions <code>1.16.100</code> and <code>1.21.30</code> (Vibrant Visuals).</p>
+                    <ul>
+                        <li>Mutual exclusion enforcement: <code>normal</code> vs <code>heightmap</code>, <code>mer</code> vs <code>mers</code></li>
+                        <li>Color accepts <code>string</code>, RGBA array, or hex values</li>
+                        <li>Generates <code>.texture_set.json</code> files for Bedrock's deferred rendering pipeline</li>
+                    </ul>
+                    <pre><code class="language-typescript">const textureSet = new TextureSet('iron_pbr');
+textureSet
+  .setColorLayer(colorLayer)
+  .setNormalLayer(normalLayer)
+  .setMERLayer(merLayer);</code></pre>
+                    <p><strong>Test coverage:</strong> 108 tests.</p>
+
+                    <h3 id="texture-rewrite">Texture Rewrite (Days 8-10)</h3>
+                    <p>Major refactor of the Texture class for multi-layer support while preserving backward compatibility.</p>
+                    <ul>
+                        <li><strong>Multi-layer support</strong> via <code>addLayer(TextureLayer)</code></li>
+                        <li><strong>Backward-compatible constructor</strong> &mdash; the old single-path API still works</li>
+                        <li><strong>Atlas mode</strong> with <code>enableAtlas(width, height)</code></li>
+                        <li><strong>PBR</strong> via <code>setTextureSet(TextureSet)</code></li>
+                        <li>Entity + texture integration tests to ensure the full pipeline works end-to-end</li>
+                    </ul>
+                </section>
+
+                <!-- Phase 3 -->
+                <section id="phase-3">
+                    <h2>Phase 3: Render Controllers (Days 11-17)</h2>
+
+                    <h3 id="render-controller-class">RenderController Class (Day 11)</h3>
+                    <p>Full implementation of Bedrock's render controller format with Molang expression support.</p>
+                    <ul>
+                        <li><strong>Geometry, materials, textures configuration</strong> &mdash; the three pillars of entity rendering</li>
+                        <li><strong>Named arrays</strong> (texture, material, geometry) for variant selection via Molang</li>
+                        <li><strong>Part visibility</strong> with wildcard patterns for showing/hiding geometry parts</li>
+                        <li><strong>Color tinting</strong> &mdash; base, overlay, on_fire, is_hurt color channels</li>
+                        <li><strong>UV animation</strong> for atlas scrolling effects</li>
+                        <li><strong>Lighting flags:</strong> <code>filterLighting</code>, <code>ignoreLighting</code></li>
+                        <li>Static factory: <code>fromTextureLayers()</code> for quick setup from existing layers</li>
+                    </ul>
+                    <pre><code class="language-typescript">const rc = new RenderController('controller.render.my_entity');
+rc
+  .setGeometry("Geometry.default")
+  .addTexture("Texture.default")
+  .addMaterial("Material.default", "*")
+  .setPartVisibility("head", "query.is_baby")
+  .setUVAnimation([0, "math.sin(query.life_time * 10)"]);</code></pre>
+                    <p><strong>Test coverage:</strong> 158 tests.</p>
+
+                    <h3 id="entity-integration">Entity Integration (Days 13-17)</h3>
+                    <p>Deep integration between Entity and the rendering pipeline components.</p>
+                    <ul>
+                        <li><strong>Array management and auto-generation</strong> &mdash; entities automatically build their texture, material, and geometry arrays</li>
+                        <li><strong>Entity.setRenderController()</strong> integration for wiring render controllers</li>
+                        <li><strong>Texture layer management</strong> on Entity for multi-layer setups</li>
+                        <li><strong>Script animation support</strong> via <code>scripts.animate</code></li>
+                        <li><strong>Client entity generation overhaul</strong> with full resource pack output</li>
+                        <li>Part visibility and color tinting integration tests</li>
+                    </ul>
+                </section>
+
+                <!-- Phase 4 -->
+                <section id="phase-4">
+                    <h2>Phase 4: File System &amp; Auto-Generation (Days 18-19)</h2>
+
+                    <h3 id="auto-render-gen">Automatic Render Controller Generation (Day 18)</h3>
+                    <p>Intelligent auto-generation that detects entity patterns and creates appropriate render controllers.</p>
+                    <ul>
+                        <li><code>addon.generateRenderControllerForEntity()</code> method</li>
+                        <li>Handles <strong>3 patterns</strong>:
+                            <ol>
+                                <li><strong>Single-texture</strong> &mdash; simple direct texture reference</li>
+                                <li><strong>Multi-variant</strong> &mdash; texture array + <code>q.variant</code> Molang query</li>
+                                <li><strong>UV atlas</strong> &mdash; atlas scrolling with UV animation</li>
+                            </ol>
+                        </li>
+                        <li>Auto-generates appropriate Material for UV atlas entities</li>
+                    </ul>
+
+                    <h3 id="resource-pack-files">ResourcePack File Integration (Day 19)</h3>
+                    <p>Batch file output for all resource pack components.</p>
+                    <ul>
+                        <li><code>addMaterialFile()</code>, <code>addRenderControllerFile()</code>, <code>addTextureSetFile()</code></li>
+                        <li><code>writeFiles()</code> for batch disk output</li>
+                        <li>Full pipeline: Entity &rarr; Material &rarr; RenderController &rarr; files on disk</li>
+                    </ul>
+                    <pre><code class="language-typescript">// Full pipeline in action
+const rp = addon.resourcePack;
+rp.addMaterialFile(material);
+rp.addRenderControllerFile(renderController);
+rp.addTextureSetFile(textureSet);
+await rp.writeFiles('./output/resource_pack');</code></pre>
+                </section>
+
+                <!-- Phase 5 -->
+                <section id="phase-5">
+                    <h2>Phase 5: Texture Atlas System (Days 21-24)</h2>
+
+                    <h3 id="texture-atlas-class">TextureAtlas Class (Day 21)</h3>
+                    <p>Sprite sheet generation with multiple layout strategies.</p>
+                    <ul>
+                        <li><strong>Grid and packed layout modes</strong> for different texture organization needs</li>
+                        <li><strong>Entity UV integration</strong> with <code>applyToEntity()</code> for automatic UV coordinate mapping</li>
+                        <li><strong>Shelf packing strategy</strong> for row-based placement of same-height textures</li>
+                    </ul>
+                    <pre><code class="language-typescript">const atlas = new TextureAtlas('item_atlas', {
+  strategy: 'shelf',
+  maxWidth: 1024,
+  maxHeight: 1024
+});
+atlas.addSprite('sword', 16, 16);
+atlas.addSprite('pickaxe', 16, 16);
+atlas.applyToEntity(entity);</code></pre>
+
+                    <h3 id="atlas-packer">Standalone AtlasPacker (Day 22)</h3>
+                    <p>Dedicated packing algorithms extracted for reuse and configurability.</p>
+                    <ul>
+                        <li><strong>Shelf algorithm</strong> &mdash; sort by height, place in rows. Optimal for uniform-size textures.</li>
+                        <li><strong>Maxrects algorithm</strong> &mdash; best short-side fit heuristic. Optimal for mixed-size textures.</li>
+                        <li><strong>Configurable padding</strong> between textures to prevent bleeding at mip levels</li>
+                    </ul>
+                    <pre><code class="language-typescript">const packer = new AtlasPacker({
+  strategy: 'maxrects',
+  maxWidth: 2048,
+  maxHeight: 2048,
+  padding: 1
+});
+packer.addRect('sword', 16, 16);
+packer.addRect('shield', 32, 32);
+const result = packer.pack();
+// result.placements: Map of sprite positions</code></pre>
+
+                    <h3 id="memory-optimization">Memory Optimization (Day 24)</h3>
+                    <p>Analysis and reporting tools for atlas efficiency.</p>
+                    <ul>
+                        <li><strong>Optimization reports</strong> &mdash; efficiency percentage and wasted area calculations</li>
+                        <li><strong>Memory reports</strong> &mdash; original vs atlas memory usage with reduction percentage</li>
+                        <li><strong>Atlas budget validation</strong> &mdash; ensures atlas dimensions stay within GPU texture limits</li>
+                    </ul>
+                </section>
+
+                <!-- CLI & Packaging -->
+                <section id="cli-packaging">
+                    <h2>CLI &amp; Packaging</h2>
+                    <p>Command-line interface for project scaffolding and build automation.</p>
+                    <ul>
+                        <li><strong>CLI with Commander:</strong> <code>init</code>, <code>add</code>, <code>build</code>, <code>validate</code> commands</li>
+                        <li><strong>Interactive prompts</strong> with Inquirer.js for guided setup</li>
+                        <li><strong>Configuration system</strong> with Zod schema validation</li>
+                        <li><strong>.mcaddon/.mcpack packaging</strong> with Archiver for ZIP archive creation</li>
+                        <li><strong>Help system</strong> with man pages for offline documentation</li>
+                    </ul>
+                    <pre><code class="language-bash"># Scaffold a new project
+jepia init my-addon
+
+# Add components
+jepia add item diamond_sword
+jepia add block reactor_core
+
+# Build and validate
+jepia validate
+jepia build</code></pre>
+                </section>
+
+                <!-- Test Coverage -->
+                <section id="test-coverage">
+                    <h2>Test Coverage</h2>
+                    <p>Comprehensive test suite covering all components and integration paths.</p>
+                    <table>
+                        <tr><th>Area</th><th>Test Count</th></tr>
+                        <tr><td>Material</td><td>115</td></tr>
+                        <tr><td>Material File Generation</td><td>39</td></tr>
+                        <tr><td>Entity-Material Integration</td><td>33</td></tr>
+                        <tr><td>TextureLayer</td><td>94</td></tr>
+                        <tr><td>TextureSet</td><td>108</td></tr>
+                        <tr><td>Texture (rewrite)</td><td>~100</td></tr>
+                        <tr><td>RenderController</td><td>158</td></tr>
+                        <tr><td>Entity Integration</td><td>~200</td></tr>
+                        <tr><td>TextureAtlas</td><td>~150</td></tr>
+                        <tr><td>AtlasPacker</td><td>~100</td></tr>
+                        <tr><td>Memory Optimization</td><td>~70</td></tr>
+                        <tr><td>Other (items, blocks, etc.)</td><td>~200</td></tr>
+                        <tr><td>Script types &amp; validation</td><td>55</td></tr>
+                        <tr><td>Script extractor</td><td>56</td></tr>
+                        <tr><td>Script bundler</td><td>25</td></tr>
+                        <tr><td>Script pipeline</td><td>42</td></tr>
+                        <tr><td>BehaviorPack script module</td><td>18</td></tr>
+                        <tr><td>Addon script integration</td><td>23</td></tr>
+                        <tr><td>Addon generate &amp; fs helpers</td><td>26</td></tr>
+                        <tr><td>Custom components</td><td>41</td></tr>
+                        <tr><td>Custom commands</td><td>37</td></tr>
+                        <tr><td>Constants generator &amp; cross-ref</td><td>39</td></tr>
+                        <tr><td><strong>Total</strong></td><td><strong>2617</strong></td></tr>
+                    </table>
+                    <p>All tests run under Bun's built-in test runner with no external test framework dependencies.</p>
+                </section>
+
+                <!-- Phase 6: Scripting -->
+                <section id="phase-scripting">
+                    <h2>Phase 6: Scripting Support (Days 1-14)</h2>
+                    <p>The scripting phase added full Minecraft Script API integration to Jepia. Users can define runtime game logic in the same TypeScript file as their JSON components. Jepia extracts, compiles, and bundles the script code into <code>behavior_pack/scripts/main.js</code> during <code>addon.generate()</code>.</p>
+
+                    <table>
+                        <tr><th>Phase</th><th>Days</th><th>What was built</th><th>Tests added</th></tr>
+                        <tr><td>Phase 1</td><td>1-2</td><td>Schema &amp; manifest fixes (<code>entry</code> field, semver dependency versions, script module types)</td><td>+55 → 2310 total</td></tr>
+                        <tr><td>Phase 2</td><td>3-5</td><td>Script extraction (<code>Function.toString()</code> + ctx rewriting), bundler (<code>Bun.build</code>), pipeline orchestrator</td><td>+123 → 2433 total</td></tr>
+                        <tr><td>Phase 3</td><td>6-8</td><td>BehaviorPack script module, <code>addon.script()</code> / <code>addon.scriptFile()</code>, generate() integration</td><td>+67 → 2500 total</td></tr>
+                        <tr><td>Phase 4</td><td>—</td><td>CLI scripting config — <em>skipped</em> (Jepia is a programmatic API only)</td><td>—</td></tr>
+                        <tr><td>Phase 5</td><td>11-13</td><td>Custom Components V2, Custom Commands, cross-reference helpers, constants injection</td><td>+117 → 2617 total</td></tr>
+                        <tr><td>Phase 6</td><td>14</td><td>Scripted examples (<code>scripted-addon.ts</code>, <code>custom-components-addon.ts</code>), polish</td><td>all 2617 passing</td></tr>
+                    </table>
+
+                    <h3 id="script-schema">Phase 1: Schema &amp; Manifest Fixes (Days 1-2)</h3>
+                    <p>The existing <code>ManifestModule</code> was missing the <code>entry</code> field required by script modules, and <code>ManifestDependency.version</code> only accepted tuple versions — but script dependencies require semver strings (e.g. <code>"1.17.0"</code>).</p>
+                    <ul>
+                        <li><strong><code>src/manifest/schema.ts</code></strong> — added <code>entry?: string</code> to <code>ManifestModule</code>; changed <code>ManifestDependency.version</code> to <code>Version | string</code>.</li>
+                        <li><strong><code>src/manifest/builder.ts</code></strong> — <code>validateModule()</code> requires <code>entry</code> starting with <code>"scripts/"</code> when <code>type === "script"</code>; <code>validateDependency()</code> accepts semver strings.</li>
+                        <li><strong><code>src/script/types.ts</code></strong> — defined <code>ScriptModuleId</code>, <code>ScriptOptions</code>, <code>ScriptBlock</code>, <code>ScriptDependency</code>, <code>ScriptConfig</code>, <code>STABLE_MODULE_VERSIONS</code>, and all helper functions.</li>
+                    </ul>
+                    <pre><code class="language-typescript">// Correct Bedrock manifest structure for a script module:
+{
+  "type": "script",
+  "language": "javascript",
+  "uuid": "...",
+  "version": [1, 0, 0],
+  "entry": "scripts/main.js"    // ← was missing in original schema
+}
+// Dependency uses semver string, not version tuple:
+{ "module_name": "@minecraft/server", "version": "2.5.0" }</code></pre>
+
+                    <h3 id="script-extract-bundle">Phase 2: Extraction &amp; Bundling (Days 3-5)</h3>
+
+                    <h4>Extractor (<code>src/script/extractor.ts</code>)</h4>
+                    <p>Uses <code>Function.prototype.toString()</code> to get callback source text, then:</p>
+                    <ul>
+                        <li>Strips the outer function wrapper (supports arrow functions, regular functions, async variants, concise arrow bodies).</li>
+                        <li>Detects <code>ctx.server</code> / <code>ctx.serverUi</code> / etc. with word-boundary matching (prevents <code>ctx.server</code> from matching <code>ctx.serverUi</code>).</li>
+                        <li>Extracts destructured imports and generates proper ES <code>import</code> statements, or <code>import * as server from '...'</code> for namespace usage.</li>
+                        <li>Merges multiple blocks into one ES module with deduplicated, sorted imports.</li>
+                    </ul>
+
+                    <h4>Bundler (<code>src/script/bundler.ts</code>)</h4>
+                    <p>Wraps <code>Bun.build()</code> with:</p>
+                    <ul>
+                        <li><code>target: "browser"</code>, <code>format: "esm"</code></li>
+                        <li><code>external: ["@minecraft/server", "@minecraft/server-ui", ...]</code> — all 5 <code>@minecraft/*</code> modules excluded from the bundle</li>
+                        <li>Temp file write → build → read → cleanup pattern</li>
+                        <li><code>bundleScriptFiles()</code> for user-provided TS/JS files (single or multi-file barrel)</li>
+                    </ul>
+
+                    <h4>Pipeline (<code>src/script/pipeline.ts</code>)</h4>
+                    <p><code>ScriptPipeline</code> orchestrates the full flow: collect blocks/files → extract → merge raw sources (custom components, commands, constants) → bundle → return <code>{ bundledJs, dependencies, scriptModuleUUID }</code>.</p>
+
+                    <h3 id="script-addon-integration">Phase 3: Addon &amp; Pack Integration (Days 6-8)</h3>
+                    <ul>
+                        <li><strong><code>src/pack/behavior.ts</code></strong> — replaced <code>hasScriptModule: boolean</code> with full <code>scriptConfig</code> + <code>scriptModuleUUID</code> + <code>setScriptDependencies()</code>. Script manifest module now includes <code>entry</code> and <code>language</code> fields; dependencies use string semver versions.</li>
+                        <li><strong><code>src/addon.ts</code></strong> — added <code>script()</code>, <code>scriptFile()</code>, <code>setScriptModuleVersion()</code>. <code>generate()</code> runs the pipeline before manifest generation, writes <code>scripts/main.js</code>, persists <code>scriptModuleUUID</code> to <code>jepia.config.json</code>.</li>
+                        <li><strong><code>src/utils/fs.ts</code></strong> — added <code>writeScriptFile()</code> and <code>createAddonFolderStructure({ includeScripts })</code>.</li>
+                    </ul>
+
+                    <h3 id="script-custom-features">Phase 5: Custom Components &amp; Commands (Days 11-13)</h3>
+
+                    <h4>Custom Components V2 (<code>src/script/custom-components.ts</code>)</h4>
+                    <p><code>Block.addCustomComponent(name, handlers, params?)</code> and <code>Item.addCustomComponent(name, handlers, params?)</code> store handler functions and optional JSON params. During <code>generate()</code>, <code>generateCustomComponentScript(registrations)</code> produces the startup registration block:</p>
+                    <pre><code class="language-javascript">system.beforeEvents.startup.subscribe((event) => {
+  const { blockComponentRegistry } = event;
+  blockComponentRegistry.registerCustomComponent('myaddon:crumble_on_step', {
+    onStepOn: (event) => { /* extracted handler */ },
+  });
+});</code></pre>
+
+                    <h4>Custom Commands (<code>src/script/custom-commands.ts</code>)</h4>
+                    <p><code>addon.addCustomCommand(config, enums?)</code> stores command registrations. <code>generateCustomCommandScript(registrations)</code> produces startup code with <code>registerEnum()</code> calls before <code>registerCommand()</code> calls. Handler callbacks are inlined via <code>Function.prototype.toString()</code>.</p>
+
+                    <h4>Constants Generator (<code>src/script/constants-generator.ts</code>)</h4>
+                    <p>When scripts are enabled, Jepia auto-injects a constants export at the top of <code>scripts/main.js</code>:</p>
+                    <pre><code class="language-javascript">export const ITEMS = { FIRE_SWORD: "myaddon:fire_sword" };
+export const BLOCKS = { MAGIC_ORE: "myaddon:magic_ore" };
+export const ENTITIES = {};</code></pre>
+                    <p>Identifiers are converted to SCREAMING_SNAKE_CASE via <code>identifierToConstantName()</code>. No constants are generated when no components are registered (zero overhead).</p>
+
+                    <h3 id="script-cross-ref">Phase 5: Cross-Reference Helpers (Day 13)</h3>
+                    <p>Added <code>addon.getItemId(item)</code>, <code>getBlockId(block)</code>, <code>getEntityId(entity)</code>, and <code>getRegisteredItemIds()</code> / <code>getRegisteredBlockIds()</code> / <code>getRegisteredEntityIds()</code>. These methods bridge component identifiers between JSON definitions and script code, making it easy to reference the same ID in both places without string duplication.</p>
+
+                    <h3>Key Technical Notes</h3>
+                    <table>
+                        <tr><th>Challenge</th><th>Solution</th></tr>
+                        <tr><td><code>@minecraft/*</code> modules don't exist at build time</td><td><code>ctx</code> phantom type pattern + extractor rewrite; Bun.build marks modules as external</td></tr>
+                        <tr><td>Word-boundary matching for ctx.server vs ctx.serverUi</td><td>Regex with negative lookahead prevents partial matches</td></tr>
+                        <tr><td>Script module UUID stability</td><td><code>scriptModuleUUID</code> persisted to <code>jepia.config.json</code> alongside pack UUIDs</td></tr>
+                        <tr><td>Startup registration context</td><td>Custom components/commands always placed in <code>system.beforeEvents.startup.subscribe()</code> — correct Bedrock execution context</td></tr>
+                        <tr><td>Dependency deduplication</td><td><code>higherVersion(a, b)</code> picks the larger semver when multiple blocks request the same module</td></tr>
+                    </table>
+                </section>
+
+                <!-- Phase 9: Visual & Client Systems -->
+                <section id="phase-visual">
+                    <h2>Phase 9: Visual &amp; Client Systems</h2>
+                    <p>Phase 9 adds five new component types covering resource-pack-side visual and audio systems: particles, standalone animations, animation controllers, attachables, and client biomes. All five follow the same fluent component pattern as previous phases and write to the resource pack.</p>
+
+                    <table>
+                        <tr><th>Component</th><th>File</th><th>Output folder</th><th>format_version</th><th>Tests added</th></tr>
+                        <tr><td><code>Particle</code></td><td><code>src/component/particle.ts</code></td><td><code>resource_pack/particles/</code></td><td><code>1.10.0</code></td><td>+15</td></tr>
+                        <tr><td><code>Animation</code></td><td><code>src/component/animation.ts</code></td><td><code>resource_pack/animations/</code></td><td><code>1.8.0</code></td><td>+16</td></tr>
+                        <tr><td><code>AnimationController</code></td><td><code>src/component/animation-controller.ts</code></td><td><code>resource_pack/animation_controllers/</code></td><td><code>1.10.0</code></td><td>+15</td></tr>
+                        <tr><td><code>Attachable</code></td><td><code>src/component/attachable.ts</code></td><td><code>resource_pack/attachables/</code></td><td><code>1.8.0</code></td><td>+14</td></tr>
+                        <tr><td><code>ClientBiome</code></td><td><code>src/component/client-biome.ts</code></td><td><code>resource_pack/biomes_client/</code></td><td><code>1.0.0</code></td><td>+13</td></tr>
+                    </table>
+                    <p>ResourcePack storage adds <code>animationControllers</code>, <code>attachables</code>, and <code>clientBiomes</code> maps (particles and animations were already stored). Total: 86 new tests. All 2811 pass.</p>
+
+                    <h3>Particle</h3>
+                    <p>Emits <code>format_version: "1.10.0"</code> with a <code>particle_effect</code> root. The <code>description</code> block holds the identifier and <code>basic_render_parameters</code> (material + texture path). The <code>components</code> object is built from fluent methods:</p>
+                    <ul>
+                        <li><code>setEmitterRate(type, params)</code> — "steady" / "instant" / "manual"</li>
+                        <li><code>setEmitterLifetime(type, params)</code> — "looping" / "once" / "expression"</li>
+                        <li><code>setEmitterShape(type, params)</code> — "point" / "sphere" / "box" / "disc" / "entity_aabb" / "custom"</li>
+                        <li><code>setParticleLifetime(maxLifetime)</code> — fixed number or Molang expression</li>
+                        <li><code>setAppearanceBillboard(params)</code> — size, facing_camera_mode, UV mapping</li>
+                        <li><code>setAppearanceTinting(color)</code> — RGBA Molang array or gradient object</li>
+                        <li><code>addCurve(name, curve)</code> / <code>addEvent(name, event)</code> — Molang curves and lifecycle events</li>
+                        <li><code>setComponent(name, value)</code> — escape hatch for any other component</li>
+                    </ul>
+
+                    <h3>Animation</h3>
+                    <p>Emits <code>format_version: "1.8.0"</code> with an <code>animations</code> dict. Each <code>Animation</code> instance represents one named animation in a single file. The animation identifier in the dict is derived from the component id (<code>"myaddon:walk"</code> → <code>"animation.myaddon.walk"</code>) and can be overridden via <code>setAnimationId()</code>. Bone keyframes are added per-property (position/rotation/scale) via <code>addBoneKeyframes(boneName, property, keyframes)</code> where keyframes is a time-string→[x,y,z] map. Timeline events and raw data merging are also supported.</p>
+
+                    <h3>AnimationController</h3>
+                    <p>Emits <code>format_version: "1.10.0"</code> with an <code>animation_controllers</code> dict. The controller identifier is derived from the component id (<code>"myaddon:base"</code> → <code>"controller.animation.myaddon.base"</code>). States are added via <code>addState(name, config)</code> where config includes <code>animations</code>, <code>transitions</code>, <code>blend_transition</code>, <code>particle_effects</code>, and <code>sound_effects</code>. Validation checks that the initial state exists in the states dict.</p>
+
+                    <h3>Attachable</h3>
+                    <p>Emits <code>format_version: "1.8.0"</code> with a <code>minecraft:attachable</code> root. The <code>description</code> block is built from fluent setters: <code>setMaterials()</code>, <code>setTextures()</code>, <code>setGeometry()</code>, <code>setAnimations()</code>, <code>setRenderControllers()</code>, <code>setScripts()</code>, <code>setParticleEffects()</code>, and <code>setSoundEffects()</code>. Empty collections are omitted from the output. Validation requires at least one texture and one geometry.</p>
+
+                    <h3>ClientBiome</h3>
+                    <p>Emits <code>format_version: "1.0.0"</code> with a <code>minecraft:client_biome</code> root. The <code>components</code> object is built from: <code>setWaterColor()</code>, <code>setSkyColor()</code>, <code>setFogAppearance()</code>, <code>setGrassColor()</code>, <code>setFoliageColor()</code>, and <code>setComponent()</code> for less common components like <code>minecraft:ambient_sounds</code> or Vibrant Visuals identifiers. Pairs with a server-side <code>Biome</code> for a complete biome definition.</p>
+
+                    <h3>Addon integration</h3>
+                    <p>Five new methods on the <code>Addon</code> class, each accepting either a component instance or a legacy <code>(id, data)</code> pair:</p>
+                    <pre><code class="language-typescript">addon.addParticle(particle);              // → resource_pack/particles/
+addon.addAnimation(animation);            // → resource_pack/animations/
+addon.addAnimationController(controller); // → resource_pack/animation_controllers/
+addon.addAttachable(attachable);          // → resource_pack/attachables/
+addon.addClientBiome(clientBiome);        // → resource_pack/biomes_client/</code></pre>
+                    <p>ResourcePack gains <code>addAnimationController()</code>, <code>addAttachable()</code>, and <code>addClientBiome()</code> storage methods with corresponding getters and <code>has*()</code> checks. All three new resource-pack types are written in <code>addon.generate()</code> after particles.</p>
+                </section>
+
+                <!-- Phase 8: World Generation -->
+                <section id="phase-worldgen">
+                    <h2>Phase 8: World Generation</h2>
+                    <p>Phase 8 adds four new component types that cover the core Minecraft world generation pipeline: biomes, features, feature rules, and dimensions. All four follow the same fluent component pattern as previous phases.</p>
+
+                    <table>
+                        <tr><th>Component</th><th>File</th><th>Output folder</th><th>format_version</th><th>Tests added</th></tr>
+                        <tr><td><code>Biome</code></td><td><code>src/component/biome.ts</code></td><td><code>behavior_pack/biomes/</code></td><td><code>1.21.110</code></td><td>+13</td></tr>
+                        <tr><td><code>Feature</code></td><td><code>src/component/feature.ts</code></td><td><code>behavior_pack/features/</code></td><td><code>1.13.0</code></td><td>+10</td></tr>
+                        <tr><td><code>FeatureRule</code></td><td><code>src/component/feature-rule.ts</code></td><td><code>behavior_pack/feature_rules/</code></td><td><code>1.13.0</code></td><td>+12</td></tr>
+                        <tr><td><code>Dimension</code></td><td><code>src/component/dimension.ts</code></td><td><code>behavior_pack/dimensions/</code></td><td><code>1.20.0</code></td><td><code>+8</td></tr>
+                    </table>
+                    <p>BehaviorPack integration adds 7 new tests. Total: 50 new tests. All 2725 pass.</p>
+
+                    <h3>Biome</h3>
+                    <p>Emits <code>format_version: "1.21.110"</code> with a <code>minecraft:biome</code> wrapper. The <code>components</code> object is built from the fluent API: <code>minecraft:climate</code>, <code>minecraft:surface_builder</code>, <code>minecraft:tags</code>, <code>minecraft:creature_spawn_probability</code>, and <code>minecraft:humidity</code>. The <code>setComponent()</code> escape hatch allows any additional component (e.g. <code>minecraft:mountain_parameters</code>, <code>minecraft:overworld_generation_rules</code>).</p>
+
+                    <h3>Feature</h3>
+                    <p>Features use a type/data pattern: <code>setType()</code> sets the root JSON key (e.g. <code>minecraft:ore_feature</code>), and <code>setData()</code> sets all type-specific fields. The description block (identifier) is always injected automatically. Supports all 19+ feature types defined in the Bedrock Creator docs including tree, ore, scatter, geode, cave carver, growing plant, multiface, sculk patch, and structure template features.</p>
+
+                    <h3>FeatureRule</h3>
+                    <p>Emits <code>format_version: "1.13.0"</code> with a <code>minecraft:feature_rules</code> wrapper. The <code>description</code> block holds both <code>identifier</code> and <code>places_feature</code>. The <code>conditions</code> block contains <code>placement_pass</code> and an optional <code>minecraft:biome_filter</code> array. The optional <code>distribution</code> block is written only when at least one field is set.</p>
+
+                    <h3>Dimension</h3>
+                    <p>Emits <code>format_version: "1.20.0"</code> with a <code>minecraft:dimension_type</code> wrapper. The <code>components</code> block always includes <code>minecraft:dimension_bounds</code> (min/max Y) and <code>minecraft:generation</code> (generator_type). The <code>setComponent()</code> escape hatch allows additional components. Note: Bedrock behavior pack dimensions currently "slice" existing terrain by restricting the accessible Y range — areas outside the bounds become inaccessible voids until the pack is removed.</p>
+
+                    <h3>Addon integration</h3>
+                    <p>Four new methods on the <code>Addon</code> class, each accepting either a component instance or a legacy <code>(id, data)</code> pair:</p>
+                    <pre><code class="language-typescript">addon.addBiome(biome);           // → behavior_pack/biomes/
+addon.addFeature(feature);       // → behavior_pack/features/
+addon.addFeatureRule(rule);      // → behavior_pack/feature_rules/
+addon.addDimension(dimension);   // → behavior_pack/dimensions/</code></pre>
+                    <p><code>BehaviorPack.getComponentCount()</code> now includes all four world generation types in its total.</p>
+                </section>
+
+                <!-- Phase 7: Gameplay Systems -->
+                <section id="phase-gameplay">
+                    <h2>Phase 7: Gameplay Systems</h2>
+                    <p>Phase 7 added four new component types covering the core gameplay loop: crafting recipes, loot drops, entity spawning, and merchant trading. All four follow the same fluent component pattern as Item, Block, and Entity.</p>
+
+                    <table>
+                        <tr><th>Component</th><th>File</th><th>Output folder</th><th>Tests added</th></tr>
+                        <tr><td><code>Recipe</code></td><td><code>src/component/recipe.ts</code></td><td><code>behavior_pack/recipes/</code></td><td>+21</td></tr>
+                        <tr><td><code>LootTable</code></td><td><code>src/component/loot-table.ts</code></td><td><code>behavior_pack/loot_tables/</code></td><td>+14</td></tr>
+                        <tr><td><code>SpawnRule</code></td><td><code>src/component/spawn-rule.ts</code></td><td><code>behavior_pack/spawn_rules/</code></td><td>+12</td></tr>
+                        <tr><td><code>TradeTable</code></td><td><code>src/component/trade-table.ts</code></td><td><code>behavior_pack/trading/</code></td><td>+10</td></tr>
+                    </table>
+                    <p>Total: 57 new tests. All 2675 pass (2725 including Phase 8).</p>
+
+                    <h3>Recipe</h3>
+                    <p>Supports four recipe types that map 1:1 to Bedrock's JSON keys:</p>
+                    <table>
+                        <tr><th>Method</th><th>JSON key emitted</th><th>Default tags</th></tr>
+                        <tr><td><code>setShaped()</code></td><td><code>minecraft:recipe_shaped</code></td><td><code>["crafting_table"]</code></td></tr>
+                        <tr><td><code>setShapeless()</code></td><td><code>minecraft:recipe_shapeless</code></td><td><code>["crafting_table"]</code></td></tr>
+                        <tr><td><code>setFurnace()</code></td><td><code>minecraft:recipe_furnace</code></td><td><code>["furnace"]</code></td></tr>
+                        <tr><td><code>setBrewing()</code></td><td><code>minecraft:recipe_brewing_container</code></td><td><code>["brewing_stand"]</code></td></tr>
+                    </table>
+                    <p>All recipes emit <code>"format_version": "1.17"</code> per the official Bedrock recipe schema. Tags can be overridden (e.g. add <code>"smoker"</code> or <code>"blast_furnace"</code> to furnace recipes). <code>assume_symmetry</code> is only included in the JSON when explicitly set.</p>
+
+                    <h3>LootTable</h3>
+                    <p>Each <code>addPool()</code> call appends a pool to the <code>pools</code> array. Rolls can be a fixed number or a <code>{ min, max }</code> object. Entry types are <code>"item"</code>, <code>"loot_table"</code> (nested table reference), and <code>"empty"</code>. The pool and individual entries both accept <code>functions</code> and <code>conditions</code> arrays, passed through as-is to the output JSON.</p>
+
+                    <h3>SpawnRule</h3>
+                    <p>Emits <code>format_version: "1.8.0"</code> with a <code>minecraft:spawn_rules</code> wrapper matching the official Bedrock spawn rule schema. Each <code>addCondition()</code> call appends one object to the <code>conditions</code> array — that object can contain any combination of <code>minecraft:*</code> spawn condition keys. Population control defaults to <code>"animal"</code>.</p>
+
+                    <h3>TradeTable</h3>
+                    <p>Emits a <code>{ tiers: [...] }</code> structure. Each tier has an optional <code>total_exp_required</code> (0 = novice) and either a flat <code>trades</code> array or a <code>groups</code> array for random selection (<code>num_to_select</code>). TradeItems support fixed or range <code>quantity</code> and a <code>price_multiplier</code> for supply/demand scaling.</p>
+
+                    <h3>Addon integration</h3>
+                    <p>All four methods on the <code>Addon</code> class accept either a component instance or a legacy <code>(id, data)</code> pair for backwards compatibility:</p>
+                    <pre><code class="language-typescript">addon.addRecipe(recipe);        // → behavior_pack/recipes/
+addon.addLootTable(lootTable);  // → behavior_pack/loot_tables/
+addon.addSpawnRule(spawnRule);  // → behavior_pack/spawn_rules/
+addon.addTradeTable(tradeTable);// → behavior_pack/trading/</code></pre>
+                    <p><code>BehaviorPack.getComponentCount()</code> now includes spawn rules and trade tables in its total.</p>
+                </section>
+
+                <!-- Phase 10: Polish & Edge Cases -->
+                <section id="phase-polish">
+                    <h2>Phase 10: Polish &amp; Edge Cases</h2>
+                    <p>Phase 10 rounds out the framework with six additions: NPC dialogue, custom camera presets, fog definitions, sound definitions, block culling rules, and a plugin system for lifecycle hooks.</p>
+
+                    <table>
+                        <tr><th>Component / Feature</th><th>File</th><th>Output location</th><th>format_version</th></tr>
+                        <tr><td><code>Dialogue</code></td><td><code>src/component/dialogue.ts</code></td><td><code>behavior_pack/dialogue/</code></td><td>1.20.80</td></tr>
+                        <tr><td><code>Camera</code></td><td><code>src/component/camera.ts</code></td><td><code>resource_pack/cameras/presets/</code></td><td>1.21.0</td></tr>
+                        <tr><td><code>Fog</code></td><td><code>src/component/fog.ts</code></td><td><code>resource_pack/fogs/</code></td><td>1.16.100</td></tr>
+                        <tr><td><code>SoundDefinition</code></td><td><code>src/component/sound-definition.ts</code></td><td><code>resource_pack/sounds/sound_definitions.json</code></td><td>1.20.20</td></tr>
+                        <tr><td><code>BlockCullingRule</code></td><td><code>src/component/block-culling.ts</code></td><td><code>resource_pack/block_culling/</code></td><td>1.21.80</td></tr>
+                        <tr><td><code>JepiaPlugin</code> / <code>PluginRegistry</code></td><td><code>src/plugin.ts</code></td><td>—</td><td>—</td></tr>
+                    </table>
+                    <p>Total: 61 new tests. All 2872 pass.</p>
+
+                    <h3>Dialogue</h3>
+                    <p>NPC dialogue scenes are defined with <code>addScene(sceneTag, options)</code>. Each scene may have an NPC name, body text, open/close commands, and interactive buttons — all of which support both plain strings and Bedrock's <code>rawtext</code> format for i18n. The <code>@initiator</code> selector (unique to NPC dialogue) targets the player who opened the dialogue.</p>
+                    <pre><code class="language-typescript">const dlg = new Dialogue('Trader Dialogue', 'myaddon:trader');
+dlg.addScene('intro', {
+  npc_name: 'Mysterious Trader',
+  text: 'Welcome, traveller. What do you seek?',
+  on_open_commands: ['/effect @initiator speed 10 1'],
+  buttons: [
+    { name: 'Buy items', commands: ['/dialogue open @e[type=myaddon:trader,r=3] @initiator shop'] },
+    { name: 'Nothing',   commands: [] },
+  ],
+});
+addon.addDialogue(dlg); // → behavior_pack/dialogue/trader.json</code></pre>
+
+                    <h3>Camera</h3>
+                    <p>Camera presets inherit from a vanilla base (e.g. <code>"minecraft:follow_orbit"</code>) and override radius, view/entity offset, starting rotation, and aim-assist settings.</p>
+                    <pre><code class="language-typescript">const cam = new Camera('Over-Shoulder Cam', 'myaddon:over_shoulder');
+cam.setInheritFrom('minecraft:follow_orbit')
+   .setRadius(4)
+   .setViewOffset(2.0, 0.5)
+   .setEntityOffset(0, 1.5, 0);
+addon.addCamera(cam); // → resource_pack/cameras/presets/over_shoulder.json</code></pre>
+
+                    <h3>Fog</h3>
+                    <p>Fog definitions support distance fog (start/end/color/render-distance-type) for any medium (air, water, lava, powder_snow, weather) and volumetric fog density + media coefficients (scattering / absorption).</p>
+                    <pre><code class="language-typescript">const fog = new Fog('Mystic Fog', 'myaddon:mystic');
+fog.setDistanceFog('air',   { fog_start: 0.8, fog_end: 1.0, fog_color: '#c0c0ff', render_distance_type: 'render' })
+   .setDistanceFog('water', { fog_start: 0,   fog_end: 30,  fog_color: '#1a3080', render_distance_type: 'fixed' });
+addon.addFog(fog); // → resource_pack/fogs/mystic.json</code></pre>
+
+                    <h3>Sound Definitions</h3>
+                    <p>All <code>SoundDefinition</code> instances are merged into a single <code>resource_pack/sounds/sound_definitions.json</code> at generation time. Sound event names use Bedrock's dot-notation (e.g. <code>"random.chestopen"</code>). Simple file references or full entries with volume, pitch, weight, and 3D-audio flags are both supported.</p>
+                    <pre><code class="language-typescript">const snd = new SoundDefinition('Drill Use', 'myaddon.drill.use');
+snd.setCategory('block')
+   .addSoundFile('sounds/myaddon/drill_use1')
+   .addSoundEntry({ name: 'sounds/myaddon/drill_use2', volume: 0.9, pitch: 1.1 });
+addon.addSoundDefinition(snd); // merged → resource_pack/sounds/sound_definitions.json</code></pre>
+
+                    <h3>Block Culling Rules</h3>
+                    <p>Face culling rules allow custom blocks to participate in Bedrock's geometry culling system. Each rule maps a neighbour direction to a geometry part (bone + cube + face) under a given condition (<code>same_block</code>, <code>same_culling_layer</code>, etc.).</p>
+                    <pre><code class="language-typescript">const cull = new BlockCullingRule('Glass Pane Culling', 'myaddon:glass_pane');
+cull.addFaceRule('block', 0, 'north', 'same_block')
+    .addFaceRule('block', 0, 'south', 'same_block')
+    .addFaceRule('block', 0, 'east',  'same_block')
+    .addFaceRule('block', 0, 'west',  'same_block');
+addon.addBlockCullingRule(cull); // → resource_pack/block_culling/glass_pane.json</code></pre>
+
+                    <h3>Plugin System</h3>
+                    <p>The <code>JepiaPlugin</code> interface exposes two lifecycle hooks. <code>onBeforeGenerate</code> fires before any file is written; <code>onAfterGenerate</code> fires after generation completes. Both receive a <code>PluginContext</code> (addon name, output path, metadata bag). Hooks are called in registration order and support async functions.</p>
+                    <pre><code class="language-typescript">import type { JepiaPlugin } from 'jepia';
+
+const loggerPlugin: JepiaPlugin = {
+  name: 'logger',
+  onBeforeGenerate({ addonName }) {
+    console.log(`Building "${addonName}"...`);
+  },
+  onAfterGenerate({ outputPath }) {
+    console.log(`Written to ${outputPath}`);
+  },
+};
+
+addon.use(loggerPlugin);
+await addon.generate('./output');</code></pre>
+                </section>
+
+                <section id="phase11">
+                    <h2>Phase 11 — Hardening</h2>
+                    <p>Phase 11 focuses on code quality, validation coverage, and correctness fixes across the codebase. No new content types; instead, existing components are strengthened.</p>
+
+                    <h3>Changes</h3>
+                    <table>
+                        <tr><th>Area</th><th>Change</th></tr>
+                        <tr><td>Biome</td><td>Removed dead code in <code>toJSON()</code> — an unused <code>surfaceBuilder</code> variable was constructed but never referenced.</td></tr>
+                        <tr><td>Item</td><td>Simplified primitive storage — removed <code>__primitive__</code> sentinel pattern; primitives now stored directly like Block does.</td></tr>
+                        <tr><td>SoundDefinition</td><td>Tightened identifier regex — rejects names starting/ending with special chars (e.g. <code>"..."</code>, <code>"---"</code>).</td></tr>
+                        <tr><td>Dialogue</td><td>Updated format_version from <code>1.17</code> to <code>1.20.80</code> per latest Minecraft creator docs.</td></tr>
+                        <tr><td>Dialogue</td><td>Added <code>validate()</code>: checks ≥1 scene, no duplicate tags, ≤6 buttons per scene.</td></tr>
+                        <tr><td>Camera</td><td>Added <code>validate()</code>: checks radius 0.1–100, pitch ±90°, yaw ±180°.</td></tr>
+                        <tr><td>Fog</td><td>Added <code>validate()</code>: checks fog_start ≤ fog_end, max_density 0–1, render_distance_type valid.</td></tr>
+                        <tr><td>Particle</td><td>Added <code>validate()</code>: checks render parameters present, emitter lifetime + rate configured.</td></tr>
+                    </table>
+
+                    <p><strong>33 new tests → 2905 total</strong> (all passing).</p>
+                </section>
+
+                <footer>
+                    <p>Jepia &mdash; a TypeScript framework for Minecraft Bedrock Add-On generation.</p>
+                </footer>
+            </main>
+        </div><!-- /.layout -->
+        </div><!-- /.page-wrapper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+        <script src="assets/nav.js"></script>
+    </body>
+</html>
