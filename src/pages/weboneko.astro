@@ -2,12 +2,136 @@
 import "../styles/global.css"
 import Nav from "../components/navbar.astro"
 import Head from "../components/head.astro"
+import Container from "../components/container.astro"
+import Footer from "../components/footer.astro"
 ---
 
 <html lang="en">
     <Head />
-	<body>
-	    <Nav highlighted="navweboneko" />
-		<h1>Weboneko</h1>
-	</body>
+    <body>
+        <Nav highlighted="navweboneko" />
+        <Container>
+            <h1>Weboneko</h1>
+            <p class="tagline">A sandboxed, creative micro-social platform</p>
+            <p>
+                Weboneko reimagines social media through intentional constraints and creative expression.
+                Every post is a fully customizable HTML/CSS webpage rendered in a sandboxed iframe,
+                combining the creative freedom of early web culture with modern safety and moderation.
+            </p>
+        </Container>
+
+        <Container>
+            <h2>Core Concepts</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <h3>One Shared Feed</h3>
+                    <p>No algorithms, no followers, no recommendations. Just a single reverse-chronological feed where everyone shares the same space.</p>
+                </div>
+                <div class="feature">
+                    <h3>Data Scarcity</h3>
+                    <p>Users get a 256KB data budget per 4-hour cycle. This encourages intentional, thoughtful posts rather than endless scrolling and spam.</p>
+                </div>
+                <div class="feature">
+                    <h3>Creative Freedom</h3>
+                    <p>Posts are raw HTML and CSS — no templates, no character limits. Express yourself with the full power of the web, minus JavaScript.</p>
+                </div>
+                <div class="feature">
+                    <h3>Reply as Post</h3>
+                    <p>No comments section. Responses are chained posts, giving every reply the same creative weight as the original.</p>
+                </div>
+            </div>
+        </Container>
+
+        <Container>
+            <h2>Nibbles Economy</h2>
+            <p>
+                Weboneko features a simple, non-transferable currency called Nibbles. Earn them through engagement
+                — nibbling posts, hitting milestones, and daily logins. Spend them on cosmetics like pixel art
+                sticker slots and sticker placements on posts.
+            </p>
+        </Container>
+
+        <Container>
+            <h2>Content Moderation</h2>
+            <p>
+                A two-stage moderation pipeline keeps the platform safe. First, a keyword blocklist catches
+                obvious violations. Then, an ML model (IBM Granite Guardian) performs deeper analysis.
+                The system is fail-closed — if anything goes wrong, content is flagged for manual review
+                rather than published.
+            </p>
+        </Container>
+
+        <Container>
+            <h2>Security Model</h2>
+            <p>
+                All user-generated content renders inside fully sandboxed iframes with zero JavaScript execution.
+                Posts are sanitized server-side, stripping scripts, event handlers, and other attack vectors
+                while preserving rich HTML5 and CSS creativity. Sessions use HMAC-SHA256 signed tokens,
+                and passwords are hashed with Argon2id.
+            </p>
+        </Container>
+
+        <Container>
+            <h2>Tech Stack</h2>
+            <ul class="tech-list">
+                <li><strong>Runtime:</strong> Bun</li>
+                <li><strong>Framework:</strong> Astro 6 (SSR)</li>
+                <li><strong>Database:</strong> SQLite with WAL mode</li>
+                <li><strong>Editor:</strong> CodeMirror (in-browser HTML/CSS)</li>
+                <li><strong>Moderation:</strong> Python server with Granite Guardian</li>
+                <li><strong>CDN:</strong> Cloudflare Tunnel + Edge Caching</li>
+            </ul>
+        </Container>
+
+        <Footer />
+    </body>
 </html>
+
+<style>
+    .tagline {
+        color: #aa75ff;
+        font-size: 1.2rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .feature {
+        background: #2a2a2a;
+        border: 1px solid #333;
+        padding: 1.5rem;
+    }
+
+    .feature h3 {
+        color: #e1ff00;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature p {
+        color: papayawhip;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .tech-list {
+        color: papayawhip;
+        line-height: 2;
+    }
+
+    .tech-list strong {
+        color: #e1ff00;
+    }
+
+    @media (max-width: 768px) {
+        .feature-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
