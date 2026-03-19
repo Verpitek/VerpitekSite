@@ -4,6 +4,7 @@ import Nav from "../components/navbar.astro"
 import Head from "../components/head.astro"
 import Container from "../components/container.astro"
 import Footer from "../components/footer.astro"
+import I18nScript from "../components/I18nScript.astro"
 ---
 
 <html lang="en">
@@ -11,9 +12,10 @@ import Footer from "../components/footer.astro"
     <body>
         <Nav highlighted="navweboneko" />
         <Container>
-            <h1>Weboneko</h1>
-            <p class="tagline">A sandboxed, creative micro-social platform</p>
-            <p>
+            <img src="/weboneko.svg" alt="Weboneko logo" class="weboneko-logo" />
+            <h1 data-i18n="weboneko.title">Weboneko</h1>
+            <p class="tagline" data-i18n="weboneko.tagline">A sandboxed, creative micro-social platform</p>
+            <p data-i18n="weboneko.intro">
                 Weboneko reimagines social media through intentional constraints and creative expression.
                 Every post is a fully customizable HTML/CSS webpage rendered in a sandboxed iframe,
                 combining the creative freedom of early web culture with modern safety and moderation.
@@ -21,30 +23,30 @@ import Footer from "../components/footer.astro"
         </Container>
 
         <Container>
-            <h2>Core Concepts</h2>
+            <h2 data-i18n="weboneko.core.title">Core Concepts</h2>
             <div class="feature-grid">
                 <div class="feature">
-                    <h3>One Shared Feed</h3>
-                    <p>No algorithms, no followers, no recommendations. Just a single reverse-chronological feed where everyone shares the same space.</p>
+                    <h3 data-i18n="weboneko.core.feed.title">One Shared Feed</h3>
+                    <p data-i18n="weboneko.core.feed.text">No algorithms, no followers, no recommendations. Just a single reverse-chronological feed where everyone shares the same space.</p>
                 </div>
                 <div class="feature">
-                    <h3>Data Scarcity</h3>
-                    <p>Users get a 256KB data budget per 4-hour cycle. This encourages intentional, thoughtful posts rather than endless scrolling and spam.</p>
+                    <h3 data-i18n="weboneko.core.scarcity.title">Data Scarcity</h3>
+                    <p data-i18n="weboneko.core.scarcity.text">Users get a 256KB data budget per 4-hour cycle. This encourages intentional, thoughtful posts rather than endless scrolling and spam.</p>
                 </div>
                 <div class="feature">
-                    <h3>Creative Freedom</h3>
-                    <p>Posts are raw HTML and CSS — no templates, no character limits. Express yourself with the full power of the web, minus JavaScript.</p>
+                    <h3 data-i18n="weboneko.core.creative.title">Creative Freedom</h3>
+                    <p data-i18n="weboneko.core.creative.text">Posts are raw HTML and CSS — no templates, no character limits. Express yourself with the full power of the web, minus JavaScript.</p>
                 </div>
                 <div class="feature">
-                    <h3>Reply as Post</h3>
-                    <p>No comments section. Responses are chained posts, giving every reply the same creative weight as the original.</p>
+                    <h3 data-i18n="weboneko.core.reply.title">Reply as Post</h3>
+                    <p data-i18n="weboneko.core.reply.text">No comments section. Responses are chained posts, giving every reply the same creative weight as the original.</p>
                 </div>
             </div>
         </Container>
 
         <Container>
-            <h2>Nibbles Economy</h2>
-            <p>
+            <h2 data-i18n="weboneko.nibbles.title">Nibbles Economy</h2>
+            <p data-i18n="weboneko.nibbles.text">
                 Weboneko features a simple, non-transferable currency called Nibbles. Earn them through engagement
                 — nibbling posts, hitting milestones, and daily logins. Spend them on cosmetics like pixel art
                 sticker slots and sticker placements on posts.
@@ -52,9 +54,9 @@ import Footer from "../components/footer.astro"
         </Container>
 
         <Container>
-            <h2>Content Moderation</h2>
-            <p>
-                A two-stage moderation pipeline keeps the platform safe. First, a keyword blocklist catches
+            <h2 data-i18n="weboneko.moderation.title">Content Moderation</h2>
+            <p data-i18n="weboneko.moderation.text">
+                A multi-stage moderation pipeline keeps the platform safe. First, a keyword blocklist catches
                 obvious violations. Then, an ML model (IBM Granite Guardian) performs deeper analysis.
                 The system is fail-closed — if anything goes wrong, content is flagged for manual review
                 rather than published.
@@ -62,8 +64,8 @@ import Footer from "../components/footer.astro"
         </Container>
 
         <Container>
-            <h2>Security Model</h2>
-            <p>
+            <h2 data-i18n="weboneko.security.title">Security Model</h2>
+            <p data-i18n="weboneko.security.text">
                 All user-generated content renders inside fully sandboxed iframes with zero JavaScript execution.
                 Posts are sanitized server-side, stripping scripts, event handlers, and other attack vectors
                 while preserving rich HTML5 and CSS creativity. Sessions use HMAC-SHA256 signed tokens,
@@ -72,22 +74,30 @@ import Footer from "../components/footer.astro"
         </Container>
 
         <Container>
-            <h2>Tech Stack</h2>
+            <h2 data-i18n="weboneko.tech.title">Tech Stack</h2>
             <ul class="tech-list">
-                <li><strong>Runtime:</strong> Bun</li>
-                <li><strong>Framework:</strong> Astro 6 (SSR)</li>
-                <li><strong>Database:</strong> SQLite with WAL mode</li>
-                <li><strong>Editor:</strong> CodeMirror (in-browser HTML/CSS)</li>
-                <li><strong>Moderation:</strong> Python server with Granite Guardian</li>
-                <li><strong>CDN:</strong> Cloudflare Tunnel + Edge Caching</li>
+                <li data-i18n="weboneko.tech.runtime"><strong>Runtime:</strong> Bun</li>
+                <li data-i18n="weboneko.tech.framework"><strong>Framework:</strong> Astro 6 (SSR)</li>
+                <li data-i18n="weboneko.tech.database"><strong>Database:</strong> SQLite with WAL mode</li>
+                <li data-i18n="weboneko.tech.editor"><strong>Editor:</strong> CodeMirror (in-browser HTML/CSS)</li>
+                <li data-i18n="weboneko.tech.moderation"><strong>Moderation:</strong> Python server with Granite Guardian</li>
+                <li data-i18n="weboneko.tech.cdn"><strong>CDN:</strong> Cloudflare Tunnel + Edge Caching</li>
             </ul>
         </Container>
 
         <Footer />
+        <I18nScript />
     </body>
 </html>
 
 <style>
+    .weboneko-logo {
+        width: 120px;
+        height: 120px;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
     .tagline {
         color: #aa75ff;
         font-size: 1.2rem;
@@ -122,11 +132,18 @@ import Footer from "../components/footer.astro"
 
     .tech-list {
         color: papayawhip;
-        line-height: 2;
+        line-height: 2.2;
+        list-style: none;
+        padding: 0;
     }
 
-    .tech-list strong {
-        color: #e1ff00;
+    .tech-list li {
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #2a2a2a;
+    }
+
+    .tech-list li:last-child {
+        border-bottom: none;
     }
 
     @media (max-width: 768px) {

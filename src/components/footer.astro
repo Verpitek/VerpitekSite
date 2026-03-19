@@ -8,11 +8,13 @@
             <a class="footer-link"
                 href="https://discord.gg/fyNQNrr7dC"
                 target="_blank"
-                rel="noopener noreferrer">Discord Community</a
+                rel="noopener noreferrer"
+                data-i18n="footer.discord">Discord Community</a
             >
         </nav>
         <div class="footer-divider"></div>
-        <p>© 2026 Verpitek, MB. All rights reserved.</p>
+        <p><a class="footer-link" href="mailto:info@verpitek.com">info@verpitek.com</a> — <span data-i18n="footer.contact">commissions and inquiries</span></p>
+        <p data-i18n="footer.copyright">© 2026 Verpitek, MB. All rights reserved.</p>
     </div>
 </div>
 
@@ -35,6 +37,11 @@
     .footer-link:hover {
         color: #e1ff00;
         text-decoration: underline;
+    }
+    .footer-divider {
+        height: 1px;
+        background: #333;
+        margin: 1rem 0;
     }
 
     @media (max-width: 768px) {

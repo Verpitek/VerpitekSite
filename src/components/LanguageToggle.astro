@@ -1,0 +1,66 @@
+---
+---
+
+<button class="lang-toggle" id="lang-toggle" aria-label="Toggle language">
+    <span class="lang-option" data-lang="en">EN</span>
+    <span class="lang-separator">/</span>
+    <span class="lang-option" data-lang="lt">LT</span>
+</button>
+
+<style>
+    .lang-toggle {
+        background: none;
+        border: 1px solid #333;
+        color: papayawhip;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.85rem;
+        cursor: pointer;
+        padding: 0.35rem 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        transition: border-color 0.3s;
+        margin-left: auto;
+    }
+    .lang-toggle:hover {
+        border-color: #aa75ff;
+    }
+    .lang-separator {
+        color: #555;
+    }
+    .lang-option {
+        color: #888;
+        transition: color 0.2s;
+    }
+    .lang-option.active {
+        color: #e1ff00;
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    function initLangToggle() {
+        const toggle = document.getElementById("lang-toggle");
+        if (!toggle) return;
+
+        const currentLang = localStorage.getItem("verpitek-lang") || "en";
+        updateToggleUI(currentLang);
+
+        toggle.addEventListener("click", () => {
+            const lang = localStorage.getItem("verpitek-lang") || "en";
+            const newLang = lang === "en" ? "lt" : "en";
+            localStorage.setItem("verpitek-lang", newLang);
+            updateToggleUI(newLang);
+            document.dispatchEvent(new CustomEvent("lang-change", { detail: { lang: newLang } }));
+        });
+    }
+
+    function updateToggleUI(lang: string) {
+        document.querySelectorAll(".lang-option").forEach((el) => {
+            el.classList.toggle("active", el.getAttribute("data-lang") === lang);
+        });
+    }
+
+    initLangToggle();
+    document.addEventListener("astro:after-swap", initLangToggle);
+</script>

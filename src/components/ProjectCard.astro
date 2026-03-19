@@ -14,6 +14,7 @@ const logoMap = {
     "BedPak": "/bedpak_mascot.webp",
     "PanSpark": "/panspark.png",
     "Jepia": "/jepia/assets/jepia.svg",
+    "Weboneko": "/weboneko.svg",
 } as const;
 const logoPath = title in logoMap ? logoMap[title as keyof typeof logoMap] : undefined;
 const isExternal = link?.startsWith('http') ?? false;

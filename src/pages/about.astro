@@ -2,12 +2,50 @@
 import "../styles/global.css"
 import Nav from "../components/navbar.astro"
 import Head from "../components/head.astro"
+import Container from "../components/container.astro"
+import Footer from "../components/footer.astro"
+import I18nScript from "../components/I18nScript.astro"
 ---
 
 <html lang="en">
     <Head />
-	<body>
-	    <Nav highlighted="navabout" />
-		<h1>About</h1>
-	</body>
+    <body>
+        <Nav highlighted="navabout" />
+        <Container>
+            <h1 data-i18n="about.title">About Verpitek</h1>
+            <p data-i18n="about.intro">Verpitek is a small software development studio based in Lithuania. We build web applications, backend systems, and creative digital projects.</p>
+        </Container>
+        <Container>
+            <h2 data-i18n="about.story.title">Our Story</h2>
+            <p data-i18n="about.story.text">What started as a group of developers making game add-ons grew into a proper development studio. We still make game content, but now we also build websites, backend services, and custom software for clients.</p>
+        </Container>
+        <Container>
+            <h2 data-i18n="about.approach.title">Our Approach</h2>
+            <p data-i18n="about.approach.text">We believe in shipping working software without unnecessary complexity. We write clean, maintainable code and focus on solving real problems rather than chasing trends.</p>
+        </Container>
+        <Container>
+            <h2 data-i18n="about.work.title">Work With Us</h2>
+            <p data-i18n="about.work.text">We take on commissions for website development, backend projects, and technical consulting. Whether you need a landing page, an API, or a full-stack application — we can help.</p>
+            <a href="mailto:info@verpitek.com" class="cta-button" data-i18n="about.work.cta">Reach us at info@verpitek.com</a>
+        </Container>
+        <Footer />
+        <I18nScript />
+    </body>
 </html>
+
+<style>
+    .cta-button {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #aa75ff;
+        color: #212121;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s;
+        margin-top: 0.5rem;
+    }
+    .cta-button:hover {
+        background: #8a55dd;
+        box-shadow: 0 4px 12px rgba(170, 117, 255, 0.4);
+    }
+</style>

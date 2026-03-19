@@ -6,6 +6,7 @@ import Container from "../components/container.astro";
 import Footer from "../components/footer.astro";
 import Hero from "../components/Hero.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import I18nScript from "../components/I18nScript.astro";
 ---
 
 <html lang="en">
@@ -14,22 +15,45 @@ import ProjectCard from "../components/ProjectCard.astro";
         <Nav highlighted="navhome" />
         <Hero />
         <Container>
-            <h1>What do we do?</h1>
-            <p>
-                We design games, add-ons and other experiences, mostly centering
-                around pushing the limits of the provided game engine.
+            <h1 data-i18n="index.whatwedo.title">What We Do</h1>
+            <p data-i18n="index.whatwedo.p1">
+                We design and build software — from polished websites and web applications to backend systems and APIs. We work primarily with TypeScript and Python across the full stack.
+            </p>
+            <p data-i18n="index.whatwedo.p2">
+                We also take on commissions for website development, small-scale backend projects, and custom tooling. If you have a project in mind, get in touch.
             </p>
         </Container>
         <Container>
-            <h1>What are we?</h1>
-            <p>
-                We are couple of passionate developers who create complex and
-                intricate game systems and software, focusing on innovation and
-                technical depth.
+            <h1 data-i18n="index.whatweare.title">Who We Are</h1>
+            <p data-i18n="index.whatweare.text">
+                We are a small team of developers based in Lithuania, focused on building well-crafted software. We value clean architecture, technical depth, and shipping things that work.
             </p>
         </Container>
+        <Container>
+            <h1 data-i18n="index.tech.title">Our Stack</h1>
+            <ul class="tech-list">
+                <li data-i18n="index.tech.frontend"><strong>Frontend:</strong> TypeScript, Astro, React</li>
+                <li data-i18n="index.tech.backend"><strong>Backend:</strong> Python, Bun, Node.js</li>
+                <li data-i18n="index.tech.infra"><strong>Infrastructure:</strong> Cloudflare, PostgreSQL, SQLite</li>
+                <li data-i18n="index.tech.gamedev"><strong>Game Dev:</strong> Minecraft Bedrock Add-Ons, custom engines</li>
+            </ul>
+        </Container>
+        <Container id="services">
+            <h1 data-i18n="index.services.title">Services</h1>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3 data-i18n="index.services.websites">Website Development</h3>
+                    <p data-i18n="index.services.websites.desc">Custom websites and web applications built with modern frameworks. From landing pages to full-stack platforms.</p>
+                </div>
+                <div class="service-card">
+                    <h3 data-i18n="index.services.backend">Backend Development</h3>
+                    <p data-i18n="index.services.backend.desc">APIs, services, and data pipelines. We build reliable backend systems with Python and TypeScript.</p>
+                </div>
+            </div>
+            <p class="services-contact" data-i18n="index.services.contact">Interested? Contact us at <a href="mailto:info@verpitek.com">info@verpitek.com</a></p>
+        </Container>
         <Container id="projects">
-            <h1>Our Projects</h1>
+            <h1 data-i18n="index.projects.title">Our Projects</h1>
             <ProjectCard
                 title="Jepia"
                 description="A TypeScript framework for programmatic Minecraft Bedrock Add-On generation, enabling complex add-ons to be built through code rather than manual JSON authoring."
@@ -38,7 +62,7 @@ import ProjectCard from "../components/ProjectCard.astro";
             />
             <ProjectCard
                 title="Weboneko"
-                description="A sandboxed, creative micro-social platform where every post is a customizable HTML/CSS webpage. Features data scarcity mechanics, a nibbles economy, and two-stage content moderation."
+                description="A sandboxed, creative micro-social platform where every post is a customizable HTML/CSS webpage. Features data scarcity mechanics, a nibbles economy, and multi-stage content moderation."
                 link="/weboneko"
                 linkText="Learn More"
             />
@@ -50,13 +74,65 @@ import ProjectCard from "../components/ProjectCard.astro";
             />
         </Container>
         <Container>
-            <h1>Documentation & Wiki</h1>
-            <p>
+            <h1 data-i18n="index.docs.title">Documentation & Wiki</h1>
+            <p data-i18n="index.docs.text">
                 Explore detailed documentation, tutorials, and technical
                 references for our projects in the Verpitek Wiki.
             </p>
-            <a href="/wiki" class="wiki-cta">Go to Wiki</a>
+            <a href="/wiki" class="wiki-cta" data-i18n="index.docs.cta">Go to Wiki</a>
         </Container>
         <Footer />
+        <I18nScript />
     </body>
 </html>
+
+<style>
+    .tech-list {
+        color: papayawhip;
+        line-height: 2.2;
+        list-style: none;
+        padding: 0;
+    }
+    .tech-list li {
+        padding: 0.25rem 0;
+        border-bottom: 1px solid #2a2a2a;
+    }
+    .tech-list li:last-child {
+        border-bottom: none;
+    }
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .service-card {
+        background: #2a2a2a;
+        border: 1px solid #333;
+        padding: 1.5rem;
+        transition: border-color 0.3s;
+    }
+    .service-card:hover {
+        border-color: #aa75ff;
+    }
+    .service-card h3 {
+        color: #e1ff00;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+    .service-card p {
+        color: papayawhip;
+        margin: 0;
+        line-height: 1.5;
+    }
+    .services-contact {
+        color: #aa75ff;
+        font-weight: 500;
+    }
+    @media (max-width: 768px) {
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
