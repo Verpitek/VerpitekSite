@@ -31,7 +31,7 @@ import I18nScript from "../components/I18nScript.astro"
                 </div>
                 <div class="feature">
                     <h3 data-i18n="weboneko.core.scarcity.title">Data Scarcity</h3>
-                    <p data-i18n="weboneko.core.scarcity.text">Users get a 256KB data budget per 4-hour cycle. This encourages intentional, thoughtful posts rather than endless scrolling and spam.</p>
+                    <p data-i18n="weboneko.core.scarcity.text">Users get a 256KB data budget per day, resetting at midnight UTC. This encourages intentional, thoughtful posts rather than endless scrolling and spam.</p>
                 </div>
                 <div class="feature">
                     <h3 data-i18n="weboneko.core.creative.title">Creative Freedom</h3>
@@ -56,10 +56,11 @@ import I18nScript from "../components/I18nScript.astro"
         <Container>
             <h2 data-i18n="weboneko.moderation.title">Content Moderation</h2>
             <p data-i18n="weboneko.moderation.text">
-                A multi-stage moderation pipeline keeps the platform safe. First, a keyword blocklist catches
-                obvious violations. Then, an ML model (IBM Granite Guardian) performs deeper analysis.
+                A three-stage moderation pipeline keeps the platform safe, all running locally. First, a keyword
+                blocklist catches obvious violations. Then, IBM Granite Guardian HAP 38M classifies text for
+                hate, abuse, and profanity. Finally, Falconsai NSFW Image Detection checks embedded images.
                 The system is fail-closed — if anything goes wrong, content is flagged for manual review
-                rather than published.
+                rather than published. No data is sent to external services.
             </p>
         </Container>
 
@@ -78,7 +79,7 @@ import I18nScript from "../components/I18nScript.astro"
             <ul class="tech-list">
                 <li data-i18n="weboneko.tech.runtime"><strong>Runtime:</strong> Bun</li>
                 <li data-i18n="weboneko.tech.framework"><strong>Framework:</strong> Astro 6 (SSR)</li>
-                <li data-i18n="weboneko.tech.database"><strong>Database:</strong> SQLite with WAL mode</li>
+                <li data-i18n="weboneko.tech.database"><strong>Database:</strong> PostgreSQL</li>
                 <li data-i18n="weboneko.tech.editor"><strong>Editor:</strong> CodeMirror (in-browser HTML/CSS)</li>
                 <li data-i18n="weboneko.tech.moderation"><strong>Moderation:</strong> Python server with Granite Guardian</li>
                 <li data-i18n="weboneko.tech.cdn"><strong>CDN:</strong> Cloudflare Tunnel + Edge Caching</li>
