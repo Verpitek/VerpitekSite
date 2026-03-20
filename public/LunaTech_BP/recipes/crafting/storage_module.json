@@ -1,0 +1,33 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:storage_module"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "PWP",
+            "WBW",
+            "PWP"
+        ],
+        "key": {
+            "P": {
+                "item": "lunatech:composite_plate"
+            },
+            "W": {
+                "item": "lunatech:wires"
+            },
+            "B": {
+                "item": "minecraft:chest"
+            }
+        },
+        "result": {
+            "item": "lunatech:storage_module"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

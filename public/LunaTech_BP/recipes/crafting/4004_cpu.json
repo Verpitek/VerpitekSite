@@ -2,35 +2,35 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:4004_cpu"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "TOT",
+            "GPG",
+            "TRT"
         ],
         "key": {
-            "I": {
-                "item": "lunatech:composite_ingot"
+            "T": {
+                "item": "lunatech:transistor"
             },
-            "S": {
-                "item": "lunatech:screen"
+            "O": {
+                "item": "lunatech:crystal_oscillator"
             },
-            "W": {
-                "item": "lunatech:wires"
-            },
-            "C": {
-                "item": "lunatech:6502_cpu"
+            "G": {
+                "item": "minecraft:gold_ingot"
             },
             "P": {
                 "item": "lunatech:prototyping_pcb"
+            },
+            "R": {
+                "item": "minecraft:redstone"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:4004_cpu"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

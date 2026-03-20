@@ -1,0 +1,42 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:8008_cpu"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "TGT",
+            "OPO",
+            "ABA"
+        ],
+        "key": {
+            "T": {
+                "item": "lunatech:transistor"
+            },
+            "G": {
+                "item": "minecraft:gold_ingot"
+            },
+            "O": {
+                "item": "lunatech:crystal_oscillator"
+            },
+            "P": {
+                "item": "lunatech:prototyping_pcb"
+            },
+            "A": {
+                "item": "minecraft:amethyst_shard"
+            },
+            "B": {
+                "item": "minecraft:redstone_block"
+            }
+        },
+        "result": {
+            "item": "lunatech:8008_cpu"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:world_module"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "PWP",
+            "WSW",
+            "PWP"
+        ],
+        "key": {
+            "P": {
+                "item": "lunatech:composite_plate"
+            },
+            "W": {
+                "item": "lunatech:wires"
+            },
+            "S": {
+                "item": "lunatech:screen"
+            }
+        },
+        "result": {
+            "item": "lunatech:world_module"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

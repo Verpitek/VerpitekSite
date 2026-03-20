@@ -1,0 +1,27 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:composite_scrap_plate_block"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "SS",
+            "SS"
+        ],
+        "key": {
+            "S": {
+                "item": "lunatech:composite_scrap"
+            }
+        },
+        "result": {
+            "item": "lunatech:composite_scrap_plate_block",
+            "count": 4
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

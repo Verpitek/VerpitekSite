@@ -1,0 +1,26 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:composite_plate"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "III"
+        ],
+        "key": {
+            "I": {
+                "item": "lunatech:composite_ingot"
+            }
+        },
+        "result": {
+            "item": "lunatech:composite_plate",
+            "count": 3
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

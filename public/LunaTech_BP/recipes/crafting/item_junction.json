@@ -1,0 +1,30 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:item_junction"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " W ",
+            "WTW",
+            " W "
+        ],
+        "key": {
+            "W": {
+                "item": "lunatech:wires"
+            },
+            "T": {
+                "item": "lunatech:transistor"
+            }
+        },
+        "result": {
+            "item": "lunatech:item_junction"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

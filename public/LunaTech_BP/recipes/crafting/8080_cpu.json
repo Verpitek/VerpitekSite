@@ -1,0 +1,42 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:8080_cpu"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "GTO",
+            "OPO",
+            "ABA"
+        ],
+        "key": {
+            "G": {
+                "item": "minecraft:gold_ingot"
+            },
+            "T": {
+                "item": "lunatech:transistor"
+            },
+            "O": {
+                "item": "lunatech:crystal_oscillator"
+            },
+            "P": {
+                "item": "lunatech:prototyping_pcb"
+            },
+            "A": {
+                "item": "minecraft:amethyst_shard"
+            },
+            "B": {
+                "item": "minecraft:redstone_block"
+            }
+        },
+        "result": {
+            "item": "lunatech:8080_cpu"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

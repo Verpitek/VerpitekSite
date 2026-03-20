@@ -1,0 +1,26 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:composite_path_block"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "SSS"
+        ],
+        "key": {
+            "S": {
+                "item": "lunatech:composite_scrap"
+            }
+        },
+        "result": {
+            "item": "lunatech:composite_path_block",
+            "count": 6
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

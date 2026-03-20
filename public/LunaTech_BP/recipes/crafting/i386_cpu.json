@@ -1,0 +1,42 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:i386_cpu"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "GTO",
+            "OKO",
+            "APA"
+        ],
+        "key": {
+            "G": {
+                "item": "minecraft:gold_ingot"
+            },
+            "T": {
+                "item": "lunatech:transistor"
+            },
+            "O": {
+                "item": "lunatech:crystal_oscillator"
+            },
+            "K": {
+                "item": "lunatech:component_kit"
+            },
+            "A": {
+                "item": "minecraft:amethyst_shard"
+            },
+            "P": {
+                "item": "lunatech:prototyping_pcb"
+            }
+        },
+        "result": {
+            "item": "lunatech:i386_cpu"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

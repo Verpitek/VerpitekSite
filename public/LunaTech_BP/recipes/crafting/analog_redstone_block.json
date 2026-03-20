@@ -2,35 +2,35 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:analog_redstone_block"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "CMC",
+            "RBR",
+            "CWC"
         ],
         "key": {
-            "I": {
+            "C": {
                 "item": "lunatech:composite_ingot"
             },
-            "S": {
-                "item": "lunatech:screen"
+            "M": {
+                "item": "lunatech:microcontroller"
+            },
+            "R": {
+                "item": "minecraft:redstone"
+            },
+            "B": {
+                "item": "minecraft:redstone_block"
             },
             "W": {
                 "item": "lunatech:wires"
-            },
-            "C": {
-                "item": "lunatech:6502_cpu"
-            },
-            "P": {
-                "item": "lunatech:prototyping_pcb"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:analog_redstone_block"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

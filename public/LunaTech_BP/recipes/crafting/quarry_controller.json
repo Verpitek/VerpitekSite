@@ -2,35 +2,35 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:quarry_controller"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "CMC",
+            "WTW",
+            "CPC"
         ],
         "key": {
-            "I": {
+            "C": {
                 "item": "lunatech:composite_ingot"
             },
-            "S": {
-                "item": "lunatech:screen"
+            "M": {
+                "item": "lunatech:electric_motor"
             },
             "W": {
                 "item": "lunatech:wires"
             },
-            "C": {
-                "item": "lunatech:6502_cpu"
+            "T": {
+                "item": "lunatech:terminal"
             },
             "P": {
                 "item": "lunatech:prototyping_pcb"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:quarry_controller"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

@@ -2,35 +2,32 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:machine_module"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "PMP",
+            "WKW",
+            "PWP"
         ],
         "key": {
-            "I": {
-                "item": "lunatech:composite_ingot"
+            "P": {
+                "item": "lunatech:composite_plate"
             },
-            "S": {
-                "item": "lunatech:screen"
+            "M": {
+                "item": "lunatech:electric_motor"
             },
             "W": {
                 "item": "lunatech:wires"
             },
-            "C": {
-                "item": "lunatech:6502_cpu"
-            },
-            "P": {
-                "item": "lunatech:prototyping_pcb"
+            "K": {
+                "item": "lunatech:component_kit"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:machine_module"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

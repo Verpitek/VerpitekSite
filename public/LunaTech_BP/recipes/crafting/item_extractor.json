@@ -2,35 +2,32 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:item_extractor"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "CWC",
+            "WPW",
+            "CHC"
         ],
         "key": {
-            "I": {
+            "C": {
                 "item": "lunatech:composite_ingot"
-            },
-            "S": {
-                "item": "lunatech:screen"
             },
             "W": {
                 "item": "lunatech:wires"
             },
-            "C": {
-                "item": "lunatech:6502_cpu"
-            },
             "P": {
                 "item": "lunatech:prototyping_pcb"
+            },
+            "H": {
+                "item": "minecraft:hopper"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:item_extractor"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

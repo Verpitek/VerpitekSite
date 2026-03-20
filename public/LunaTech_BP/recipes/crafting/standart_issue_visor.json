@@ -2,19 +2,19 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:standart_issue_visor"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "PSP",
+            "WKW",
+            " G "
         ],
         "key": {
-            "I": {
-                "item": "lunatech:composite_ingot"
+            "P": {
+                "item": "lunatech:composite_plate"
             },
             "S": {
                 "item": "lunatech:screen"
@@ -22,15 +22,15 @@
             "W": {
                 "item": "lunatech:wires"
             },
-            "C": {
-                "item": "lunatech:6502_cpu"
+            "K": {
+                "item": "lunatech:component_kit"
             },
-            "P": {
+            "G": {
                 "item": "lunatech:prototyping_pcb"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:standart_issue_visor"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

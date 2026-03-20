@@ -1,0 +1,1671 @@
+---
+import WikiLayout from "../../../components/WikiLayout.astro";
+import BedrockRenderer from "../../../components/BedrockRender.astro";
+import RecipeRenderer from "../../../components/recipes/RecipeRenderer.astro";
+import WikiSearch from "../../../components/WikiSearch.astro";
+import { parseRecipeJSON } from "../../../lib/recipes/parsers";
+
+// Global recipe data cache
+const recipeData: Record<string, any> = {};
+
+// Use import.meta.glob to load all recipe files
+const allCraftingRecipeModules = import.meta.glob<{ default: any }>('../../../../public/LunaTech_BP/recipes/crafting/*.json', { eager: true });
+const allSmeltingRecipeModules = import.meta.glob<{ default: any }>('../../../../public/LunaTech_BP/recipes/smelting/*.json', { eager: true });
+
+// Build recipe map and populate recipeData cache
+const recipesByOutput: Record<string, string[]> = {};
+
+// Process crafting recipes
+for (const [filePath, mod] of Object.entries(allCraftingRecipeModules)) {
+  const recipeJson = mod.default;
+  let recipeType = '';
+  let recipeDataItem: any = null;
+  
+  if (recipeJson['minecraft:recipe_shaped']) {
+    recipeType = 'minecraft:recipe_shaped';
+    recipeDataItem = recipeJson['minecraft:recipe_shaped'];
+  } else if (recipeJson['minecraft:recipe_shapeless']) {
+    recipeType = 'minecraft:recipe_shapeless';
+    recipeDataItem = recipeJson['minecraft:recipe_shapeless'];
+  }
+  
+  if (recipeDataItem && recipeDataItem.result) {
+    let outputItem = '';
+    if (typeof recipeDataItem.result === 'string') {
+      outputItem = recipeDataItem.result;
+    } else if (Array.isArray(recipeDataItem.result)) {
+      outputItem = recipeDataItem.result[0]?.item || '';
+    } else if (recipeDataItem.result.item) {
+      outputItem = recipeDataItem.result.item;
+    }
+    
+    if (outputItem) {
+      const recipePath = `/LunaTech_BP/recipes/crafting/${filePath.split('/').pop()}`;
+      recipeData[recipePath] = recipeJson;
+      
+      if (!recipesByOutput[outputItem]) {
+        recipesByOutput[outputItem] = [];
+      }
+      recipesByOutput[outputItem].push(recipePath);
+    }
+  }
+}
+
+// Process smelting recipes
+for (const [filePath, mod] of Object.entries(allSmeltingRecipeModules)) {
+  const recipeJson = mod.default;
+  if (recipeJson['minecraft:recipe_furnace']) {
+    const furnaceData = recipeJson['minecraft:recipe_furnace'];
+    let outputItem = '';
+    if (typeof furnaceData.output === 'string') {
+      outputItem = furnaceData.output;
+    } else if (furnaceData.output?.item) {
+      outputItem = furnaceData.output.item;
+    }
+    
+    if (outputItem) {
+      const recipePath = `/LunaTech_BP/recipes/smelting/${filePath.split('/').pop()}`;
+      recipeData[recipePath] = recipeJson;
+      
+      if (!recipesByOutput[outputItem]) {
+        recipesByOutput[outputItem] = [];
+      }
+      recipesByOutput[outputItem].push(recipePath);
+    }
+  }
+}
+
+function applyRecipesToItems<T extends { identifier: string; recipes: string[] }>(
+  items: T[]
+): T[] {
+  return items.map(item => {
+    const recipes = recipesByOutput[item.identifier] || [];
+    return { ...item, recipes };
+  });
+}
+
+// Geometry file path mapping
+const geometryMap: Record<string, string> = {
+  "geometry.stiched_full_block": "/LunaTech_RP/models/blocks/stitched_full_block.geo.json",
+  "geometry.alloy_plating": "/LunaTech_RP/models/blocks/alloy_plating.geo.json",
+  "geometry.invisible": "/LunaTech_RP/models/blocks/invisibile.geo.json",
+  "geometry.block_breaker": "/LunaTech_RP/models/blocks/block_breaker.geo.json",
+  "geometry.item_emitter": "/LunaTech_RP/models/blocks/item_emitter.geo.json",
+  "geometry.item_junction": "/LunaTech_RP/models/blocks/item_junction.geo.json",
+  "geometry.item_reciever": "/LunaTech_RP/models/blocks/item_reciever.geo.json",
+  "geometry.machine_block": "/LunaTech_RP/models/blocks/machine_block.geo.json",
+  "geometry.microcontroller": "/LunaTech_RP/models/blocks/microcontroller.geo.json",
+  "geometry.quarry_beam": "/LunaTech_RP/models/blocks/quarry_beam.geo.json",
+  "geometry.quarry_controller": "/LunaTech_RP/models/blocks/quarry_controller.geo.json",
+  "geometry.quarry_corner": "/LunaTech_RP/models/blocks/quarry_corner.geo.json",
+};
+
+const items = [
+  {
+    "identifier": "lunatech:multitester",
+    "name": "Multitester",
+    "icon": "lunatech_multitester",
+    "texturePath": "LunaTech_RP/textures/items/tools/multitester.png",
+    "description": "Handheld diagnostic unit for reading machine states, power levels, and system status. Essential for troubleshooting.",
+    "specs": {
+      "type": "Diagnostic Tool",
+      "maxStack": 1,
+      "sensors": "Power, temperature, status",
+      "display": "LED readout",
+      "range": "20 blocks (line of sight)"
+    },
+    "lore": "Every technician's best friend. Can identify problems instantly.",
+    "file": "/LunaTech_BP/items/tools/multitester.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/multitester.json"
+    ],
+    "notImplemented": true
+  },
+  {
+    "identifier": "lunatech:jetpack",
+    "name": "Jetpack",
+    "icon": "chestplate",
+    "texturePath": null,
+    "description": "Wearable thruster system for brief flight. Powered by battery; enables vertical terrain navigation.",
+    "specs": {
+      "type": "Equipment - Chest Armor",
+      "maxStack": 1,
+      "wearSlot": "Chest",
+      "thrustDuration": "Limited (battery-dependent)",
+      "reuseTime": "Requires recharge between uses",
+      "purpose": "Mobility/traversal"
+    },
+    "lore": "Dangerous in untrained hands. Still experimental—test carefully.",
+    "file": "/LunaTech_BP/items/tools/jetpack.item.json",
+    "recipes": [],
+    "notImplemented": true
+  },
+
+  {
+    "identifier": "lunatech:powered_drill",
+    "name": "Powered Drill",
+    "icon": "lunatech_powered_drill",
+    "texturePath": "LunaTech_RP/textures/items/tools/powered_drill.png",
+    "description": "Electric rapid-percussion mining tool. Dramatically accelerates block mining across all materials.",
+    "specs": {
+      "type": "Powered Tool",
+      "maxStack": 1,
+      "mineSpeed": "24× normal speed (extremely fast)",
+      "toolTiers": ["Iron tier", "Is Pickaxe", "Is Shovel"],
+      "efficiency": "Respects Efficiency enchantments",
+      "power": "Requires charged battery"
+    },
+    "lore": "Lethargia's field mining standard. Reduces resource gathering time by 95%.",
+    "file": "/LunaTech_BP/items/tools/powered_drill.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/powered_drill.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:powered_chainsaw",
+    "name": "Powered Chainsaw",
+    "icon": "lunatech_powered_chainsaw",
+    "texturePath": "LunaTech_RP/textures/items/tools/powered_chainsaw.png",
+    "description": "High-speed oscillating blade for rapid wood cutting. Harvests entire trees nearly instantly.",
+    "specs": {
+      "type": "Powered Tool",
+      "maxStack": 1,
+      "cutSpeed": "40× normal wood speed",
+      "material": "Composite 34 frame, steel blades",
+      "power": "Battery powered",
+      "dropMultiplier": "No bonus (same as hand cutting)"
+    },
+    "lore": "Eliminates wood bottleneck in early-game development. Popular with builders.",
+    "file": "/LunaTech_BP/items/tools/powered_chainsaw.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/powered_chainsaw.json"
+    ]
+  },
+
+  {
+    "identifier": "lunatech:hammer",
+    "name": "Hammer",
+    "icon": "lunatech_hammer",
+    "texturePath": "LunaTech_RP/textures/items/tools/hammer.png",
+    "description": "Heavy shaping tool for material work. Used in Wire crafting and general fabrication.",
+    "specs": {
+      "type": "Tool",
+      "durability": "250 uses",
+      "maxStack": 1,
+      "components": "Steel head, Composite 34 handle",
+      "ability": "Wire crafting catalyst"
+    },
+    "lore": "Every LunaTech technician carries one. Essential for field repairs.",
+    "file": "/LunaTech_BP/items/tools/hammer.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/hammer.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:wrench",
+    "name": "Wrench",
+    "icon": "lunatech_wrench",
+    "texturePath": "LunaTech_RP/textures/items/tools/wrench.png",
+    "description": "Multi-purpose assembly tool. Used for machine configuration, rotating blocks, and fastener work.",
+    "specs": {
+      "type": "Tool",
+      "maxStack": 1,
+      "material": "Composite 34 alloy",
+      "ability": "Machine orientation rotation",
+      "crafting": "Wrench recipes"
+    },
+    "lore": "The icon of LunaTech craftsmanship. Used to configure power nodes and adjust machines.",
+    "file": "/LunaTech_BP/items/tools/wrench.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/wrench.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:screwdriver",
+    "name": "Screwdriver",
+    "icon": "lunatech_screwdriver",
+    "texturePath": "LunaTech_RP/textures/items/tools/screwdriver.png",
+    "description": "Precision fastening tool for delicate electronics work. Required for PCB assembly.",
+    "specs": {
+      "type": "Tool",
+      "maxStack": 1,
+      "purpose": "Electronics assembly",
+      "material": "Steel tip, Composite 34 handle",
+      "requirement": "PCB crafting"
+    },
+    "lore": "Allows precise work on circuit boards without damaging sensitive components.",
+    "file": "/LunaTech_BP/items/tools/screwdriver.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:pliers",
+    "name": "Pliers",
+    "icon": "lunatech_pliers",
+    "texturePath": "LunaTech_RP/textures/items/tools/pliers.png",
+    "description": "Wire-working tool for bending and crimping. Used in electrical component fabrication.",
+    "specs": {
+      "type": "Tool",
+      "maxStack": 1,
+      "material": "Steel & Composite 34",
+      "purpose": "Wire and connector work",
+      "crafting": "Electrical component recipes"
+    },
+    "lore": "Essential for anyone working with the wiring systems.",
+    "file": "/LunaTech_BP/items/tools/pliers.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:soldering_iron",
+    "name": "Soldering Iron",
+    "icon": "lunatech_soldering_iron",
+    "texturePath": "LunaTech_RP/textures/items/tools/soldering_iron.png",
+    "description": "Heated tool for joining electrical connections. Permanently fuses circuit elements together.",
+    "specs": {
+      "type": "Tool",
+      "maxStack": 1,
+      "heatingElement": "Composite 34 tip",
+      "purpose": "PCB assembly",
+      "temperature": "350°C (estimated)"
+    },
+    "lore": "Creates permanent connections that can't be undone. Use carefully.",
+    "file": "/LunaTech_BP/items/tools/soldering_iron.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:standart_issue_pda",
+    "name": "Standard Issue PDA",
+    "icon": "lunatech_standart_issue_pda",
+    "texturePath": "LunaTech_RP/textures/items/tools/standart_issue_pda.png",
+    "description": "Personal Data Assistant. Compact computing device for accessing Lethargia's information networks and local data.",
+    "specs": {
+      "type": "Equipment - Computing",
+      "maxStack": 1,
+      "processor": "6502-class CPU (estimated)",
+      "storage": "16 MB flash",
+      "display": "Monochrome LCD",
+      "purpose": "Data access, navigation, inventory tracking"
+    },
+    "lore": "Standard-issue to all clone personnel. Contains mission data, technical specifications, and survival information.",
+    "file": "/LunaTech_BP/items/tools/standart_issue_pda.item.json",
+    "recipes": [],
+    "notImplemented": true
+  },
+  {
+    "identifier": "lunatech:standart_issue_visor",
+    "name": "Standard Issue Visor",
+    "icon": "lunatech_standart_issue_visor",
+    "texturePath": "LunaTech_RP/textures/items/tools/standart_issue_visor.png",
+    "description": "Head-mounted augmented reality display. Overlays real-time tactical and scientific information on the wearer's vision.",
+    "specs": {
+      "type": "Equipment - Head Display",
+      "maxStack": 1,
+      "displayType": "OLED retinal projection",
+      "refreshRate": "60 Hz",
+      "fieldOfView": "120°",
+      "overlayModes": "Tactical, Scientific, Navigation"
+    },
+    "lore": "Enhances situational awareness. Many clones won't work without one.",
+    "file": "/LunaTech_BP/items/tools/standard_issue_visor.item.json",
+    "recipes": [],
+    "notImplemented": true
+  },
+
+  {
+    "identifier": "lunatech:raw_copper_powder",
+    "name": "Raw Copper Powder",
+    "icon": "lunatech_raw_copper_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/raw_copper_powder.png",
+    "description": "Copper ore pulverized by the Macerator. Preprocessed for smelting or further processing. Doubles output vs direct smelting.",
+    "specs": {
+      "type": "Material - Ore Powder",
+      "source": "Macerator (Copper Ore)",
+      "stackSize": 64,
+      "purpose": "Smelting, alloy crafting"
+    },
+    "lore": "Macerator-processed ore increases yield efficiency by 100%.",
+    "file": "/LunaTech_BP/items/powder/raw_copper_powder.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:raw_gold_powder",
+    "name": "Raw Gold Powder",
+    "icon": "lunatech_raw_gold_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/raw_gold_powder.png",
+    "description": "Macerator-ground gold ore. Soft metal requires precise temperature control when smelting.",
+    "specs": {
+      "type": "Material - Ore Powder",
+      "source": "Macerator (Gold Ore)",
+      "stackSize": 64,
+      "purpose": "Composite alloy component"
+    },
+    "lore": "Critical for Composite 34 synthesis.",
+    "file": "/LunaTech_BP/items/powder/raw_gold_powder.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:raw_iron_powder",
+    "name": "Raw Iron Powder",
+    "icon": "lunatech_raw_iron_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/raw_iron_powder.png",
+    "description": "Ground iron ore from the Macerator. Ready for smelting or use in metal alloys.",
+    "specs": {
+      "type": "Material - Ore Powder",
+      "source": "Macerator (Iron Ore)",
+      "stackSize": 64,
+      "purpose": "Smelting, alloy crafting"
+    },
+    "lore": "The most abundant element in Composite 34.",
+    "file": "/LunaTech_BP/items/powder/raw_iron_powder.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_powder",
+    "name": "Composite Powder",
+    "icon": "lunatech_composite_powder",
+    "texturePath": "LunaTech_RP/textures/items/powder/composite_powder.png",
+    "description": "Fine Composite 34 dust. Precursor to ingots when compressed. Result of Compressor processing.",
+    "specs": {
+      "type": "Material - Powder",
+      "source": "Compressor (Composite Plate)",
+      "stackSize": 64,
+      "purpose": "Composite Ingot synthesis"
+    },
+    "lore": "Intermediate stage in Composite 34 production.",
+    "file": "/LunaTech_BP/items/powder/composite_powder.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/composite_powder.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:databank_active",
+    "name": "Databank §a(Active)",
+    "icon": "lunatech_databank_active",
+    "texturePath": "LunaTech_RP/textures/items/storage/databank_active.png",
+    "description": "Data storage module in active state. Stores 256 MB of data. Used for archival and data transfer.",
+    "specs": {
+      "type": "Storage Device",
+      "capacity": "256 MB",
+      "state": "Active (ready)",
+      "interface": "USB/legacy wired",
+      "purpose": "Data backup, transfer"
+    },
+    "lore": "Essential for knowledge preservation. Each contains irreplaceable Earth records.",
+    "file": "/LunaTech_BP/items/storage/databank_active.item.json",
+    "recipes": [],
+    "notImplemented": true
+  },
+  {
+    "identifier": "lunatech:databank_full",
+    "name": "Databank §c(Full)",
+    "icon": "lunatech_databank_full",
+    "texturePath": "LunaTech_RP/textures/items/storage/databank_full.png",
+    "description": "Data storage module at full capacity. Cannot accept new writes until wiped. Contains archives of critical information.",
+    "specs": {
+      "type": "Storage Device",
+      "capacity": "256 MB (100% full)",
+      "state": "Full (read-only until wiped)",
+      "writeStatus": "No space remaining"
+    },
+    "lore": "When full, must be carefully archived or wiped to preserve space for new discoveries.",
+    "file": "/LunaTech_BP/items/storage/databank_full.item.json",
+    "recipes": [],
+    "notImplemented": true
+  },
+
+  {
+    "identifier": "lunatech:wires",
+    "name": "Wires",
+    "icon": "lunatech_wires",
+    "texturePath": "LunaTech_RP/textures/items/components/wires.png",
+     "description": "Copper-composite conductive wire used internally within machines. Not used to connect between machines.",
+     "specs": {
+       "type": "Component - Electrical",
+       "material": "Copper + Composite 34",
+       "purpose": "Internal machine wiring"
+     },
+     "lore": "Basic wiring component for internal machine construction.",
+    "file": "/LunaTech_BP/items/components/wires.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:electric_motor",
+    "name": "Electric Motor",
+    "icon": "lunatech_electric_motor",
+    "texturePath": "LunaTech_RP/textures/items/components/electric_motor.png",
+    "description": "Electromagnetic unit converting electrical energy into rotational force. Essential component for processing machines.",
+    "specs": {
+      "type": "Component - Mechanical",
+      "material": "Copper coils, iron core, Composite 34",
+      "purpose": "Mechanical power generation",
+      "efficiency": "92%"
+    },
+    "lore": "Proven technology from Lethargia's original propulsion systems, adapted for industrial machinery.",
+    "file": "/LunaTech_BP/items/components/electric_motor.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/electric_motor.json"
+    ]
+  },
+   {
+     "identifier": "lunatech:transformer",
+     "name": "Transformer",
+     "icon": "lunatech_transformer",
+     "texturePath": "LunaTech_RP/textures/items/components/transformer.png",
+     "description": "Basic electrical component used in machine crafting. A foundational building block for LunaTech equipment.",
+     "specs": {
+       "type": "Component - Electrical",
+       "material": "Copper coils, iron laminate",
+       "purpose": "Machine component"
+     },
+     "lore": "Essential crafting component for most LunaTech machines.",
+     "file": "/LunaTech_BP/items/components/transformer.item.json",
+     "recipes": [
+       "/LunaTech_BP/recipes/crafting/transformer.json"
+     ]
+   },
+
+  {
+    "identifier": "lunatech:rubber",
+    "name": "Rubber",
+    "icon": "lunatech_rubber",
+    "texturePath": "LunaTech_RP/textures/items/components/rubber.png",
+    "description": "Vulcanized rubber. Elastic insulation material for electrical components and sealing applications.",
+    "specs": {
+      "type": "Material - Rubber",
+      "source": "Compound vulcanization",
+      "stackSize": 64,
+      "purpose": "Insulation, sealing, gaskets",
+      "elasticity": "High"
+    },
+    "lore": "Dromia's flora provides raw material. Insulation technology depends on adequate supply.",
+    "file": "/LunaTech_BP/items/components/rubber.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:screen",
+    "name": "Screen",
+    "icon": "lunatech_screen",
+    "texturePath": "LunaTech_RP/textures/items/components/screen.png",
+    "description": "LED/LCD display panel for terminal and control interfaces. Enables machine status monitoring.",
+    "specs": {
+      "type": "Component - Display",
+      "material": "Composite 34, silicon, rare earth elements",
+      "purpose": "Information display",
+      "resolution": "Variable (depends on driver)",
+      "colors": "16-color palette"
+    },
+    "lore": "Salvaged from Lethargia's original bridge displays. Surprisingly durable.",
+    "file": "/LunaTech_BP/items/components/screen.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/screen.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:composite_plate",
+    "name": "Composite Plate",
+    "icon": "lunatech_composite_plate",
+    "texturePath": "LunaTech_RP/textures/items/components/composite_plate.png",
+    "description": "Sheet form of Composite 34. Primary structural material for machine casings and building blocks.",
+    "specs": {
+      "type": "Material - Processed",
+      "source": "Composite 34 (processed)",
+      "stackSize": 64,
+      "use": "Machine components, structural blocks, crafting",
+      "properties": "Corrosion-resistant, impact-absorbing"
+    },
+    "lore": "The most important material in human settlement on Dromia. Every facility depends on adequate supply.",
+    "file": "/LunaTech_BP/items/components/composite_plate.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_ingot",
+    "name": "Composite Ingot",
+    "icon": "lunatech_composite_ingot",
+    "texturePath": "LunaTech_RP/textures/items/components/composite_ingot.png",
+    "description": "Refined Composite 34 alloy in ingot form. The pre-cursor to plates. Crafted from base metals.",
+    "specs": {
+      "type": "Material - Processed",
+      "composition": "Copper + Steel + Gold (atomic fusion)",
+      "processMethod": "High-temperature atomic recombination",
+      "stackSize": 64,
+      "use": "Advanced crafting, transformer cores"
+    },
+    "lore": "The Collective's greatest metallurgical achievement. Earth-level technology, but impossible to replicate without industrial infrastructure.",
+    "file": "/LunaTech_BP/items/components/composite_ingot.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/composite_ingot.json"
+    ]
+  },
+
+
+  {
+    "identifier": "lunatech:prototyping_pcb",
+    "name": "Prototyping PCB",
+    "icon": "lunatech_prototyping_pcb",
+    "texturePath": "LunaTech_RP/textures/items/components/prototyping_pcb.png",
+    "description": "Breadboard-style circuit board blank. Base for electronics prototyping. Can be soldered with components.",
+    "specs": {
+      "type": "Component - Electronics Base",
+      "material": "FR-4 epoxy laminate",
+      "pattern": "Through-hole pad grid",
+      "purpose": "Circuit assembly substrate",
+      "stackSize": 64
+    },
+    "lore": "Allows field electronics experimentation without access to industrial fabrication.",
+    "file": "/LunaTech_BP/items/components/prototyping_pcb.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/prototyping_pcb.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:component_kit",
+    "name": "Component Kit",
+    "icon": "lunatech_component_kit",
+    "texturePath": "LunaTech_RP/textures/items/components/component_kit.png",
+    "description": "Pre-assorted selection of electrical components. Convenience bundle for common crafting recipes.",
+    "specs": {
+      "type": "Component - Bundle",
+      "contents": "Transistors, resistors, capacitors, diodes",
+      "stackSize": 64,
+      "purpose": "Bulk component supply"
+    },
+    "lore": "Saves time sourcing individual parts.",
+    "file": "/LunaTech_BP/items/components/component_kit.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/component_kit.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:rubber_compound",
+    "name": "Rubber Compound",
+    "icon": "lunatech_rubber_compound",
+    "texturePath": "LunaTech_RP/textures/items/components/rubber_compound.png",
+    "description": "Processed latex mixture before vulcanization. Hardens into functional rubber through heat or chemical treatment.",
+    "specs": {
+      "type": "Material - Rubber Precursor",
+      "source": "Tree sap processing",
+      "stackSize": 64,
+      "curableInto": "Rubber (hardened)"
+    },
+    "lore": "Dromian flora yields useful rubber. Partially replaces dependence on imported materials.",
+    "file": "/LunaTech_BP/items/components/rubber_compound.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/rubber_compound.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:composite_scrap",
+    "name": "Composite Scrap",
+    "icon": "lunatech_composite_scrap",
+    "texturePath": "LunaTech_RP/textures/items/components/composite_scrap.png",
+    "description": "Waste fragments from Composite 34 manufacturing. Can be recycled back into usable material.",
+    "specs": {
+      "type": "Material - Recycled",
+      "source": "Manufacturing byproduct",
+      "stackSize": 64,
+      "processedInto": "Composite Powder → Ingot"
+    },
+    "lore": "Nothing is wasted on Dromia. Scrap becomes resource again.",
+    "file": "/LunaTech_BP/items/components/composite_scrap.item.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:transistor",
+    "name": "Transistor",
+    "icon": "lunatech_transistor",
+    "texturePath": "LunaTech_RP/textures/items/semiconductors/transistor.png",
+    "description": "Semiconductor electronic component. Essential building block for all digital circuits and logic gates.",
+    "specs": {
+      "type": "Component - Semiconductor",
+      "material": "Silicon-based semiconductor",
+      "purpose": "Digital logic, signal amplification",
+      "stackSize": 64,
+      "applications": "CPU cores, memory, circuit boards"
+    },
+    "lore": "The fundamental component of modern electronics. Required in countless devices for computational logic.",
+    "file": "/LunaTech_BP/items/semiconductors/transistor.item.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/transistor.json"
+    ]
+  },
+   {
+     "identifier": "lunatech:crystal_oscillator",
+     "name": "Crystal Oscillator",
+     "icon": "lunatech_crystal_oscillator",
+     "texturePath": "LunaTech_RP/textures/items/semiconductors/crystal_oscillator.png",
+     "description": "Quartz crystal frequency standard. Provides precise clock signal for electronics. Required for CPU operation.",
+     "specs": {
+       "type": "Component - Timing",
+       "material": "Synthetic quartz crystal",
+       "frequency": "1-16 MHz (configurable)",
+       "stability": "±5 ppm",
+       "purpose": "CPU clock, timing reference"
+     },
+     "lore": "Every processor needs an oscillator. Frequency determines processor speed.",
+     "file": "/LunaTech_BP/items/semiconductors/crystal_oscillator.item.json",
+     "recipes": [
+       "/LunaTech_BP/recipes/crafting/crystal_oscillator.json"
+     ]
+   },
+   {
+     "identifier": "lunatech:nutrition_brick",
+     "name": "Nutrition Brick",
+     "icon": "lunatech_nutrition_brick",
+     "texturePath": "LunaTech_RP/textures/items/food/nutrition_brick.png",
+     "description": "Compressed nutrient paste. Highly efficient food source. Restores 6 hunger points. Manufactured from various organic sources.",
+     "specs": {
+       "type": "Food/Consumable",
+       "hunger": "+6 hunger",
+       "stackSize": 64,
+       "manufacture": "From organic matter",
+       "shelf-life": "Indefinite (chemically preserved)"
+     },
+     "lore": "No one would call it delicious. But it keeps you alive in the field.",
+     "file": "/LunaTech_BP/items/food/nutrition_brick.item.json",
+     "recipes": []
+   }
+];
+
+const blocks = [
+  {
+    "identifier": "lunatech:quarry_beam",
+    "name": "Quarry Beam",
+    "texture": "lunatech_quarry_beam",
+    "texturePath": "LunaTech_RP/textures/blocks/quarry_beam.png",
+    "description": "Vertical support beam for quarry mining operations. Part of the quarry frame structure; must be connected to a Quarry Controller to function.",
+    "specs": {
+      "type": "Quarry Structure",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "purpose": "Structural support component"
+    },
+    "lore": "Composite 34 construction beam from Lethargia's mining infrastructure. Designed for large-scale resource extraction on Dromia.",
+    "file": "/LunaTech_BP/blocks/quarry_beam.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:item_extractor",
+    "name": "Item Extractor",
+    "texture": "lunatech_item_extractor",
+    "texturePath": "LunaTech_RP/textures/blocks/item_extractor.png",
+    "description": "Pulls items from adjacent containers and launches them toward Item Receivers. Sources of automated item transportation.",
+    "specs": {
+      "type": "Item Logistics",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "orientation": "6-directional (configurable face)",
+      "extractionSlot": "Configurable",
+      "throughput": "1 item/cycle (configurable)",
+      "target": "Any Item Receiver or Junction"
+    },
+    "lore": "Implements Lethargia's container-to-network interface protocol. Makes possible the first truly automated factories on Dromia.",
+    "file": "/LunaTech_BP/blocks/item_extractor.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:resin_jungle_log",
+    "name": "Resin Jungle Log",
+    "texture": "lunatech_unfilled_resin_jungle_log",
+    "texturePath": "LunaTech_RP/textures/blocks/resin/log_jungle_empty_resin.png",
+    "description": "Jungle wood saturated with hardening resin from Dromian flora. State toggles between empty and resin-filled form.",
+    "specs": {
+      "type": "Specialty Block",
+      "hardness": "3 seconds",
+      "toolRequired": "Axe",
+      "state": "resin_filled (boolean)",
+      "fillingMechanic": "Random tick (6000-18000 ticks)",
+      "placement": "6-directional"
+    },
+    "lore": "Hybrid material combining Dromian biological processes with human industrial applications. Used in specialized crafting.",
+    "file": "/LunaTech_BP/blocks/resin_jungle_log.json",
+    "recipes": [],
+    "notImplemented": true
+  },
+  {
+    "identifier": "lunatech:quarry_controller",
+    "name": "Quarry Controller",
+    "texture": "lunatech_quarry_controller",
+    "texturePath": "LunaTech_RP/textures/blocks/quarry_controller.png",
+    "description": "Master control unit for large-scale quarry operations. Coordinates Block Breakers and Quarry Beams to mine defined areas automatically.",
+    "specs": {
+      "type": "Quarry System",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "maxArea": "Variable (defined by Corner blocks)",
+      "miningDepth": "Down to bedrock",
+      "miningSpeed": "Scales with connected Breaker count",
+      "dropCollection": "Automatic (hopper compatible)"
+    },
+    "lore": "Lethargia's most sophisticated mining automation. Reduces resource extraction bottleneck significantly on resource-scarce Dromia.",
+    "file": "/LunaTech_BP/blocks/quarry_controller.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:block_breaker",
+    "name": "Block Breaker",
+    "texture": "lunatech_block_breaker",
+    "texturePath": "LunaTech_RP/textures/blocks/block_breaker.png",
+    "description": "Directional block-breaking machine. Continuously mines blocks in its configured direction, dropping them for collection.",
+    "specs": {
+      "type": "Extraction Machine",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "direction": "Configurable (North/South/East/West)",
+      "miningSpeed": "Standard hard block speed",
+      "operatingStates": ["IDLE", "BREAKING", "STUCK"],
+      "breakingStages": 4
+    },
+    "lore": "Automated mining head from Lethargia's original quarry systems. Can be chained vertically for efficient layer-by-layer extraction.",
+    "file": "/LunaTech_BP/blocks/machines/block_breaker.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:recycler",
+    "name": "Recycler",
+    "texture": "lunatech_recycler",
+    "texturePath": "LunaTech_RP/textures/blocks/recycler.png",
+    "description": "Breaks down composite and electronic waste into base materials. Critical for sustainable operations on resource-limited Dromia.",
+    "specs": {
+      "type": "Processing Machine",
+      "powerBuffer": "1,000 EU",
+      "craftTime": "45 ticks (2.25 seconds)",
+      "energyConsumption": "1 EU/tick",
+      "inputSlot": 0,
+      "outputSlot": 1,
+      "hopperSupport": true,
+      "throughput": "26.7 items/minute",
+      "recoveryRate": "~80% material recovery"
+    },
+    "lore": "Originally designed to reduce waste in Lethargia's confined quarters. Now essential for closed-loop manufacturing on Dromia.",
+    "file": "/LunaTech_BP/blocks/machines/recycler.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/recycler.json"
+    ]
+  },
+   {
+     "identifier": "lunatech:power_node",
+    "name": "Power Node",
+    "texture": "lunatech_power_node",
+    "texturePath": "LunaTech_RP/textures/blocks/power_node.png",
+    "description": "Wireless energy relay using beam transmission technology derived from Dromian aura practices. Creates a wireless network of power distribution points.",
+    "specs": {
+      "type": "Power Relay/Node",
+      "powerBuffer": "500 EU",
+      "transmissionRange": "12 blocks",
+      "energyRange": "12 blocks",
+      "category": "Transmission"
+    },
+    "lore": "Reverse-engineered from Dromian aura channeling practices. Uses Composite 34 emitter nodes to propagate soul-energy wirelessly—technology that represents humanity's most significant technological advance since arriving on Dromia.",
+    "file": "/LunaTech_BP/blocks/machines/power_node.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/power_node.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:solar_panel",
+    "name": "Solar Panel",
+    "texture": "lunatech_solar_panel",
+    "texturePath": "LunaTech_RP/textures/blocks/solar_panel.png",
+    "description": "Harnesses Dromia's star energy during daylight to generate electrical power. Most reliable at noon; inactive at night and during storms.",
+     "specs": {
+       "type": "Generator",
+       "powerGeneration": "10 EU/tick (variable with sunlight)",
+       "powerBuffer": "100 EU",
+       "energyRange": "10 blocks"
+     },
+    "lore": "Based on Lethargia's original solar collection systems, adapted for Dromia's luminosity. Silent operation makes it popular for stealth installations.",
+    "file": "/LunaTech_BP/blocks/machines/solar_panel.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/solar_panel.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:accumulator",
+    "name": "Accumulator",
+    "texture": "lunatech_accumulator",
+    "texturePath": "LunaTech_RP/textures/blocks/accumulator.png",
+     "description": "High-capacity energy storage using advanced acid-based batteries. Buffers power from generators and distributes to consumers.",
+    "specs": {
+      "type": "Battery/Energy Storage",
+      "powerBuffer": "10,000 EU",
+      "energyRange": "10 blocks",
+      "inputRate": "Unlimited",
+      "outputRate": "Unlimited",
+      "efficiency": "100%"
+    },
+     "lore": "Reliable acid-battery based storage. Each unit can store and release significant energy to stabilize power distribution across a settlement.",
+    "file": "/LunaTech_BP/blocks/machines/accumulator.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/accumulator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:electric_furnace",
+    "name": "Electric Furnace",
+    "texture": "lunatech_electric_furnace",
+    "texturePath": "LunaTech_RP/textures/blocks/electric_furnace.png",
+    "description": "Industrial smelting apparatus that uses electrical resistance heating. Processes ores and materials into refined ingots.",
+    "specs": {
+      "type": "Processing Machine",
+      "powerBuffer": "1,000 EU",
+      "craftTime": "20 ticks per item",
+      "energyConsumption": "5 EU/tick",
+      "inputSlot": 0,
+      "outputSlot": 1,
+      "hopperSupport": true,
+      "operatingStates": ["NO_INPUT", "INSUFFICIENT_INPUT", "INVALID_INPUT", "CRAFTING", "OUTPUT_FULL", "OUT_OF_ENERGY"]
+    },
+    "lore": "Lethargia standard-issue smelter. More efficient than traditional furnaces and integrates with automated systems.",
+    "file": "/LunaTech_BP/blocks/machines/electric_furnace.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/electric_furnace.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:windmill",
+    "name": "Windmill",
+    "texture": "lunatech_windmill",
+    "texturePath": "LunaTech_RP/textures/blocks/windmill.png",
+    "description": "Harvests kinetic energy from Dromia's atmospheric winds. Output scales with altitude—mount on towers for maximum efficiency.",
+     "specs": {
+       "type": "Generator",
+       "powerGeneration": "Variable (scales with height)",
+       "powerBuffer": "100 EU",
+       "energyRange": "10 blocks",
+       "optimalAltitude": "Y > 128"
+     },
+    "lore": "Mechanical design inspired by pre-industrial Dromian wind harvesting. Dromia's atmospheric dynamics make wind generation more viable than Earth records suggested.",
+    "file": "/LunaTech_BP/blocks/machines/windmill.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/windmill.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:watermill",
+    "name": "Watermill",
+    "texture": "lunatech_watermill",
+    "texturePath": "LunaTech_RP/textures/blocks/machines/watermill.png",
+    "description": "Extracts rotational energy from flowing water. Must be placed adjacent to flowing water or waterfalls to operate.",
+    "specs": {
+      "type": "Generator",
+      "powerGeneration": "Variable (scales with flow)",
+      "powerBuffer": "100 EU",
+      "energyRange": "10 blocks",
+      "requirement": "Adjacent flowing water block",
+      "output": "Direct mechanical-to-electrical conversion"
+    },
+    "lore": "Reverse-engineered from Dromian water-power systems observed in Magi-Tech settlements. Remarkably efficient at converting kinetic to electrical energy.",
+    "file": "/LunaTech_BP/blocks/machines/watermill.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/watermill.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:solid_fuel_generator",
+    "name": "Solid Fuel Generator",
+    "texture": "lunatech_solid_fuel_generator",
+    "texturePath": "LunaTech_RP/textures/blocks/solid_fuel_generator.png",
+    "description": "Combustion-based power generation. Burns solid fuels (coal, charcoal, etc.) to produce sustained electrical output.",
+    "specs": {
+      "type": "Generator",
+      "powerGeneration": "10 EU/tick while burning",
+      "powerBuffer": "100 EU",
+      "energyRange": "10 blocks",
+      "fuelSlot": 0,
+      "operatingStates": ["NO_FUEL", "INVALID_FUEL", "GENERATING"],
+      "burnTime": "Scales with fuel type"
+    },
+    "lore": "Efficient combustion chamber using Composite 34 lining for heat tolerance. Represents a transition bridge between renewable and chemical energy sources.",
+    "file": "/LunaTech_BP/blocks/machines/solid_fuel_generator.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/solid_fuel_generator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:terminal",
+    "name": "Terminal",
+    "texture": "lunatech_terminal",
+    "texturePath": "LunaTech_RP/textures/blocks/terminal.png",
+    "description": "Command interface for machine automation. Programs and monitors connected workers using Panspark VM scripting.",
+    "specs": {
+      "type": "Control/Automation",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "programming": "Panspark bytecode VM",
+      "operatingStates": ["UNINIT", "INITING", "IDLE", "RUNNING", "ERR", "OUT_OF_POWER", "FINISHED"],
+      "connectivity": "16-directional (4 power states per face)"
+    },
+    "lore": "Direct descendant of Lethargia's original automation control suite. Allows sophisticated machine coordination using the Panspark scripting language.",
+    "file": "/LunaTech_BP/blocks/machines/terminal.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/terminal.json"
+    ],
+    "notImplemented": true
+  },
+  {
+    "identifier": "lunatech:compressor",
+    "name": "Compressor",
+    "texture": "lunatech_compressor",
+    "texturePath": "LunaTech_RP/textures/blocks/compressor.png",
+    "description": "Applies massive pressure to materials, compacting them into denser forms. Slowest processor but essential for advanced crafting.",
+    "specs": {
+      "type": "Processing Machine",
+      "powerBuffer": "1,000 EU",
+      "craftTime": "400 ticks (20 seconds)",
+      "energyConsumption": "1 EU/tick",
+      "inputSlot": 0,
+      "outputSlot": 1,
+      "hopperSupport": true,
+      "throughput": "9 items/minute"
+    },
+    "lore": "Uses hydraulic pressure systems to densify composite materials. Critical for crafting high-grade components.",
+    "file": "/LunaTech_BP/blocks/machines/compressor.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:macerator",
+    "name": "Macerator",
+    "texture": "lunatech_macerator",
+    "texturePath": "LunaTech_RP/textures/blocks/macerator.png",
+    "description": "Grinds ores and materials into powders. Doubles ore output compared to smelting alone when combined with Electric Furnace.",
+    "specs": {
+      "type": "Processing Machine",
+      "powerBuffer": "1,000 EU",
+      "craftTime": "300 ticks (15 seconds)",
+      "energyConsumption": "1 EU/tick",
+      "inputSlot": 0,
+      "outputSlot": 1,
+      "hopperSupport": true,
+      "throughput": "12 items/minute",
+      "efficiency": "Double ore yield vs traditional smelting"
+    },
+    "lore": "High-speed grinding apparatus. Primary component of Lethargia's ore processing pipeline.",
+    "file": "/LunaTech_BP/blocks/machines/macerator.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/macerator.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:machine_block",
+    "name": "Machine Block",
+    "texture": "lunatech_machine_block",
+    "texturePath": "LunaTech_RP/textures/blocks/machine_block.png",
+    "description": "Basic structural casing for machine assembly. Provides no function alone; used as building component.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "5 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "purpose": "Structural component"
+    },
+    "lore": "Standard Composite 34 machine housing. Forms the basis of all LunaTech industrial equipment.",
+    "file": "/LunaTech_BP/blocks/machines/machine_block.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/machine_block.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:microcontroller",
+    "name": "Microcontroller",
+    "texture": "lunatech_microcontroller",
+    "texturePath": "LunaTech_RP/textures/blocks/machines/microcontroller.png",
+     "description": "Programmable logic controller using Panspark VM. Executes custom automation code with digital and analog I/O capabilities.",
+     "specs": {
+       "type": "Programmable Controller",
+       "powerBuffer": "1,000 EU",
+       "energyRange": "10 blocks",
+       "digitalOutput": "0 or 15 (binary)",
+       "analogInput": "0-15 (16 levels)",
+       "programming": "Panspark bytecode",
+       "operatingStates": ["UNINIT", "IDLE", "COMPILING", "RUNNING", "ERR"],
+       "compileTime": "Depends on code complexity"
+     },
+    "lore": "Pocket-sized computing unit descended from Lethargia's navigation processors. Enables complex automation without Terminal overhead.",
+    "file": "/LunaTech_BP/blocks/machines/microcontroller.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:item_reciever",
+    "name": "Item Receiver",
+    "texture": "lunatech_item_reciever",
+    "texturePath": "LunaTech_RP/textures/blocks/item_reciever.png",
+    "description": "Endpoint for item transport networks. Accepts items from adjacent Item Extractors or Item Junctions.",
+    "specs": {
+      "type": "Item Logistics",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "orientation": "6-directional (configurable face)",
+      "inputSlot": "Unlimited (container)",
+      "throughput": "Limited by source speed",
+      "compatibility": "Integrates with hopper systems"
+    },
+    "lore": "Part of Lethargia's autonomous supply chains. Enables fully automated factories.",
+    "file": "/LunaTech_BP/blocks/item_reciever.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:quarry_corner",
+    "name": "Quarry Corner",
+    "texture": "lunatech_quarry_corner",
+    "texturePath": "LunaTech_RP/textures/blocks/quarry_corner.png",
+    "description": "Boundary marker for quarry mining area. Define a rectangular region with corners to establish extraction limits.",
+    "specs": {
+      "type": "Quarry Structure",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "10 blocks",
+      "purpose": "Quarry frame corner",
+      "pairing": "Must be used with Quarry Controller & Beams"
+    },
+    "lore": "Defines the coordinate system for automated quarry operations. Prevents uncontrolled mining expansion.",
+    "file": "/LunaTech_BP/blocks/quarry_corner.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:item_junction",
+    "name": "Item Junction",
+    "texture": "lunatech_item_junction",
+    "texturePath": "LunaTech_RP/textures/blocks/item_junction.png",
+     "description": "The connection point for item transport networks. Serves as the hub between item sources and destinations in automated systems.",
+    "specs": {
+      "type": "Item Logistics",
+      "powerBuffer": "1,000 EU",
+      "energyRange": "20 blocks (2× typical range)",
+      "orientation": "6-directional",
+      "connections": "Up to 6 simultaneous routes",
+      "sortingCapable": true,
+      "throughput": "Multi-path (scales with connected devices)"
+    },
+    "lore": "Sophisticated packet routing. Allows massive item networks to scale without throughput degradation.",
+    "file": "/LunaTech_BP/blocks/item_junction.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:wireless_charger",
+    "name": "Wireless Charger",
+    "texture": "lunatech_wireless_charger",
+    "texturePath": "LunaTech_RP/textures/blocks/wireless_charger.png",
+    "description": "Charges compatible tools and devices within range using beam transmission. No physical contact required.",
+    "specs": {
+      "type": "Charging Station",
+      "powerBuffer": "1,000 EU",
+      "transmissionRange": "10 blocks",
+      "chargingRate": "Variable (scales with available power)",
+      "compatible": "Powered tools, equipment, batteries",
+      "efficiency": "85% (15% transmission loss)"
+    },
+    "lore": "Uses the same beam transmission physics as Power Nodes. Enables field operations without physical cable infrastructure.",
+    "file": "/LunaTech_BP/blocks/wireless_charger.json",
+    "recipes": [
+      "/LunaTech_BP/recipes/crafting/wireless_charger.json"
+    ]
+  },
+  {
+    "identifier": "lunatech:analog_redstone_block",
+    "name": "Analog Redstone Block",
+    "texture": "acacia_leaves",
+    "texturePath": "LunaTech_RP/textures/blocks/analog_redstone_block.png",
+    "description": "Emits analog redstone signals (0-15) based on machine state or energy levels. Bridges Lethargia automation with Minecraft redstone.",
+    "specs": {
+      "type": "Redstone Integration",
+      "inputType": "Energy level / Machine state",
+      "outputType": "Analog redstone (0-15)",
+      "outputFaces": "Directional (north/south configurable)",
+      "signalRange": "16 power levels",
+      "resolution": "16-step discrete output"
+    },
+    "lore": "Represents the integration of LunaTech systems with Minecraft's native redstone logic. Enables hybrid automation architectures.",
+    "file": "/LunaTech_BP/blocks/analog_redstone_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_grate",
+    "name": "Composite Plate Grate",
+    "texture": "lunatech_composite_plate_grate",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_grate.png",
+    "description": "Grated flooring combining structural support with ventilation. Part of Lethargia's standard ship architecture.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "5 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Composite 34 alloy",
+      "transparency": "Partial (grated)"
+    },
+    "lore": "Iconic design element of Lethargia. Used throughout Camp Cities for practical ventilation.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_grate.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_scrap_plate_block",
+    "name": "Composite Scrap Plate Block",
+    "texture": "lunatech_composite_scrap_plate_block",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_scrap_plate_block.png",
+    "description": "Recycled composite material block. Economical alternative to standard plates for non-critical structures.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "4 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Recycled Composite 34"
+    },
+    "lore": "Sustainability-focused construction material. Reflects human adaptation to finite resources on Dromia.",
+    "file": "/LunaTech_BP/blocks/building/composite_scrap_plate_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_frame_glass",
+    "name": "Composite Frame Glass",
+    "texture": "lunatech_composite_frame_glass",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_frame_glass.png",
+    "description": "Reinforced transparent view pane. Lethargia-grade glass for windows and enclosures.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "3 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "transparency": "Full (transparent)",
+      "reinforcement": "Composite 34 frame"
+    },
+    "lore": "Tough enough to survive Dromia's hostile fauna and environmental extremes.",
+    "file": "/LunaTech_BP/blocks/building/composite_frame_glass.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_block",
+    "name": "Composite Plate Block",
+    "texture": "lunatech_composite_plate_block",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_block.png",
+    "description": "Solid structural plating. The standard building block for LunaTech facilities.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "5 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Composite 34 alloy",
+      "structure": "Solid"
+    },
+    "lore": "Foundational architectural element. Appears in every LunaTech facility.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_ornament",
+    "name": "Composite Plate Ornament",
+    "texture": "lunatech_composite_plate_ornament",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_ornament.png",
+    "description": "Decorative ribbed plating. Balances aesthetics with Lethargia's utilitarian design philosophy.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "5 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Composite 34 alloy",
+      "purpose": "Aesthetic detailing"
+    },
+    "lore": "Subtle design element from Lethargia's 80s-era engineering aesthetic.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_ornament.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_open_plate_grate",
+    "name": "Composite Open Plate Grate",
+    "texture": "lunatech_composite_open_plate_grate",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_open_plate_grate.png",
+    "description": "Heavy ventilation grating. High airflow for critical cooling systems.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "5 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Composite 34 alloy",
+      "transparency": "Maximum (open grate)"
+    },
+    "lore": "Essential for thermal management in high-powered reactor installations.",
+    "file": "/LunaTech_BP/blocks/building/composite_open_plate_grate.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_plate_shingles",
+    "name": "Composite Plate Shingles",
+    "texture": "lunatech_composite_plate_shingles",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_plate_shingles.png",
+    "description": "Overlapping plate roofing. Weather-resistant and integrated with Lethargia's aesthetic.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "5 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Composite 34 alloy",
+      "purpose": "Roofing element"
+    },
+    "lore": "Iconic visual element of Camp Cities. Recognizable from orbit.",
+    "file": "/LunaTech_BP/blocks/building/composite_plate_shingles.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:sturdy_composite_block",
+    "name": "Sturdy Composite Block",
+    "texture": "lunatech_sturdy_composite_block",
+    "texturePath": "LunaTech_RP/textures/blocks/sturdy_composite_block.png",
+    "description": "Enhanced-strength composite block. Used where extreme durability is required.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "6 seconds (stronger)",
+      "toolRequired": "Iron+ Pickaxe (2× faster with pickaxe)",
+      "material": "High-density Composite 34"
+    },
+    "lore": "Reserved for critical structural applications. Rarely seen outside reactor containment.",
+    "file": "/LunaTech_BP/blocks/building/sturdy_composite_block.json",
+    "recipes": []
+  },
+  {
+    "identifier": "lunatech:composite_path_block",
+    "name": "Composite Path Block",
+    "texture": "lunatech_composite_path_block",
+    "texturePath": "LunaTech_RP/textures/blocks/composite_path_block.png",
+    "description": "Textured walkway plating. Reduces slipping and provides visual contrast.",
+    "specs": {
+      "type": "Building Block",
+      "hardness": "4 seconds",
+      "toolRequired": "Iron+ Pickaxe",
+      "material": "Composite 34 with grip texture"
+    },
+    "lore": "Practical safety feature. Prevents skids on polished Composite 34 floors.",
+    "file": "/LunaTech_BP/blocks/building/composite_path_block.json",
+    "recipes": []
+  }
+];
+
+// Apply auto-discovered recipes to items and blocks
+const itemsWithRecipes = applyRecipesToItems(items);
+const blocksWithRecipes = applyRecipesToItems(blocks);
+
+const blockGeometryMap: Record<string, string> = {
+  "lunatech:quarry_beam": "geometry.quarry_beam",
+  "lunatech:item_extractor": "geometry.item_emitter",
+  "lunatech:resin_jungle_log": "minecraft:geometry.full_block",
+  "lunatech:quarry_controller": "geometry.quarry_controller",
+  "lunatech:block_breaker": "geometry.block_breaker",
+  "lunatech:recycler": "geometry.stiched_full_block",
+  "lunatech:solid_fuel_generator": "geometry.stiched_full_block",
+  "lunatech:power_node": "geometry.stiched_full_block",
+  "lunatech:solar_panel": "geometry.stiched_full_block",
+  "lunatech:accumulator": "geometry.stiched_full_block",
+  "lunatech:electric_furnace": "geometry.stiched_full_block",
+  "lunatech:windmill": "geometry.stiched_full_block",
+  "lunatech:watermill": "geometry.stiched_full_block",
+  "lunatech:terminal": "geometry.stiched_full_block",
+  "lunatech:compressor": "geometry.stiched_full_block",
+  "lunatech:macerator": "geometry.stiched_full_block",
+  "lunatech:machine_block": "geometry.machine_block",
+  "lunatech:microcontroller": "geometry.microcontroller",
+  "lunatech:item_reciever": "geometry.item_reciever",
+  "lunatech:quarry_corner": "geometry.quarry_corner",
+  "lunatech:item_junction": "geometry.item_junction",
+  "lunatech:wireless_charger": "geometry.stiched_full_block",
+  "lunatech:analog_redstone_block": "geometry.invisible",
+  "lunatech:composite_plate_grate": "geometry.alloy_plating",
+  "lunatech:composite_scrap_plate_block": "geometry.alloy_plating",
+  "lunatech:composite_frame_glass": "geometry.alloy_plating",
+  "lunatech:composite_plate_block": "geometry.alloy_plating",
+  "lunatech:composite_plate_ornament": "geometry.alloy_plating",
+  "lunatech:composite_open_plate_grate": "geometry.alloy_plating",
+  "lunatech:composite_plate_shingles": "geometry.alloy_plating",
+  "lunatech:sturdy_composite_block": "geometry.alloy_plating",
+  "lunatech:composite_path_block": "geometry.alloy_plating",
+};
+
+// Load geometries (used for model rendering)
+const geometryData: Record<string, any> = {};
+const geometryPaths = new Set<string>();
+for (const block of blocksWithRecipes) {
+  const geomId = blockGeometryMap[block.identifier] || `geometry.${block.identifier.split(':')[1]}`;
+  const path = geomId === "minecraft:geometry.full_block" 
+    ? "/LunaTech_RP/models/blocks/stitched_full_block.geo.json"
+    : geometryMap[geomId] || `/LunaTech_RP/models/blocks/${geomId.replace('geometry.', '')}.geo.json`;
+  geometryPaths.add(path);
+}
+
+for (const path of geometryPaths) {
+  try {
+    const response = await fetch(path);
+    if (response.ok) geometryData[path] = await response.json();
+  } catch (e) {
+    console.warn(`Failed to load geometry ${path}:`, e);
+  }
+}
+
+function getShapedRecipe(path: string) {
+  const data = recipeData[path];
+  if (!data) return null;
+  return parseRecipeJSON(data);
+}
+
+function getGeometryJson(geometry: string): any {
+  const path = geometry === "minecraft:geometry.full_block" 
+    ? "/LunaTech_RP/models/blocks/stitched_full_block.geo.json"
+    : geometryMap[geometry] || `/LunaTech_RP/models/blocks/${geometry.replace('geometry.', '')}.geo.json`;
+  return geometryData[path] || { "minecraft:geometry": [{ "description": { "identifier": "fallback", "texture_width": 16, "texture_height": 16 }, "bones": [] }] };
+}
+
+function getGeometryPath(identifier: string): string {
+  const geomId = blockGeometryMap[identifier] || `geometry.${identifier.split(':')[1]}`;
+  return geomId === "minecraft:geometry.full_block"
+    ? "/LunaTech_RP/models/blocks/stitched_full_block.geo.json"
+    : geometryMap[geomId] || `/LunaTech_RP/models/blocks/${geomId.replace('geometry.', '')}.geo.json`;
+}
+
+// Map of block identifier → geometry file path, used by recipe item slots
+const blockGeometryPathMap: Record<string, string> = {};
+for (const block of blocksWithRecipes) {
+  blockGeometryPathMap[block.identifier] = getGeometryPath(block.identifier);
+}
+---
+
+<WikiLayout title="LunaTech Bedrock Wiki">
+  <section class="intro">
+    <p>LunaTech Bedrock Wiki</p>
+    <WikiSearch />
+  </section>
+
+  <section>
+    <h2>Items ({itemsWithRecipes.length})</h2>
+    <div class="grid">
+      {itemsWithRecipes.map(item => (
+        <div class="card" data-identifier={item.identifier}>
+          <div class="card-image">
+            {item.texturePath ? (
+              <img src={"/" + item.texturePath} alt={item.name} width="64" height="64" />
+            ) : (
+              <div class="placeholder">No texture</div>
+            )}
+          </div>
+           <div class="card-content">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h3>{item.name}</h3>
+                {item.notImplemented && <span class="warning-badge">Not Implemented</span>}
+              </div>
+              <p class="identifier">{item.identifier}</p>
+              <p class="description">{item.description}</p>
+             {item.specs && (
+               <div class="specs">
+                 <details>
+                   <summary>Technical Specs</summary>
+                   <dl class="specs-list">
+                     {Object.entries(item.specs).map(([key, value]) => (
+                       <>
+                         <dt>{key}</dt>
+                         <dd>{typeof value === 'object' ? JSON.stringify(value) : String(value)}</dd>
+                       </>
+                     ))}
+                   </dl>
+                 </details>
+               </div>
+             )}
+             {item.lore && (
+               <div class="lore">
+                 <details>
+                   <summary>Lore</summary>
+                   <p>{item.lore}</p>
+                 </details>
+               </div>
+             )}
+             {item.recipes.length > 0 && (
+               <div class="recipes">
+                 <div class="recipe-grids">
+                   {item.recipes.map(recipePath => {
+                     const recipe = getShapedRecipe(recipePath);
+                     if (!recipe) return null;
+                     return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} geometryPaths={blockGeometryPathMap} />;
+                   })}
+                 </div>
+
+               </div>
+             )}
+           </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2>Blocks ({blocksWithRecipes.length})</h2>
+    <div class="grid">
+       {blocksWithRecipes.map(block => (
+         <div class="card" data-identifier={block.identifier}>
+           <div class="card-image">
+             {block.texturePath ? (
+               <BedrockRenderer
+                 modelPath={getGeometryPath(block.identifier)}
+                 texturePath={"/" + block.texturePath}
+                 height="150px"
+                 autoRotateSpeed={30}
+               />
+             ) : (
+               <div class="placeholder">No texture</div>
+             )}
+           </div>
+             <div class="card-content">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h3>{block.name}</h3>
+                {block.notImplemented && <span class="warning-badge">Not Implemented</span>}
+              </div>
+              <p class="identifier">{block.identifier}</p>
+              <p class="description">{block.description}</p>
+             {block.specs && (
+               <div class="specs">
+                 <details>
+                   <summary>Technical Specs</summary>
+                   <dl class="specs-list">
+                     {Object.entries(block.specs).map(([key, value]) => (
+                       <>
+                         <dt>{key}</dt>
+                         <dd>{typeof value === 'object' ? JSON.stringify(value) : String(value)}</dd>
+                       </>
+                     ))}
+                   </dl>
+                 </details>
+               </div>
+             )}
+             {block.lore && (
+               <div class="lore">
+                 <details>
+                   <summary>Lore</summary>
+                   <p>{block.lore}</p>
+                 </details>
+               </div>
+             )}
+             {block.recipes.length > 0 && (
+               <div class="recipes">
+                 <div class="recipe-grids">
+                   {block.recipes.map(recipePath => {
+                     const recipe = getShapedRecipe(recipePath);
+                     if (!recipe) return null;
+                     return <RecipeRenderer recipe={recipe} items={itemsWithRecipes} blocks={blocksWithRecipes} geometryPaths={blockGeometryPathMap} />;
+                   })}
+                 </div>
+
+               </div>
+             )}
+           </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .intro {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: #2a2a2a;
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .card {
+      background: #333;
+      border: 1px solid #444;
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #e1ff00;
+    }
+    .card-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      background: #222;
+      border-right: 1px solid #444;
+      flex-shrink: 0;
+      width: 180px;
+      box-sizing: border-box;
+    }
+    .card-image img {
+      image-rendering: pixelated;
+      width: 64px;
+      height: 64px;
+    }
+    .placeholder {
+      width: 64px;
+      height: 64px;
+      background: #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 0.8rem;
+    }
+    .card-content {
+      padding: 1.5rem;
+      flex-grow: 1;
+    }
+    .card-content h3 {
+      margin-top: 0;
+      color: #e1ff00;
+      font-size: 1.2rem;
+    }
+    .identifier {
+      font-family: monospace;
+      color: #aaa;
+      font-size: 0.9rem;
+      margin: 0.5rem 0;
+    }
+     .description {
+       color: #ccc;
+       line-height: 1.4;
+       margin-bottom: 1rem;
+     }
+     .specs {
+       margin: 1rem 0;
+       font-size: 0.9rem;
+     }
+     .specs summary {
+       cursor: pointer;
+       color: #00ff00;
+       font-weight: bold;
+       user-select: none;
+     }
+     .specs summary:hover {
+       color: #e1ff00;
+     }
+     .specs-list {
+       margin: 0.5rem 0 0 1.5rem;
+       display: grid;
+       grid-template-columns: auto 1fr;
+       gap: 0.5rem 1rem;
+     }
+     .specs-list dt {
+       color: #00ff00;
+       font-weight: bold;
+       text-align: right;
+     }
+     .specs-list dd {
+       color: #aaa;
+       margin: 0;
+       word-break: break-word;
+     }
+     .lore {
+       margin: 1rem 0;
+       font-size: 0.9rem;
+     }
+     .lore summary {
+       cursor: pointer;
+       color: #ff9500;
+       font-weight: bold;
+       user-select: none;
+     }
+     .lore summary:hover {
+       color: #e1ff00;
+     }
+     .lore p {
+       margin: 0.5rem 0 0 1.5rem;
+       color: #ddd;
+       line-height: 1.5;
+     }
+     .recipes {
+       margin-top: 1rem;
+       font-size: 0.9rem;
+     }
+    .recipe-grids {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .recipes ul {
+      margin: 0.5rem 0 0 0;
+      padding-left: 1.2rem;
+    }
+    .recipes a {
+      color: #aa75ff;
+      text-decoration: none;
+    }
+    .recipes a:hover {
+      text-decoration: underline;
+    }
+    h2 {
+      color: #e1ff00;
+      border-bottom: 2px solid #444;
+      padding-bottom: 0.5rem;
+    }
+     section {
+       margin-bottom: 3rem;
+     }
+     .card.highlighted {
+       animation: highlight 0.5s ease;
+       border-color: #e1ff00;
+       box-shadow: 0 0 12px rgba(225, 255, 0, 0.3);
+     }
+     @keyframes highlight {
+       0% {
+         box-shadow: 0 0 0 rgba(225, 255, 0, 0.5);
+       }
+       50% {
+         box-shadow: 0 0 16px rgba(225, 255, 0, 0.5);
+       }
+       100% {
+         box-shadow: 0 0 0 rgba(225, 255, 0, 0);
+       }
+      }
+      
+      .warning-badge {
+        display: inline-block;
+        background: #ff4444;
+        color: #fff;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+      }
+      
+      @media (max-width: 768px) {
+      .card {
+        flex-direction: column;
+      }
+      .card-image {
+        border-right: none;
+        border-bottom: 1px solid #444;
+      }
+    }
+  </style>
+</WikiLayout>

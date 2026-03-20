@@ -1,0 +1,14 @@
+{
+    "format_version": "1.21.90",
+    "minecraft:recipe_furnace": {
+        "description": {
+            "identifier": "lunatech:resin_clump_vine"
+        },
+        "tags": [
+            "campfire",
+            "furnace"
+        ],
+        "input": "minecraft:vine",
+        "output": "minecraft:resin_clump"
+    }
+}

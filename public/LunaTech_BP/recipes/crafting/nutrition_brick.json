@@ -1,0 +1,37 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:nutrition_brick"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "WWW",
+            "PCB",
+            "WWW"
+        ],
+        "key": {
+            "W": {
+                "item": "minecraft:wheat"
+            },
+            "P": {
+                "item": "minecraft:potato"
+            },
+            "C": {
+                "item": "minecraft:carrot"
+            },
+            "B": {
+                "item": "minecraft:bread"
+            }
+        },
+        "result": {
+            "item": "lunatech:nutrition_brick",
+            "count": 4
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

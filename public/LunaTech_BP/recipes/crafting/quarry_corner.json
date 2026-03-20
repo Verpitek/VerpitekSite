@@ -2,32 +2,27 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:electric_furnace"
+            "identifier": "lunatech:quarry_corner"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "CAC",
-            "CMC",
-            "BBB"
+            "CC ",
+            "CI ",
+            "   "
         ],
         "key": {
-            "A": {
-                "item": "lunatech:prototyping_pcb"
-            },
-            "B": {
-                "item": "minecraft:copper_ingot"
-            },
             "C": {
                 "item": "lunatech:composite_ingot"
             },
-            "M": {
-                "item": "lunatech:machine_block"
+            "I": {
+                "item": "minecraft:iron_ingot"
             }
         },
         "result": {
-            "item": "lunatech:electric_furnace"
+            "item": "lunatech:quarry_corner",
+            "count": 4
         },
         "unlock": {
             "context": "AlwaysUnlocked"

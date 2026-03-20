@@ -2,35 +2,35 @@
     "format_version": "1.20.50",
     "minecraft:recipe_shaped": {
         "description": {
-            "identifier": "lunatech:terminal"
+            "identifier": "lunatech:microcontroller"
         },
         "tags": [
             "crafting_table"
         ],
         "pattern": [
-            "ISI",
-            "WCW",
-            "IPI"
+            "CPC",
+            "WUW",
+            "CRC"
         ],
         "key": {
-            "I": {
+            "C": {
                 "item": "lunatech:composite_ingot"
             },
-            "S": {
-                "item": "lunatech:screen"
+            "P": {
+                "item": "lunatech:prototyping_pcb"
             },
             "W": {
                 "item": "lunatech:wires"
             },
-            "C": {
-                "item": "lunatech:6502_cpu"
+            "U": {
+                "item": "lunatech:4004_cpu"
             },
-            "P": {
-                "item": "lunatech:prototyping_pcb"
+            "R": {
+                "item": "minecraft:redstone"
             }
         },
         "result": {
-            "item": "lunatech:terminal"
+            "item": "lunatech:microcontroller"
         },
         "unlock": {
             "context": "AlwaysUnlocked"

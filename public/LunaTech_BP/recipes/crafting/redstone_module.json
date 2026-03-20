@@ -1,0 +1,33 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:redstone_module"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            " W ",
+            "RTR",
+            " W "
+        ],
+        "key": {
+            "W": {
+                "item": "lunatech:wires"
+            },
+            "R": {
+                "item": "minecraft:redstone"
+            },
+            "T": {
+                "item": "lunatech:transistor"
+            }
+        },
+        "result": {
+            "item": "lunatech:redstone_module"
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}

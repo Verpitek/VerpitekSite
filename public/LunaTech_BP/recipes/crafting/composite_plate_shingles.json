@@ -1,0 +1,27 @@
+{
+    "format_version": "1.20.50",
+    "minecraft:recipe_shaped": {
+        "description": {
+            "identifier": "lunatech:composite_plate_shingles"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "pattern": [
+            "PP ",
+            " PP"
+        ],
+        "key": {
+            "P": {
+                "item": "lunatech:composite_plate"
+            }
+        },
+        "result": {
+            "item": "lunatech:composite_plate_shingles",
+            "count": 4
+        },
+        "unlock": {
+            "context": "AlwaysUnlocked"
+        }
+    }
+}
