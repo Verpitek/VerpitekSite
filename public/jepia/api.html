@@ -73,6 +73,15 @@
                                 <li><a href="#feature">Feature</a></li>
                                 <li><a href="#feature-rule">FeatureRule</a></li>
                                 <li><a href="#dimension">Dimension</a></li>
+                                <li><a href="#particle">Particle</a></li>
+                                <li><a href="#animation">Animation</a></li>
+                                <li><a href="#animation-controller">AnimationController</a></li>
+                                <li><a href="#attachable">Attachable</a></li>
+                                <li><a href="#client-biome">ClientBiome</a></li>
+                                <li><a href="#jigsaw-structure">JigsawStructure</a></li>
+                                <li><a href="#template-pool">TemplatePool</a></li>
+                                <li><a href="#structure-set">StructureSet</a></li>
+                                <li><a href="#processor-list">ProcessorList</a></li>
                             </ul>
                         </div>
                     </li>
@@ -1905,6 +1914,243 @@ await addon.generate('./output');</code></pre>
                         <tr><td><code>addon.use(plugin)</code></td><td>Register a plugin; returns <code>this</code> for chaining</td></tr>
                     </table>
                     <p>Both hooks are called in registration order and support <code>async</code> functions.</p>
+                </section>
+
+                <!-- Phase 9: Visual & Client Systems -->
+
+                <section id="particle">
+                    <h2>Particle</h2>
+                    <p>Particle effect definitions written to <code>resource_pack/particles/&lt;id&gt;.json</code>. Format version <code>1.10.0</code>.</p>
+                    <pre><code class="language-typescript">import { Particle } from 'jepia';
+
+const sparks = new Particle('Sparks', 'myaddon:sparks');
+sparks.setRenderParameters('particles_alpha', 'textures/particle/particles');
+sparks.setEmitterRate('steady', { spawn_rate: 10, max_particles: 50 });
+sparks.setEmitterLifetime('looping', { active_time: 2 });
+sparks.setEmitterShape('sphere', { radius: 0.5 });
+sparks.setParticleLifetime(1.5);
+sparks.setAppearanceBillboard({ size: [0.1, 0.1], facing_camera_mode: 'lookat_xyz' });
+addon.addParticle(sparks);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setRenderParameters(material, texture)</code></td><td>Set material and texture path for rendering</td></tr>
+                        <tr><td><code>setEmitterRate(type, params)</code></td><td>Set spawn rate: <code>"steady"</code>, <code>"instant"</code>, or <code>"manual"</code></td></tr>
+                        <tr><td><code>setEmitterLifetime(type, params)</code></td><td>Set emitter lifetime: <code>"looping"</code>, <code>"once"</code>, or <code>"expression"</code></td></tr>
+                        <tr><td><code>setEmitterShape(type, params?)</code></td><td>Set emitter shape: <code>"point"</code>, <code>"sphere"</code>, <code>"box"</code>, <code>"disc"</code>, <code>"entity_aabb"</code>, <code>"custom"</code></td></tr>
+                        <tr><td><code>setParticleLifetime(max)</code></td><td>Set particle max lifetime (number or Molang expression)</td></tr>
+                        <tr><td><code>setAppearanceBillboard(params)</code></td><td>Set billboard appearance: <code>size</code>, <code>facing_camera_mode</code>, <code>uv</code></td></tr>
+                        <tr><td><code>setAppearanceTinting(color)</code></td><td>Set particle color tinting (RGBA Molang array or gradient)</td></tr>
+                        <tr><td><code>addCurve(name, curve)</code></td><td>Add a Molang curve for animation</td></tr>
+                        <tr><td><code>addEvent(name, event)</code></td><td>Add a lifecycle event</td></tr>
+                        <tr><td><code>setComponent(name, value)</code></td><td>Set arbitrary particle component (escape hatch)</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks material, texture, emitter lifetime, emitter rate</td></tr>
+                    </table>
+                </section>
+
+                <section id="animation">
+                    <h2>Animation</h2>
+                    <p>Bone animations written to <code>resource_pack/animations/&lt;id&gt;.json</code>. Format version <code>1.8.0</code>.</p>
+                    <pre><code class="language-typescript">import { Animation } from 'jepia';
+
+const walk = new Animation('Walk Anim', 'myaddon:walk');
+walk.setLoop(true);
+walk.setAnimationLength(1.0);
+walk.addBoneKeyframes('left_leg', 'rotation', {
+  '0.0': ['-30', '0', '0'],
+  '0.5': ['30', '0', '0'],
+  '1.0': ['-30', '0', '0'],
+});
+walk.addTimelineEvent('0.5', '/playsound step.grass @s');
+addon.addAnimation(walk);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setAnimationId(id)</code></td><td>Override animation identifier (default: <code>animation.&lt;ns&gt;.&lt;name&gt;</code>)</td></tr>
+                        <tr><td><code>getAnimationId()</code></td><td>Get the animation identifier string</td></tr>
+                        <tr><td><code>setLoop(loop)</code></td><td>Set loop mode: <code>true</code>, <code>false</code>, or <code>"hold_on_last_frame"</code></td></tr>
+                        <tr><td><code>setAnimationLength(seconds)</code></td><td>Set total animation duration in seconds</td></tr>
+                        <tr><td><code>addBoneKeyframes(bone, property, keyframes)</code></td><td>Add keyframes: property is <code>"position"</code>, <code>"rotation"</code>, or <code>"scale"</code></td></tr>
+                        <tr><td><code>addTimelineEvent(time, event)</code></td><td>Add a timeline event (command string or array)</td></tr>
+                        <tr><td><code>setData(data)</code></td><td>Merge raw animation definition data (escape hatch)</td></tr>
+                    </table>
+                </section>
+
+                <section id="animation-controller">
+                    <h2>AnimationController</h2>
+                    <p>Animation state machines written to <code>resource_pack/animation_controllers/&lt;id&gt;.json</code>. Format version <code>1.10.0</code>.</p>
+                    <pre><code class="language-typescript">import { AnimationController } from 'jepia';
+
+const ctrl = new AnimationController('Move Controller', 'myaddon:move');
+ctrl.setInitialState('idle');
+ctrl.addState('idle', {
+  animations: ['idle'],
+  transitions: [{ walk: 'q.is_moving' }],
+});
+ctrl.addState('walk', {
+  animations: ['walk'],
+  transitions: [{ idle: '!q.is_moving' }],
+  blend_transition: 0.2,
+});
+addon.addAnimationController(ctrl);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setControllerId(id)</code></td><td>Override controller identifier (default: <code>controller.animation.&lt;ns&gt;.&lt;name&gt;</code>)</td></tr>
+                        <tr><td><code>getControllerId()</code></td><td>Get the controller identifier string</td></tr>
+                        <tr><td><code>setInitialState(state)</code></td><td>Set initial state name (defaults to <code>"default"</code>)</td></tr>
+                        <tr><td><code>addState(name, config)</code></td><td>Add/replace a state: animations, transitions, blend_transition, particle_effects, sound_effects</td></tr>
+                        <tr><td><code>getStateNames()</code></td><td>Get all configured state names</td></tr>
+                        <tr><td><code>setData(data)</code></td><td>Merge raw controller data (escape hatch)</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: at least 1 state, initial state exists</td></tr>
+                    </table>
+                </section>
+
+                <section id="attachable">
+                    <h2>Attachable</h2>
+                    <p>Item appearance when worn or held, written to <code>resource_pack/attachables/&lt;id&gt;.json</code>. Format version <code>1.8.0</code>.</p>
+                    <pre><code class="language-typescript">import { Attachable } from 'jepia';
+
+const helmet = new Attachable('Iron Helmet', 'myaddon:iron_helmet');
+helmet.setMaterials({ default: 'armor' });
+helmet.setTextures({ default: 'textures/models/armor/iron_1' });
+helmet.setGeometry({ default: 'geometry.humanoid.armor.helmet' });
+helmet.setRenderControllers(['controller.render.armor']);
+addon.addAttachable(helmet);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setMaterials(materials)</code></td><td>Set material definitions (name &rarr; material id)</td></tr>
+                        <tr><td><code>setTextures(textures)</code></td><td>Set texture definitions (name &rarr; texture path)</td></tr>
+                        <tr><td><code>setGeometry(geometry)</code></td><td>Set geometry definitions (name &rarr; geometry id)</td></tr>
+                        <tr><td><code>setAnimations(animations)</code></td><td>Set animation references (short name &rarr; full id)</td></tr>
+                        <tr><td><code>setRenderControllers(controllers)</code></td><td>Set render controllers list</td></tr>
+                        <tr><td><code>setScripts(scripts)</code></td><td>Set scripts block (parent_setup, pre_animation, animate)</td></tr>
+                        <tr><td><code>setData(data)</code></td><td>Merge raw description data (escape hatch)</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: at least 1 texture and 1 geometry</td></tr>
+                    </table>
+                </section>
+
+                <section id="client-biome">
+                    <h2>ClientBiome</h2>
+                    <p>Client-side biome rendering written to <code>resource_pack/biomes_client/&lt;id&gt;.json</code>. Format version <code>1.0.0</code>. Pairs with the server-side <a href="#biome">Biome</a> component.</p>
+                    <pre><code class="language-typescript">import { ClientBiome } from 'jepia';
+
+const crystal = new ClientBiome('Crystal Caves Client', 'myaddon:crystal_caves');
+crystal.setWaterColor('#1a3c6b');
+crystal.setSkyColor('#0a0a2e');
+crystal.setFogAppearance('#0a0a2e', 0.0, 0.5);
+crystal.setGrassColor('#2d5a27');
+crystal.setFoliageColor('#1e3a1e');
+addon.addClientBiome(crystal);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setWaterColor(hex)</code></td><td>Set water surface color</td></tr>
+                        <tr><td><code>setSkyColor(hex)</code></td><td>Set sky color</td></tr>
+                        <tr><td><code>setFogAppearance(color, start, end)</code></td><td>Set fog color, start distance (0&ndash;1), end distance</td></tr>
+                        <tr><td><code>setGrassColor(hex)</code></td><td>Set grass/vegetation tint</td></tr>
+                        <tr><td><code>setFoliageColor(hex)</code></td><td>Set foliage (leaves) tint</td></tr>
+                        <tr><td><code>setComponent(name, value)</code></td><td>Set arbitrary client biome component (escape hatch)</td></tr>
+                    </table>
+                </section>
+
+                <!-- Phase 12: Jigsaw Structures -->
+
+                <section id="jigsaw-structure">
+                    <h2>JigsawStructure</h2>
+                    <p>Procedural jigsaw structure definitions written to <code>behavior_pack/worldgen/structures/&lt;id&gt;.json</code>. Format version <code>1.21.20</code>.</p>
+                    <pre><code class="language-typescript">import { JigsawStructure } from 'jepia';
+
+const village = new JigsawStructure('Village', 'myaddon:village');
+village.setStep('surface_structures');
+village.setStartPool('myaddon:village/town_centers');
+village.setMaxDepth(6);
+village.setStartHeight({ type: 'constant', value: { absolute: 0 } });
+village.setTerrainAdaptation('beard_thin');
+village.setHeightmapProjection('world_surface');
+village.addBiomeFilter({ test: 'has_biome_tag', value: 'village' });
+addon.addJigsawStructure(village);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setStep(step)</code></td><td>Set generation step (e.g. <code>"surface_structures"</code>, <code>"underground_structures"</code>)</td></tr>
+                        <tr><td><code>setStartPool(pool)</code></td><td>Set starting template pool identifier</td></tr>
+                        <tr><td><code>setMaxDepth(depth)</code></td><td>Set max recursion depth (0&ndash;20)</td></tr>
+                        <tr><td><code>setStartHeight(height)</code></td><td>Set start height provider (<code>constant</code> or <code>uniform</code>)</td></tr>
+                        <tr><td><code>setTerrainAdaptation(mode)</code></td><td>Set terrain mode: <code>none</code>, <code>bury</code>, <code>beard_thin</code>, <code>beard_box</code>, <code>encapsulate</code></td></tr>
+                        <tr><td><code>setHeightmapProjection(proj)</code></td><td>Set projection: <code>world_surface</code>, <code>ocean_floor</code>, <code>none</code></td></tr>
+                        <tr><td><code>addBiomeFilter(filter)</code></td><td>Add a biome filter condition</td></tr>
+                        <tr><td><code>addPoolAlias(alias)</code></td><td>Add pool alias (direct, random, or random_group)</td></tr>
+                        <tr><td><code>setStartJigsawName(name)</code></td><td>Set jigsaw block name from start pool</td></tr>
+                        <tr><td><code>setDimensionPadding(padding)</code></td><td>Set dimension padding</td></tr>
+                        <tr><td><code>setMaxDistanceFromCenter(dist)</code></td><td>Set max distance from center</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks step, startPool, maxDepth range, startHeight</td></tr>
+                    </table>
+                </section>
+
+                <section id="template-pool">
+                    <h2>TemplatePool</h2>
+                    <p>Weighted structure template pools written to <code>behavior_pack/worldgen/template_pools/&lt;id&gt;.json</code>. Format version <code>1.21.20</code>.</p>
+                    <pre><code class="language-typescript">import { TemplatePool } from 'jepia';
+
+const pool = new TemplatePool('Town Centers', 'myaddon:village/town_centers');
+pool.addElement({ location: 'myaddon:village/plains_center' }, 1);
+pool.addElement({ location: 'myaddon:village/desert_center' }, 1);
+pool.addEmptyElement(3); // 60% chance of nothing
+pool.setFallback('minecraft:empty');
+addon.addTemplatePool(pool);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>addElement(config, weight?)</code></td><td>Add a structure element. Config: <code>location</code>, optional <code>processors</code>/<code>projection</code>. Weight 1&ndash;200 (default 1)</td></tr>
+                        <tr><td><code>addEmptyElement(weight?)</code></td><td>Add empty element (generates nothing). Weight 1&ndash;200</td></tr>
+                        <tr><td><code>setFallback(pool)</code></td><td>Set fallback pool (default: <code>"minecraft:empty"</code>)</td></tr>
+                        <tr><td><code>getElements()</code></td><td>Get all elements as a copy</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: at least 1 element</td></tr>
+                    </table>
+                </section>
+
+                <section id="structure-set">
+                    <h2>StructureSet</h2>
+                    <p>Structure placement rules written to <code>behavior_pack/worldgen/structure_sets/&lt;id&gt;.json</code>. Format version <code>1.21.20</code>.</p>
+                    <pre><code class="language-typescript">import { StructureSet } from 'jepia';
+
+const set = new StructureSet('Village Set', 'myaddon:villages');
+set.setPlacement({
+  type: 'minecraft:random_spread',
+  salt: 10387312,
+  spacing: 34,
+  separation: 8,
+  spread_type: 'linear',
+});
+set.addStructure('myaddon:village', 1);
+addon.addStructureSet(set);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>setPlacement(config)</code></td><td>Set placement: <code>type</code>, <code>salt</code>, <code>spacing</code>, <code>separation</code> (&lt; spacing), <code>spread_type</code></td></tr>
+                        <tr><td><code>addStructure(id, weight?)</code></td><td>Add a jigsaw structure with weight (default 1)</td></tr>
+                        <tr><td><code>getPlacement()</code></td><td>Get placement config or null</td></tr>
+                        <tr><td><code>getStructures()</code></td><td>Get all structures as a copy</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: placement set, separation &lt; spacing, at least 1 structure</td></tr>
+                    </table>
+                </section>
+
+                <section id="processor-list">
+                    <h2>ProcessorList</h2>
+                    <p>Block transformation rules for structure placement, written to <code>behavior_pack/worldgen/processors/&lt;id&gt;.json</code>. Format version <code>1.21.20</code>.</p>
+                    <pre><code class="language-typescript">import { ProcessorList } from 'jepia';
+
+const proc = new ProcessorList('Mossy Processor', 'myaddon:mossy');
+proc.addBlockIgnore(['minecraft:structure_void']);
+proc.addRule({
+  input_predicate: { predicate_type: 'minecraft:block_match', block: 'minecraft:cobblestone' },
+  location_predicate: { predicate_type: 'minecraft:always_true' },
+  output_state: { name: 'minecraft:mossy_cobblestone' },
+});
+addon.addProcessorList(proc);</code></pre>
+                    <table>
+                        <tr><th>Method</th><th>Description</th></tr>
+                        <tr><td><code>addBlockIgnore(blocks)</code></td><td>Add block_ignore processor (array of block names to filter out)</td></tr>
+                        <tr><td><code>addProtectedBlocks(tag)</code></td><td>Add protected_blocks processor (tag of blocks that can't be replaced)</td></tr>
+                        <tr><td><code>addRule(rule)</code></td><td>Add rule processor: input/location/position predicates &rarr; output_state</td></tr>
+                        <tr><td><code>addCapped(limit, delegate)</code></td><td>Add capped processor limiting delegate applications</td></tr>
+                        <tr><td><code>addRawProcessor(processor)</code></td><td>Add raw processor object directly (must have <code>processor_type</code>)</td></tr>
+                        <tr><td><code>validate()</code></td><td>Checks: at least 1 processor</td></tr>
+                    </table>
                 </section>
 
                 <section id="validation">
