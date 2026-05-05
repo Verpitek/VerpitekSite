@@ -3,8 +3,11 @@
 
 <div class="hero">
     <h1 class="hero-title" data-i18n="hero.title">Verpitek</h1>
-    <p class="hero-subtitle" data-i18n="hero.subtitle">Software development studio specializing in web, backend systems, and creative digital experiences.</p>
-    <a href="#projects" class="hero-button" data-i18n="hero.cta">View Our Work</a>
+    <p class="hero-subtitle" data-i18n="hero.subtitle">Software development studio specializing in web, backend systems, and creative digital experiences. Affordable commissions from just 100 EUR.</p>
+    <div class="hero-actions">
+        <a href="#projects" class="hero-button" data-i18n="hero.cta">View Our Work</a>
+        <a href="#services" class="hero-button hero-button-alt">Services</a>
+    </div>
 </div>
 
 <style>
@@ -29,6 +32,12 @@
         margin-left: auto;
         margin-right: auto;
     }
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
     .hero-button {
         display: inline-block;
         padding: 1rem 2rem;
@@ -36,11 +45,22 @@
         color: #212121;
         text-decoration: none;
         font-weight: 600;
-        transition: background 0.3s;
+        transition: background 0.3s, box-shadow 0.3s;
     }
     .hero-button:hover {
         background: #8a55dd;
         box-shadow: 0 4px 12px rgba(170, 117, 255, 0.4);
+    }
+    .hero-button-alt {
+        background: transparent;
+        color: #aa75ff;
+        border: 1px solid #aa75ff;
+    }
+    .hero-button-alt:hover {
+        background: rgba(170, 117, 255, 0.1);
+        color: #e1ff00;
+        border-color: #e1ff00;
+        box-shadow: 0 0 15px rgba(225, 255, 0, 0.15);
     }
 
     @media (max-width: 768px) {
@@ -58,7 +78,6 @@
             padding: 1rem 1.5rem;
             min-height: 44px;
             min-width: 140px;
-            box-shadow: 0 4px 8px rgba(170, 117, 255, 0.3);
         }
     }
 </style>

@@ -10,7 +10,11 @@ import I18nScript from "../components/I18nScript.astro";
 ---
 
 <html lang="en">
-    <Head />
+    <Head
+        title="Verpitek — Software Development Studio | Websites & APIs from 100 EUR"
+        description="Verpitek is a software development studio based in Lithuania. We build websites, backend systems, APIs, and creative digital experiences. Custom websites and basic APIs starting at just 100 EUR."
+        path="/"
+    />
     <body>
         <Nav highlighted="navhome" />
         <Hero />
@@ -20,7 +24,7 @@ import I18nScript from "../components/I18nScript.astro";
                 We design and build software — from polished websites and web applications to backend systems and APIs. We work primarily with TypeScript and Python across the full stack.
             </p>
             <p data-i18n="index.whatwedo.p2">
-                We also take on commissions for website development, small-scale backend projects, and custom tooling. If you have a project in mind, get in touch.
+                We also take on commissions for website development, small-scale backend projects, and custom tooling. Custom websites and basic APIs start at just 100 EUR — get in touch.
             </p>
         </Container>
         <Container>
@@ -39,7 +43,7 @@ import I18nScript from "../components/I18nScript.astro";
             </ul>
         </Container>
         <Container id="services">
-            <h1 data-i18n="index.services.title">Services</h1>
+            <h1 data-i18n="index.services.title">Services — from 100 EUR</h1>
             <div class="services-grid">
                 <div class="service-card">
                     <h3 data-i18n="index.services.websites">Website Development</h3>
@@ -49,8 +53,13 @@ import I18nScript from "../components/I18nScript.astro";
                     <h3 data-i18n="index.services.backend">Backend Development</h3>
                     <p data-i18n="index.services.backend.desc">APIs, services, and data pipelines. We build reliable backend systems with Python and TypeScript.</p>
                 </div>
+                <div class="service-card pricing-card">
+                    <h3 data-i18n="index.services.basic">Custom Websites & Basic APIs</h3>
+                    <p data-i18n="index.services.basic.desc">From simple landing pages to basic backend APIs. Starting at just 100 EUR. Contact us for a quote.</p>
+                    <span class="pricing-badge">100 EUR</span>
+                </div>
             </div>
-            <p class="services-contact" data-i18n="index.services.contact">Interested? Contact us at <a href="mailto:info@verpitek.com">info@verpitek.com</a></p>
+            <p class="services-contact" data-i18n="index.services.contact">Interested? Contact us at info@verpitek.com</p>
         </Container>
         <Container id="projects">
             <h1 data-i18n="index.projects.title">Our Projects</h1>
@@ -62,13 +71,13 @@ import I18nScript from "../components/I18nScript.astro";
             />
             <ProjectCard
                 title="Weboneko"
-                description="A sandboxed, creative micro-social platform where every post is a customizable HTML/CSS webpage. Features data scarcity mechanics, a nibbles economy, and three-stage content moderation."
+                description="A sandboxed, creative micro-social platform where every post is a customizable HTML/CSS webpage with PanSpark scripting. Features data scarcity mechanics, a nibbles economy, and three-stage content moderation."
                 link="/weboneko"
                 linkText="Learn More"
             />
             <ProjectCard
                 title="PanSpark"
-                description="A tiny programming language for JavaScript environments, primarily used in our projects for microcontrollers."
+                description="A tiny programming language for JavaScript environments, primarily used in our projects for microcontrollers and embeddable scripting."
                 link="/editor.html"
                 linkText="Try the Editor"
             />
@@ -80,6 +89,14 @@ import I18nScript from "../components/I18nScript.astro";
                 references for our projects in the Verpitek Wiki.
             </p>
             <a href="/wiki" class="wiki-cta" data-i18n="index.docs.cta">Go to Wiki</a>
+        </Container>
+        <Container class="cta-section">
+            <h1 data-i18n="index.cta.title">Ready to Start?</h1>
+            <p data-i18n="index.cta.text">
+                Have a project in mind? We build custom websites and APIs from 100 EUR.
+                Reach out and let's discuss what we can build together.
+            </p>
+            <a href="mailto:info@verpitek.com" class="cta-button" data-i18n="index.cta.button">Contact Us</a>
         </Container>
         <Footer />
         <I18nScript />
@@ -112,6 +129,7 @@ import I18nScript from "../components/I18nScript.astro";
         border: 1px solid #333;
         padding: 1.5rem;
         transition: border-color 0.3s;
+        position: relative;
     }
     .service-card:hover {
         border-color: #aa75ff;
@@ -126,13 +144,53 @@ import I18nScript from "../components/I18nScript.astro";
         margin: 0;
         line-height: 1.5;
     }
+    .pricing-card {
+        border-color: #aa75ff;
+        box-shadow: 0 0 15px rgba(170, 117, 255, 0.1);
+    }
+    .pricing-card:hover {
+        border-color: #e1ff00;
+        box-shadow: 0 0 20px rgba(225, 255, 0, 0.15);
+    }
+    .pricing-badge {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.35rem 0.8rem;
+        background: #aa75ff;
+        color: #212121;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+    }
     .services-contact {
         color: #aa75ff;
         font-weight: 500;
     }
+    .cta-section {
+        text-align: center;
+        border-color: #aa75ff;
+    }
+    .cta-button {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        background: #e1ff00;
+        color: #212121;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s, box-shadow 0.3s;
+        margin-top: 0.5rem;
+    }
+    .cta-button:hover {
+        background: #c9e000;
+        box-shadow: 0 0 20px rgba(225, 255, 0, 0.3);
+    }
     @media (max-width: 768px) {
         .services-grid {
             grid-template-columns: 1fr;
+        }
+        .cta-button {
+            padding: 1rem 2rem;
+            min-height: 44px;
         }
     }
 </style>

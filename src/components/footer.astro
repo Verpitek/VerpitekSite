@@ -1,10 +1,17 @@
 ---
-
 ---
 
 <div class="footer">
     <div class="footer-content">
-        <nav class="footer-links" aria-label="Footer navigation">
+        <nav class="footer-nav" aria-label="Footer navigation">
+            <a class="footer-link" href="/" data-i18n="footer.home">Home</a>
+            <span class="footer-sep">&middot;</span>
+            <a class="footer-link" href="/#services" data-i18n="footer.services">Services</a>
+            <span class="footer-sep">&middot;</span>
+            <a class="footer-link" href="/wiki" data-i18n="footer.wiki">Wiki</a>
+            <span class="footer-sep">&middot;</span>
+            <a class="footer-link" href="/about" data-i18n="footer.about">About</a>
+            <span class="footer-sep">&middot;</span>
             <a class="footer-link"
                 href="https://discord.gg/fyNQNrr7dC"
                 target="_blank"
@@ -29,6 +36,14 @@
         margin-left: 5vw;
         margin-right: 5vw
     }
+    .footer-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+    }
     .footer-link {
         text-decoration: none;
         color: #aa75ff;
@@ -37,6 +52,9 @@
     .footer-link:hover {
         color: #e1ff00;
         text-decoration: underline;
+    }
+    .footer-sep {
+        color: #444;
     }
     .footer-divider {
         height: 1px;

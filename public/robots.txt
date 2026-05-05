@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /wiki/
+Allow: /about
+Allow: /weboneko
+Allow: /editor.html
+
+Disallow: /jepia/
+
+Sitemap: https://verpitek.com/sitemap-index.xml

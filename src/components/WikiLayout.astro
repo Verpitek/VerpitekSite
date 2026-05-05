@@ -12,7 +12,11 @@ const { title, sidebarLinks = [] } = Astro.props;
 ---
 
 <html lang="en">
-    <Head />
+    <Head
+        title={`${title} — Verpitek Wiki`}
+        description={`${title} — Technical documentation and reference for the Verpitek projects.`}
+        path={Astro.url.pathname}
+    />
     <body>
         <Nav highlighted="navwiki" />
         <div class="wiki-container">

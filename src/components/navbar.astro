@@ -3,12 +3,14 @@ const { highlighted = undefined } = Astro.props;
 import LanguageToggle from "./LanguageToggle.astro";
 ---
 
-<div class="navbar" data-message={highlighted}>
-    <a href="/" class="navbar-logo">
+<div class="navbar" data-message={highlighted} role="navigation" aria-label="Main navigation">
+    <a href="/" class="navbar-logo" aria-label="Verpitek home">
         <img
             class="navbar-img"
             src="/verpitek.svg"
-            alt="main Verpitek Logo"
+            alt="Verpitek Logo"
+            width="64"
+            height="64"
             transition:persist="logo"
         />
     </a>
@@ -35,6 +37,16 @@ import LanguageToggle from "./LanguageToggle.astro";
     .navlink {
         text-decoration: none;
         color: papayawhip;
+        transition: color 0.2s;
+    }
+
+    .navlink:hover {
+        color: #aa75ff;
+    }
+
+    .navlink:focus-visible {
+        outline: 2px solid #aa75ff;
+        outline-offset: 2px;
     }
 
     .navbar-logo {
@@ -44,6 +56,7 @@ import LanguageToggle from "./LanguageToggle.astro";
 
     .navbar-img {
         height: 64px;
+        width: 64px;
     }
 
     @media (max-width: 768px) {
@@ -53,9 +66,11 @@ import LanguageToggle from "./LanguageToggle.astro";
             margin-left: 2vw;
             margin-right: 2vw;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .navbar-img {
             height: 48px;
+            width: 48px;
         }
         .navlink {
             padding: 0.75rem 0.5rem;

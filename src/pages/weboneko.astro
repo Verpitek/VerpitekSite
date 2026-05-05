@@ -8,7 +8,11 @@ import I18nScript from "../components/I18nScript.astro"
 ---
 
 <html lang="en">
-    <Head />
+    <Head
+        title="Weboneko — Sandboxed Creative Micro-Social Platform | Verpitek"
+        description="Weboneko is a sandboxed creative micro-social platform where every post is a customizable HTML/CSS webpage with PanSpark scripting. Features a nibbles economy, pixel art sticker studio, and three-stage moderation."
+        path="/weboneko"
+    />
     <body>
         <Nav highlighted="navweboneko" />
         <Container>
@@ -17,8 +21,9 @@ import I18nScript from "../components/I18nScript.astro"
             <p class="tagline" data-i18n="weboneko.tagline">A sandboxed, creative micro-social platform</p>
             <p data-i18n="weboneko.intro">
                 Weboneko reimagines social media through intentional constraints and creative expression.
-                Every post is a fully customizable HTML/CSS webpage rendered in a sandboxed iframe,
-                combining the creative freedom of early web culture with modern safety and moderation.
+                Every post is a fully customizable HTML/CSS webpage with optional PanSpark scripting,
+                rendered in a sandboxed iframe. It combines the creative freedom of early web culture
+                with a modern safety net.
             </p>
         </Container>
 
@@ -47,30 +52,91 @@ import I18nScript from "../components/I18nScript.astro"
         <Container>
             <h2 data-i18n="weboneko.nibbles.title">Nibbles Economy</h2>
             <p data-i18n="weboneko.nibbles.text">
-                Weboneko features a simple, non-transferable currency called Nibbles. Earn them through engagement
-                — nibbling posts, hitting milestones, and daily logins. Spend them on cosmetics like pixel art
-                sticker slots and sticker placements on posts.
+                Weboneko features a simple currency called Nibbles. Earn them through engagement
+                — nibbling posts, hitting milestones, and daily login streaks. Spend them on
+                cosmetics from the in-app shop: username styles, profile borders, sticker effects,
+                and more.
+            </p>
+        </Container>
+
+        <Container>
+            <h2 data-i18n="weboneko.panspark.title">PanSpark Scripting</h2>
+            <p data-i18n="weboneko.panspark.text">
+                Posts can include interactive scripts written in PanSpark, Weboneko's built-in
+                programming language. With 40 virtual peripherals for counters, animations, canvas
+                drawing, and persistent storage, users create tiny interactive experiences — all
+                running securely inside sandboxed iframes without JavaScript access.
+            </p>
+        </Container>
+
+        <Container>
+            <h2 data-i18n="weboneko.stickers.title">Sticker Studio</h2>
+            <p data-i18n="weboneko.stickers.text">
+                A built-in 32x32 pixel art editor with palette tools, mirroring, and undo. Users
+                draw pixel art stickers and place them on any post at exact pixel coordinates.
+                Additional sticker slots can be earned through activity or purchased with Nibbles.
+                Stickers persist across posts and appear on user profiles as a showcase.
+            </p>
+        </Container>
+
+        <Container>
+            <h2 data-i18n="weboneko.shop.title">Shop & Cosmetics</h2>
+            <p data-i18n="weboneko.shop.text">
+                Spend earned Nibbles in the in-app shop on cosmetic items: username styles with
+                gradients and glows, profile borders, background theme upgrades, and sticker visual
+                effects. All cosmetics are applied client-side via CSS custom properties — no
+                server-side re-rendering required. A live preview shows changes before purchase.
+            </p>
+        </Container>
+
+        <Container>
+            <h2 data-i18n="weboneko.remixes.title">Remixes</h2>
+            <p data-i18n="weboneko.remixes.text">
+                Every post can be remixed — create a derivative work that credits the original
+                author. Each remix is a full HTML/CSS canvas building on someone else's creation.
+                This encourages collaborative creativity rather than passive consumption.
+            </p>
+        </Container>
+
+        <Container>
+            <h2 data-i18n="weboneko.activity.title">Activity & Notifications</h2>
+            <p data-i18n="weboneko.activity.text">
+                An in-app notification system tracks meaningful interactions: when someone chains
+                to your post, places a sticker, sends nibbles, or remixes your work. No vanity
+                metrics, no engagement scores — just genuine creative exchanges.
+            </p>
+        </Container>
+
+        <Container>
+            <h2 data-i18n="weboneko.design.title">Recent Design</h2>
+            <p data-i18n="weboneko.design.text">
+                A 3-column desktop layout with fixed sidebars and a scrollable feed center. An
+                ambient Three.js wireframe starfield background creates a signal-station aesthetic.
+                The dark amber-on-black palette paired with DynaPuff display type and IBM Plex Mono
+                body type gives the platform a warm, handcrafted feel. Flat surfaces, 2px borders,
+                and amber glow feedback on interaction.
             </p>
         </Container>
 
         <Container>
             <h2 data-i18n="weboneko.moderation.title">Content Moderation</h2>
             <p data-i18n="weboneko.moderation.text">
-                A three-stage moderation pipeline keeps the platform safe, all running locally. First, a keyword
-                blocklist catches obvious violations. Then, IBM Granite Guardian HAP 38M classifies text for
-                hate, abuse, and profanity. Finally, Falconsai NSFW Image Detection checks embedded images.
-                The system is fail-closed — if anything goes wrong, content is flagged for manual review
-                rather than published. No data is sent to external services.
+                A three-stage moderation pipeline keeps the platform safe, all running locally.
+                First, a keyword blocklist catches obvious violations. Then, IBM Granite Guardian
+                HAP 38M classifies text for hate, abuse, and profanity. Finally, Falconsai NSFW
+                Image Detection checks embedded images. The system is fail-closed — if anything
+                goes wrong, content is flagged for manual review rather than published. No data
+                is sent to external services.
             </p>
         </Container>
 
         <Container>
             <h2 data-i18n="weboneko.security.title">Security Model</h2>
             <p data-i18n="weboneko.security.text">
-                All user-generated content renders inside fully sandboxed iframes with zero JavaScript execution.
-                Posts are sanitized server-side, stripping scripts, event handlers, and other attack vectors
-                while preserving rich HTML5 and CSS creativity. Sessions use HMAC-SHA256 signed tokens,
-                and passwords are hashed with Argon2id.
+                All user-generated content renders inside fully sandboxed iframes with zero
+                JavaScript execution. Posts are sanitized server-side, stripping scripts, event
+                handlers, and other attack vectors while preserving rich HTML5 and CSS creativity.
+                Sessions use HMAC-SHA256 signed tokens, and passwords are hashed with Argon2id.
             </p>
         </Container>
 
@@ -79,9 +145,9 @@ import I18nScript from "../components/I18nScript.astro"
             <ul class="tech-list">
                 <li data-i18n="weboneko.tech.runtime"><strong>Runtime:</strong> Bun</li>
                 <li data-i18n="weboneko.tech.framework"><strong>Framework:</strong> Astro 6 (SSR)</li>
-                <li data-i18n="weboneko.tech.database"><strong>Database:</strong> PostgreSQL</li>
+                <li data-i18n="weboneko.tech.database"><strong>Database:</strong> SQLite</li>
                 <li data-i18n="weboneko.tech.editor"><strong>Editor:</strong> CodeMirror (in-browser HTML/CSS)</li>
-                <li data-i18n="weboneko.tech.moderation"><strong>Moderation:</strong> Python server with Granite Guardian</li>
+                <li data-i18n="weboneko.tech.moderation"><strong>Moderation:</strong> Python server with Granite Guardian + Falconsai</li>
                 <li data-i18n="weboneko.tech.cdn"><strong>CDN:</strong> Cloudflare Tunnel + Edge Caching</li>
             </ul>
         </Container>
